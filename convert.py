@@ -158,6 +158,7 @@ class LatexConverter:
                 text = text.replace('\\[Pi]', '\\pi')
                 text = text.replace('\\[Infinity]', '\\infty')
                 text = text.replace('\\n', ' ')
+                text = text.replace('\\[InvisibleSpace]', ' ')
                 # Skip empty or very short strings
                 if len(text.strip()) > 2:
                     cleaned_texts.append(text)
@@ -172,14 +173,15 @@ class LatexConverter:
                        if t not in ['Input', 'Output', 'Text', 'Print', 'Code', 'During evaluation of']
                        and not t.startswith('ExpressionUUID')
                        and not t.startswith('In[')
+                       and not any(skip in t for skip in ['RowBox', 'SuperscriptBox', 'FractionBox', 'SqrtBox'])
                        and len(t) > 2]
             if filtered:
                 return ' '.join(filtered[:3])  # Limit to first 3 to avoid too much noise
         
         # Try to extract from BoxData if it contains readable content
         # Look for RowBox with text
-        if 'RowBox' in cell_content:
-            # This likely contains code or mathematical expressions
+        if 'RowBox' in cell_content or 'SuperscriptBox' in cell_content or 'FractionBox' in cell_content:
+            # This likely contains code or mathematical expressions that we can't easily convert
             return ''
         
         return ''
@@ -230,8 +232,11 @@ class LatexConverter:
                 # Show output
                 output_text = self.extract_output_text(content)
                 if output_text and len(output_text.strip()) > 5:
-                    # Filter out metadata-like content
-                    if any(skip in output_text for skip in ['CellChangeTimes', 'CellLabel', 'ExpressionUUID', 'StripOnInput']):
+                    # Filter out metadata-like content and Box structures
+                    skip_patterns = ['CellChangeTimes', 'CellLabel', 'ExpressionUUID', 
+                                   'StripOnInput', 'RowBox', 'SuperscriptBox', 
+                                   'FractionBox', 'SqrtBox', '[InvisibleSpace]']
+                    if any(skip in output_text for skip in skip_patterns):
                         return ''
                     
                     # Check if it looks like a heading (short text, possibly bold)
@@ -254,8 +259,10 @@ class LatexConverter:
             # Always include text cells
             text_content = self.extract_output_text(content)
             if text_content and len(text_content.strip()) > 5:
-                latex_output.append(text_content)
-                latex_output.append("")
+                # Filter out Box structures
+                if not any(skip in text_content for skip in ['RowBox', 'SuperscriptBox', 'FractionBox']):
+                    latex_output.append(text_content)
+                    latex_output.append("")
         
         return '\n'.join(latex_output)
 
