@@ -1,0 +1,20 @@
+homework:
+  name: "Homework 8-1"
+  title: "Variational Methods Problems"
+  author: "Bradley Taul"
+  
+problems:
+  - file: "HW 8-1 pb 4.nb"
+    name: "Problem 4"
+    display: "output-only"
+    description: "Infinite Square Well - Variational Method"
+    
+  - file: "HW 8-1 pb 5-all.nb"
+    name: "Problem 5"
+    display: "input-output"
+    description: "Extended variational analysis"
+    
+  - file: "HW 8-1 pb 8.nb"
+    name: "Problem 8"
+    display: "output-only"
+    description: "Variational method application"
