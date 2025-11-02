@@ -25,6 +25,9 @@ logger = logging.getLogger(__name__)
 class NotebookParser:
     """Parse Mathematica notebook files and extract cells."""
     
+    # Constants for parsing
+    METADATA_MARKER = '(* Internal cache information *)'
+    
     def __init__(self, notebook_path: str):
         self.notebook_path = notebook_path
         self.content = None
@@ -46,7 +49,7 @@ class NotebookParser:
             self.read_notebook()
         
         # Split content to focus only on the actual notebook content, not metadata
-        metadata_start = self.content.find('(* Internal cache information *)')
+        metadata_start = self.content.find(self.METADATA_MARKER)
         if metadata_start > 0:
             content_to_parse = self.content[:metadata_start]
         else:
@@ -120,6 +123,19 @@ class NotebookParser:
 class LatexConverter:
     """Convert Mathematica expressions to LaTeX."""
     
+    # Constants for filtering
+    SKIP_PATTERNS = {
+        'CellChangeTimes', 'CellLabel', 'ExpressionUUID', 
+        'StripOnInput', 'RowBox', 'SuperscriptBox', 
+        'FractionBox', 'SqrtBox', '[InvisibleSpace]',
+        '\\<\\', '\\>'
+    }
+    
+    EXCLUDED_TERMS = {
+        'Input', 'Output', 'Text', 'Print', 'Code', 
+        'During evaluation of', 'RowBox', 'SuperscriptBox', 'FractionBox'
+    }
+    
     def __init__(self):
         self.figure_counter = 0
         
@@ -168,12 +184,12 @@ class LatexConverter:
         # Alternative: look for quoted strings in a simpler format
         simple_quotes = re.findall(r'"([^"]{3,})"', cell_content)
         if simple_quotes:
-            # Filter out common Mathematica keywords and metadata
+            # Filter out common Mathematica keywords and metadata using set for O(1) lookup
             filtered = [t for t in simple_quotes 
-                       if t not in ['Input', 'Output', 'Text', 'Print', 'Code', 'During evaluation of']
+                       if t not in self.EXCLUDED_TERMS
                        and not t.startswith('ExpressionUUID')
                        and not t.startswith('In[')
-                       and not any(skip in t for skip in ['RowBox', 'SuperscriptBox', 'FractionBox', 'SqrtBox'])
+                       and not any(skip in t for skip in self.SKIP_PATTERNS)
                        and len(t) > 2]
             if filtered:
                 return ' '.join(filtered[:3])  # Limit to first 3 to avoid too much noise
@@ -232,12 +248,8 @@ class LatexConverter:
                 # Show output
                 output_text = self.extract_output_text(content)
                 if output_text and len(output_text.strip()) > 5:
-                    # Filter out metadata-like content and Box structures
-                    skip_patterns = ['CellChangeTimes', 'CellLabel', 'ExpressionUUID', 
-                                   'StripOnInput', 'RowBox', 'SuperscriptBox', 
-                                   'FractionBox', 'SqrtBox', '[InvisibleSpace]',
-                                   '\\<\\', '\\>']  # Escaped Mathematica string delimiters
-                    if any(skip in output_text for skip in skip_patterns):
+                    # Filter out metadata-like content and Box structures using class constant
+                    if any(skip in output_text for skip in self.SKIP_PATTERNS):
                         return ''
                     
                     # Check if text has unbalanced braces (likely corrupted)
@@ -264,8 +276,8 @@ class LatexConverter:
             # Always include text cells
             text_content = self.extract_output_text(content)
             if text_content and len(text_content.strip()) > 5:
-                # Filter out Box structures and corrupted text
-                if not any(skip in text_content for skip in ['RowBox', 'SuperscriptBox', 'FractionBox', '\\<\\', '\\>']):
+                # Filter out Box structures and corrupted text using class constant
+                if not any(skip in text_content for skip in self.SKIP_PATTERNS):
                     if text_content.count('{') == text_content.count('}'):
                         latex_output.append(text_content)
                         latex_output.append("")
