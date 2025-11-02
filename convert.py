@@ -235,8 +235,13 @@ class LatexConverter:
                     # Filter out metadata-like content and Box structures
                     skip_patterns = ['CellChangeTimes', 'CellLabel', 'ExpressionUUID', 
                                    'StripOnInput', 'RowBox', 'SuperscriptBox', 
-                                   'FractionBox', 'SqrtBox', '[InvisibleSpace]']
+                                   'FractionBox', 'SqrtBox', '[InvisibleSpace]',
+                                   '\\<\\', '\\>']  # Escaped Mathematica string delimiters
                     if any(skip in output_text for skip in skip_patterns):
+                        return ''
+                    
+                    # Check if text has unbalanced braces (likely corrupted)
+                    if output_text.count('{') != output_text.count('}'):
                         return ''
                     
                     # Check if it looks like a heading (short text, possibly bold)
@@ -259,10 +264,11 @@ class LatexConverter:
             # Always include text cells
             text_content = self.extract_output_text(content)
             if text_content and len(text_content.strip()) > 5:
-                # Filter out Box structures
-                if not any(skip in text_content for skip in ['RowBox', 'SuperscriptBox', 'FractionBox']):
-                    latex_output.append(text_content)
-                    latex_output.append("")
+                # Filter out Box structures and corrupted text
+                if not any(skip in text_content for skip in ['RowBox', 'SuperscriptBox', 'FractionBox', '\\<\\', '\\>']):
+                    if text_content.count('{') == text_content.count('}'):
+                        latex_output.append(text_content)
+                        latex_output.append("")
         
         return '\n'.join(latex_output)
 
