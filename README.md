@@ -2,6 +2,14 @@
 
 Automated Python script that converts Mathematica notebook files (.nb) to LaTeX documents, with user control over display modes for each problem.
 
+## ⚡ Easiest Way to Get Started
+
+Just run these 2 commands:
+```bash
+./setup.sh          # One-time setup (installs dependencies)
+./example.sh        # See it in action with example notebooks
+```
+
 📚 **[Quick Start Guide](QUICKSTART.md)** | 📖 **[Detailed Usage](USAGE.md)**
 
 ## Features

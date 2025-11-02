@@ -2,13 +2,26 @@
 
 Get started with the Mathematica to LaTeX converter in 5 minutes!
 
+## ⚡ Super Quick Start (Easiest Way!)
+
+After cloning the repository:
+
+```bash
+./setup.sh          # Installs everything
+./example.sh        # Run example conversion
+```
+
+Done! See the generated LaTeX in `homework-8-1/latex/generated.tex`
+
+---
+
 ## Prerequisites
 
 - Python 3.7 or higher
 - Mathematica notebook files (.nb)
 - (Optional) LaTeX distribution for PDF compilation
 
-## Installation
+## Manual Installation
 
 1. **Clone or download this repository**
 
