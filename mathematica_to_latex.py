@@ -62,7 +62,7 @@ class MathematicaToLatexConverter:
     }
     
     def __init__(self):
-        self.cells = []
+        pass
         
     def escape_latex_chars(self, text: str) -> str:
         """Escape special LaTeX characters."""
@@ -283,7 +283,7 @@ class MathematicaToLatexConverter:
                     
                     # Look for patterns like "\<\"content\"\>"
                     # Pattern: \<\"...\"\> extracts content between the escaped quotes
-                    string_matches = re.findall(r'\\<\\"([^"\\]+)\\"', row_content)
+                    string_matches = re.findall(r'\\<\\"([^"\\\\]+)\\"', row_content)
                     if string_matches:
                         cells.extend(string_matches)
                     
@@ -365,6 +365,20 @@ class MathematicaToLatexConverter:
         
         return {'type': cell_type, 'content': cell_content}
     
+    # Font size constants for styling detection
+    FONT_SIZE_BOLD_THRESHOLD = 14
+    FONT_SIZE_TITLE = 16
+    
+    def is_bold_or_title(self, content: str) -> bool:
+        """Check if content should be formatted as bold based on font styling."""
+        return ('FontWeight->Bold' in content or 
+                f'FontSize->{self.FONT_SIZE_BOLD_THRESHOLD}' in content or 
+                f'FontSize->{self.FONT_SIZE_TITLE}' in content)
+    
+    def is_italic(self, content: str) -> bool:
+        """Check if content should be formatted as italic."""
+        return 'FontSlant->Italic' in content
+    
     def extract_cell_content(self, cell: Dict) -> Optional[str]:
         """Extract meaningful content from a parsed cell."""
         cell_type = cell['type']
@@ -380,8 +394,7 @@ class MathematicaToLatexConverter:
                     result.append(comment)
                 return '\n\n'.join(result)
             
-            # Extract actual code (if we want to show it)
-            # For now, we'll focus on comments
+            # Code extraction not currently implemented
             return None
         
         elif cell_type == 'Print':
@@ -403,10 +416,10 @@ class MathematicaToLatexConverter:
                     if string_content:
                         result = self.convert_greek_letters(string_content)
                         result = self.convert_unicode_escapes(result)
-                        # Check styling
-                        if 'FontWeight->Bold' in stylebox_content or 'FontSize->14' in stylebox_content or 'FontSize->16' in stylebox_content:
+                        # Apply styling
+                        if self.is_bold_or_title(stylebox_content):
                             result = r'\textbf{' + result + '}'
-                        elif 'FontSlant->Italic' in stylebox_content:
+                        elif self.is_italic(stylebox_content):
                             result = r'\textit{' + result + '}'
                         return result
             
@@ -419,10 +432,10 @@ class MathematicaToLatexConverter:
                 # Clean up special sequences like \.b2 (which is a unicode marker)
                 result = re.sub(r'\\\.b2', '', result)
                 result = re.sub(r'\\n', '', result)
-                # Check if it's a title or heading
-                if 'FontSize->16' in content or 'FontWeight->Bold' in content:
+                # Apply styling
+                if self.is_bold_or_title(content):
                     result = r'\textbf{' + result + '}'
-                elif 'FontSlant->Italic' in content:
+                elif self.is_italic(content):
                     result = r'\textit{' + result + '}'
                 return result
             
@@ -446,8 +459,12 @@ class MathematicaToLatexConverter:
     
     def parse_notebook(self, filepath: str) -> List[Dict]:
         """Parse a Mathematica notebook file."""
-        with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
-            content = f.read()
+        try:
+            with open(filepath, 'r', encoding='utf-8', errors='replace') as f:
+                content = f.read()
+        except (IOError, OSError) as e:
+            print(f"Error reading file {filepath}: {e}")
+            return []
         
         # Find all Cell[...] expressions
         # We need to handle nested brackets carefully
