@@ -135,6 +135,21 @@ class MathematicaToLatexConverter:
         result = re.sub(r'\\\[Integral\]', r'$\\int$', result)
         result = re.sub(r'\\:222b', r'$\\int$', result)
         
+        # Infinity
+        result = re.sub(r'\\\[Infinity\]', r'$\\infty$', result)
+        
+        # Plus/Minus
+        result = re.sub(r'\\\[PlusMinus\]', r'$\\pm$', result)
+        
+        # Comparison operators
+        result = re.sub(r'\\\[LessEqual\]', r'$\\leq$', result)
+        result = re.sub(r'\\\[GreaterEqual\]', r'$\\geq$', result)
+        result = re.sub(r'\\\[NotEqual\]', r'$\\neq$', result)
+        result = re.sub(r'\\\[Equal\]', r'$=$', result)
+        
+        # Square root
+        result = re.sub(r'\\\[Sqrt\]', r'$\\sqrt{}$', result)
+        
         return result
     
     def extract_string_content(self, text: str) -> str:
