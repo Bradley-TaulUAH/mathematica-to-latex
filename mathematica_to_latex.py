@@ -485,7 +485,7 @@ def convert_notebook_to_latex(input_file):
                 latex_output.extend([
                     r'\begin{figure}[H]',
                     r'\centering',
-                    r'\fbox{\parbox{0.7\textwidth}{\centering\vspace{1cm}\textit{Figure placeholder: Export ' + graphic + '.png from Mathematica}\vspace{1cm}}}',
+                    r'\fbox{\parbox{0.7\textwidth}{\centering\vspace{1cm}\textit{Figure placeholder: Export ' + graphic + r'.png from Mathematica}\vspace{1cm}}}',
                     r'% \includegraphics[width=0.7\textwidth]{' + figures_dir + '/' + graphic + '.png}',
                     r'\caption{Figure ' + str(graphic_idx + 1) + '}',
                     r'\label{fig:' + str(graphic_idx + 1) + '}',
@@ -612,7 +612,7 @@ def convert_notebook_to_latex(input_file):
             latex_output.extend([
                 r'\begin{figure}[H]',
                 r'\centering',
-                r'\fbox{\parbox{0.7\textwidth}{\centering\vspace{1cm}\textit{Figure ' + str(i+1) + ' placeholder}\vspace{1cm}}}',
+                r'\fbox{\parbox{0.7\textwidth}{\centering\vspace{1cm}\textit{Figure ' + str(i+1) + r' placeholder}\vspace{1cm}}}',
                 r'% \includegraphics[width=0.7\textwidth]{' + figures_dir + '/' + graphics_list[i] + '.png}',
                 r'\caption{Figure ' + str(i + 1) + '}',
                 r'\label{fig:' + str(i + 1) + '}',
