@@ -344,10 +344,56 @@ def clean_formbox_expressions(text):
     return text
 
 
+def extract_input_code(cell_text):
+    """Extract code from an Input cell."""
+    # Look for RowBox patterns which contain the actual code
+    # Pattern: RowBox[{"code", "parts", ...}]
+    code_parts = []
+    
+    # Find all string literals in RowBox
+    matches = re.findall(r'"([^"\\]*(?:\\.[^"\\]*)*)"', cell_text)
+    for match in matches:
+        # Skip style markers and metadata
+        if match in ['Input', 'Code', 'Bold', 'Italic'] or match.startswith('FontWeight'):
+            continue
+        # Skip empty or whitespace-only strings
+        if not match or match.isspace():
+            continue
+        # Clean up the code
+        cleaned = match.replace('\\n', '\n')
+        cleaned = cleaned.replace('\\"', '"')
+        
+        # Replace Mathematica formatting codes with spaces
+        cleaned = re.sub(r'\[IndentingNewLine\]', '\n', cleaned)
+        cleaned = re.sub(r'\[?Continuation\]?', '', cleaned)
+        
+        # Convert bracket notations to actual brackets
+        cleaned = cleaned.replace('\\[', '[')
+        cleaned = cleaned.replace('\\]', ']')
+        cleaned = cleaned.replace('\\(', '(')
+        cleaned = cleaned.replace('\\)', ')')
+        
+        if cleaned.strip():
+            code_parts.append(cleaned)
+    
+    if code_parts:
+        # Join with spaces, but preserve newlines
+        result = ' '.join(code_parts)
+        # Clean up multiple spaces
+        result = re.sub(r' +', ' ', result)
+        # Clean up spacing around newlines
+        result = re.sub(r' *\n *', '\n', result)
+        return result
+    return ''
+
+
 def process_cell_content(cell_text):
     """Process a single cell's content."""
-    # Check if this is a code cell (Input) - skip these
+    # Check if this is a code cell (Input) - now we include these
     if '"Input"' in cell_text:
+        code = extract_input_code(cell_text)
+        if code:
+            return ('INPUT', code)
         return ''
     
     # Check if this cell contains a GraphicsBox (but not inside GridBox for legends)
@@ -418,8 +464,8 @@ def extract_cells_from_notebook(notebook_content):
                 # Process the cell content
                 processed = process_cell_content(cell_content)
                 if processed:
-                    # Could be a string or a tuple ('TABLE', data)
-                    if isinstance(processed, tuple) and processed[0] == 'TABLE':
+                    # Could be a string or a tuple ('TABLE', data) or ('INPUT', code) or ('GRAPHIC', data)
+                    if isinstance(processed, tuple):
                         cells.append(processed)
                     elif isinstance(processed, str) and len(processed) > 3:
                         cells.append(processed)
@@ -456,6 +502,22 @@ def convert_notebook_to_latex(input_file):
     latex_output.append(r'\usepackage{array}')
     latex_output.append(r'\usepackage{booktabs}')
     latex_output.append(r'\usepackage{float}')
+    latex_output.append(r'\usepackage{listings}')
+    latex_output.append(r'\usepackage{xcolor}')
+    latex_output.append(r'')
+    latex_output.append(r'% Configure listings for Mathematica code')
+    latex_output.append(r'\lstset{')
+    latex_output.append(r'  language=Mathematica,')
+    latex_output.append(r'  basicstyle=\small\ttfamily,')
+    latex_output.append(r'  keywordstyle=\color{blue},')
+    latex_output.append(r'  commentstyle=\color{green!60!black},')
+    latex_output.append(r'  stringstyle=\color{red},')
+    latex_output.append(r'  numbers=none,')
+    latex_output.append(r'  frame=single,')
+    latex_output.append(r'  breaklines=true,')
+    latex_output.append(r'  backgroundcolor=\color{gray!10},')
+    latex_output.append(r'  captionpos=b')
+    latex_output.append(r'}')
     latex_output.append(r'')
     latex_output.append(r'\begin{document}')
     latex_output.append(r'')
@@ -474,6 +536,22 @@ def convert_notebook_to_latex(input_file):
     
     # Add cells
     for cell in cells:
+        # Handle input code cells
+        if isinstance(cell, tuple) and cell[0] == 'INPUT':
+            # Flush current paragraph
+            if current_paragraph:
+                latex_output.append(' '.join(current_paragraph))
+                latex_output.append(r'')
+                current_paragraph = []
+            
+            # Add code block
+            code = cell[1]
+            latex_output.append(r'\begin{lstlisting}')
+            latex_output.append(code)
+            latex_output.append(r'\end{lstlisting}')
+            latex_output.append(r'')
+            continue
+        
         # Handle graphic cells
         if isinstance(cell, tuple) and cell[0] == 'GRAPHIC':
             # Flush current paragraph

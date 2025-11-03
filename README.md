@@ -5,6 +5,7 @@ A Python script to convert Mathematica notebook files (.nb) to LaTeX format.
 ## Features
 
 - Converts Mathematica notebooks to compilable LaTeX documents
+- **Shows code and results**: Includes both Mathematica input code and output results in formatted code blocks
 - **Improved formatting**: Automatic section headings and paragraph flow for better readability
 - **Graphics detection**: Automatically detects figures and adds placeholders with export instructions
 - Translates Greek letters and special symbols to LaTeX commands
@@ -64,7 +65,7 @@ The script automatically converts Mathematica symbols to LaTeX:
 ## Limitations
 
 - **FormBox expressions**: Complex formatted expressions are replaced with `[formula]` placeholders as they contain Mathematica's internal formatting that's difficult to convert automatically
-- **Code cells**: Input code cells are skipped, only output/Print cells are converted
+- **Code formatting**: Input code is shown with minimal formatting cleanup - some Mathematica internal markers may appear
 - **Graphics extraction**: Graphics are detected and placeholders are added, but you must export the actual images from Mathematica using `Export["figure_N.png", graphicsObject]` and place them in the specified directory
 - **Complex tables**: Some table structures may not convert perfectly
 - **Manual review recommended**: Always review and potentially edit the generated LaTeX for best results
@@ -83,6 +84,8 @@ Required LaTeX packages (automatically included in the output):
 - graphicx
 - array
 - booktabs
+- listings (for code blocks)
+- xcolor (for syntax highlighting)
 
 ## Graphics Export
 
