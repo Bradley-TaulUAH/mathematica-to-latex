@@ -1,0 +1,386 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+% Configure listings for Mathematica code
+\lstset{
+  language=Mathematica,
+  basicstyle=\small\ttfamily,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{red},
+  numbers=none,
+  frame=single,
+  breaklines=true,
+  backgroundcolor=\color{gray!10},
+  captionpos=b,
+  aboveskip=10pt,
+  belowskip=10pt
+}
+
+% Adjust section spacing
+\titlespacing*{\section}{0pt}{12pt plus 4pt minus 2pt}{6pt plus 2pt minus 2pt}
+\titlespacing*{\subsection}{0pt}{10pt plus 3pt minus 2pt}{4pt plus 2pt minus 2pt}
+
+\begin{document}
+
+\title{HW 8-1 pb 4}
+\date{\today}
+\maketitle
+
+\bigskip
+
+\noindent\textbf{Input:}
+\begin{lstlisting}
+(* Infinite Square Well - Variational Method *) (* Merzbacher Problem 8.1 - Complete Solution *) (* Pure symbolic version - no numerical substitution *) Clear [ "\<Global`*\>" ] $Assumptions = a > 0 && b > 0 ; \
+Print [ "\<\>" ] Print [ "\<INFINITE SQUARE WELL VARIATIONAL CALCULATION\>" ] Print [ ] Print [ "\<Boundary conditions: [Psi]([PlusMinus]a) = 0\>" ] Print [ "\<\>" ] \
+(* === === === === === === === === === === === === === === === === === === === === === === === === *) \
+Print [ "\<\>" ] Print [ "\<PART (a): TRAPEZOIDAL TRIAL FUNCTION\>" ] Print [ "\<\>" ] \
+Print [ "\<Trial function:\>" ] Print [ ] Print [ ] Print [ "\<\>" ] \
+Print [ "\<Case (i): b = 0 (Triangular function)\>" ] Print [ "\<\>" ] \
+Print [ "\<Normalization integral:\>" ] Print [ "\< N = [Integral]_{-a}^{a} (a - |x|)^2 dx\>" ] Print [ ] Print [ ] Print [ "\< = [a^2 x - ax^2 + x^3/3]_{0}^{a}\>" ] Print [ "\< = a^3 - a^3 + a^3/3\>" ] Print [ "\< = a^3/3\>" ] normIntTri = Simplify [ 2 * Integrate [ ( a - x ) ^ 2 , { x , 0 , a } ] ] Print [ "\< N = \>" , normIntTri ] \
+ATri = Simplify [ 1 / Sqrt [ normIntTri ] ] Print [ "\< A = 1/[Sqrt]N = \>" , ATri ] Print [ "\<\>" ] \
+Print [ "\<Kinetic energy calculation:\>" ] Print [ "\< d[Psi]/dx = -A for 0 < x < a\>" ] Print [ "\< d[Psi]/dx = +A for -a < x < 0\>" ] Print [ ] Print [ ] Print [ "\< = ([HBar]^2/2m) [Times] 2A^2 a\>" ] kineticTri = Simplify [ 2 * Integrate [ ATri ^ 2 , { x , 0 , a } ] ] Print [ "\< = ([HBar]^2/2m) [Times] \>" , kineticTri ] Print [ "\< <E> = ([HBar]^2/2m) [Times] \>" , Simplify [ kineticTri / a ^ 2 ] , "\</a^2\>" ] Print [ "\<\>" ] \
+Print [ Framed [ Style [ "\<ANSWER (Case i): <E> = \>" <> ToString [ Simplify [ kineticTri / a ^ 2 ] , TraditionalForm ] <> "\< [HBar]^2/(2ma^2)\>" , , 14 ] , FrameStyle -> Thick , Background -> LightYellow ] ] Print [ "\<\>" ] \
+Print [ "\<Case (ii): Optimize parameter b\>" ] Print [ "\<\>" ] \
+Print [ "\<Normalization integral:\>" ] Print [ "\< N = [Integral]_{-a}^{a} [Psi]^2 dx\>" ] Print [ ] Print [ "\< By symmetry of outer regions:\>" ] Print [ ] Print [ "\< = 2[(a - x)^3/(-3)]_{b}^{a} + 2b(a - b)^2\>" ] Print [ "\< = 2(a - b)^3/3 + 2b(a - b)^2\>" ] part1 = Integrate [ ( a - x ) ^ 2 , { x , b , a } ] part2 = Integrate [ ( a - b ) ^ 2 , { x , - b , b } ] normTrap = Simplify [ 2 * part1 + part2 ] Print [ "\< N(b) = \>" , normTrap ] Print [ "\<\>" ] \
+ATrap = 1 / Sqrt [ normTrap ] Print [ "\<Kinetic energy calculation:\>" ] Print [ ] Print [ "\< d[Psi]/dx = -1 for b < x < a\>" ] Print [ "\< d[Psi]/dx = +1 for -a < x < -b\>" ] Print [ ] Print [ "\< = ([HBar]^2/2m) [Times] 2(a - b)/N\>" ] kineticTrap = Simplify [ 2 * Integrate [ ATrap ^ 2 , { x , b , a } ] ] Print [ "\< = ([HBar]^2/2m) [Times] \>" , kineticTrap ] Print [ "\<\>" ] \
+dEdb = Simplify [ D [ kineticTrap , b ] ] Print [ "\<Optimization:\>" ] Print [ "\< d<E>/db = ([HBar]^2/2m) [Times] \>" , dEdb ] Print [ "\<\>" ] Print [ ] Print [ ] Print [ "\<\>" ] \
+Print [ Framed [ Style [ , , 14 ] , FrameStyle -> Thick , Background -> LightYellow ] ] Print [ "\<\>" ] \
+(* === === === === === === === === === === === === === === === === === === === === === === === === *) \
+Print [ "\<\>" ] Print [ "\<PART (b): PARABOLIC TRIAL FUNCTION\>" ] Print [ "\<\>" ] \
+Print [ ] Print [ "\<\>" ] \
+Print [ "\<Normalization integral:\>" ] Print [ "\< N = [Integral]_{-a}^{a} (x^2 - a^2)^2 dx\>" ] Print [ "\< = [Integral]_{-a}^{a} (x^4 - 2a^2 x^2 + a^4) dx\>" ] Print [ "\< By symmetry (all terms are even):\>" ] Print [ "\< = 2[Integral]_{0}^{a} (x^4 - 2a^2 x^2 + a^4) dx\>" ] Print [ "\< = 2[x^5/5 - 2a^2 x^3/3 + a^4 x]_{0}^{a}\>" ] Print [ "\< = 2(a^5/5 - 2a^5/3 + a^5)\>" ] Print [ "\< = 2a^5(1/5 - 2/3 + 1)\>" ] Print [ "\< = 2a^5(3/15 - 10/15 + 15/15)\>" ] Print [ "\< = 2a^5(8/15)\>" ] normIntB = Integrate [ ( x ^ 2 - a ^ 2 ) ^ 2 , { x , - a , a } ] Print [ "\< N = \>" , normIntB ] \
+AB = Simplify [ 1 / Sqrt [ normIntB ] ] Print [ "\< A = \>" , AB ] Print [ "\<\>" ] \
+Print [ "\<Derivative: d[Psi]/dx = 2Ax\>" ] Print [ "\<\>" ] \
+Print [ "\<Kinetic energy calculation:\>" ] Print [ ] Print [ "\< = ([HBar]^2/2m)[Integral]_{-a}^{a} (2Ax)^2 dx\>" ] Print [ ] Print [ "\< By symmetry:\>" ] Print [ ] Print [ "\< = ([HBar]^2/2m) [Times] 8A^2 [x^3/3]_{0}^{a}\>" ] Print [ "\< = ([HBar]^2/2m) [Times] 8A^2 a^3/3\>" ] kineticIntB = Integrate [ ( 2 * AB * x ) ^ 2 , { x , - a , a } ] kineticIntB = Simplify [ kineticIntB ] Print [ "\< = ([HBar]^2/2m) [Times] \>" , kineticIntB ] Print [ "\< <E> = ([HBar]^2/2m) [Times] \>" , Simplify [ kineticIntB / a ^ 2 ] , "\</a^2\>" ] Print [ "\<\>" ] \
+Print [ Framed [ Style [ "\<ANSWER (Part b): <E> = \>" <> ToString [ Simplify [ kineticIntB / a ^ 2 ] , TraditionalForm ] <> "\< [HBar]^2/(2ma^2)\>" , , 14 ] , FrameStyle -> Thick , Background -> LightYellow ] ] Print [ "\<\>" ] \
+(* === === === === === === === === === === === === === === === === === === === === === === === === *) \
+Print [ "\<\>" ] Print [ "\<PART (c): QUARTIC TRIAL FUNCTION\>" ] Print [ "\<\>" ] \
+Print [ ] Print [ "\<Variational parameter: r = [Alpha]/[Beta]\>" ] Print [ "\<\>" ] \
+[Psi]cFunc [ x_ ] := ( a ^ 2 - x ^ 2 ) * ( [Alpha] * x ^ 2 + [Beta] ) Print [ ] Print [ "\<\>" ] \
+Print [ "\<Normalization integral:\>" ] Print [ ] Print [ ] Print [ ] normIntC = Integrate [ [Psi]cFunc [ x ] ^ 2 , { x , - a , a } ] normIntC = Simplify [ normIntC ] Print [ "\< N = \>" , normIntC ] Print [ "\<\>" ] \
+AC = 1 / Sqrt [ normIntC ] \
+Print [ "\<Derivative calculation:\>" ] Print [ ] Print [ ] Print [ ] Print [ ] Print [ "\< = 2[Alpha]a^2 x - 4[Alpha]x^3 - 2[Beta]x\>" ] d[Psi]cFunc = D [ [Psi]cFunc [ x ] , x ] Print [ "\< d[Psi]/dx = \>" , d[Psi]cFunc ] Print [ "\<\>" ] \
+Print [ "\<Kinetic energy integral:\>" ] Print [ ] Print [ ] Print [ "\< (Even function integrated over symmetric limits)\>" ] kineticIntCNum = Integrate [ d[Psi]cFunc ^ 2 , { x , - a , a } ] kineticIntCNum = Simplify [ kineticIntCNum ] Print [ "\< Numerator = \>" , kineticIntCNum ] Print [ "\<\>" ] \
+kineticIntC = Simplify [ kineticIntCNum / normIntC ] Print [ "\< <T> = ([HBar]^2/2m) [Times] \>" , kineticIntC ] Print [ "\<\>" ] \
+energyC = Simplify [ kineticIntC /. [Alpha] -> r * [Beta] ] Print [ "\<Energy as function of r = [Alpha]/[Beta]:\>" ] Print [ "\< <E>(r) = ([HBar]^2/2m) [Times] \>" , energyC ] Print [ "\<\>" ] \
+dEdr = Simplify [ D [ energyC , r ] ] Print [ "\<Variational condition d<E>/dr = 0:\>" ] Print [ "\< d<E>/dr = ([HBar]^2/2m) [Times] \>" , dEdr ] Print [ "\<\>" ] \
+rSols = Solve [ dEdr == 0 , r ] Print [ "\<Solutions for optimal r:\>" ] r1 = Simplify [ r /. rSols [ [ 1 ] ] ] r2 = Simplify [ r /. rSols [ [ 2 ] ] ] Print [ "\< r\[Subscript 1] = \>" , r1 ] Print [ "\< r\[Subscript 2] = \>" , r2 ] Print [ "\<\>" ] \
+E1 = Simplify [ energyC /. r -> r1 ] E2 = Simplify [ energyC /. r -> r2 ] \
+Print [ "\<Energy values:\>" ] Print [ "\< At r\[Subscript 1]: <E> = ([HBar]^2/2m) [Times] \>" , Simplify [ E1 / a ^ 2 ] , "\</a^2\>" ] Print [ "\< At r\[Subscript 2]: <E> = ([HBar]^2/2m) [Times] \>" , Simplify [ E2 / a ^ 2 ] , "\</a^2\>" ] Print [ "\<\>" ] \
+(* Compare which is smaller *) \
+E1num = N [ E1 /. a -> 1 ] E2num = N [ E2 /. a -> 1 ] \
+If [ E1num < E2num , Print [ "\<Selecting r\[Subscript 1] (minimum energy)\>" ] ; \
+rOpt = r1 ; energyCOpt = E1 , Print [ "\<Selecting r\[Subscript 2] (minimum energy)\>" ] ; \
+rOpt = r2 ; energyCOpt = E2 ] \
+Print [ "\<\>" ] Print [ "\<Optimal parameters:\>" ] Print [ "\< r\[Subscript opt] = \>" , rOpt ] Print [ "\< <E> = ([HBar]^2/2m) [Times] \>" , Simplify [ energyCOpt / a ^ 2 ] , "\</a^2\>" ] Print [ "\<\>" ] \
+Print [ Framed [ Column [ { Style [ "\<ANSWER (Part c):\>" , , 14 ] , Style [ "\<Optimal r = \>" <> ToString [ rOpt , TraditionalForm ] , , 12 ] , Style [ "\<<E> = \>" <> ToString [ Simplify [ energyCOpt / a ^ 2 ] , TraditionalForm ] <> "\< [HBar]^2/(2ma^2)\>" , , 12 ] } ] , FrameStyle -> Thick , Background -> LightYellow ] ] Print [ "\<\>" ] \
+(* === === === === === === === === === === === === === === === === === === === === === === === === *) \
+Print [ "\<\>" ] Print [ "\<PART (d): COMPARISON WITH EXACT RESULT\>" ] Print [ "\<\>" ] \
+exactEnergy = [Pi] ^ 2 / ( 8 * a ^ 2 ) \
+Print [ "\<Exact ground state:\>" ] Print [ ] Print [ , exactEnergy ] Print [ "\<\>" ] \
+Print [ "\<Summary of Variational Estimates\>" ] Print [ "\<\>" ] \
+Print [ Style [ , ] ] Print [ "\<Exact \>" , exactEnergy ] Print [ "\<Triangular \>" , Simplify [ kineticTri / a ^ 2 ] ] Print [ "\<Parabolic \>" , Simplify [ kineticIntB / a ^ 2 ] ] Print [ "\<Quartic (optimized) \>" , Simplify [ energyCOpt / a ^ 2 ] ] Print [ "\<\>" ] \
+Print [ ] Print [ "\<Triangular: \>" , N [ Simplify [ kineticTri / a ^ 2 ] /. a -> 1 ] , "\< [GreaterEqual] \>" , N [ [Pi] ^ 2 / 8 ] , "\< [Checkmark]\>" ] Print [ "\<Parabolic: \>" , N [ Simplify [ kineticIntB / a ^ 2 ] /. a -> 1 ] , "\< [GreaterEqual] \>" , N [ [Pi] ^ 2 / 8 ] , "\< [Checkmark]\>" ] Print [ "\<Quartic: \>" , N [ Simplify [ energyCOpt / a ^ 2 ] /. a -> 1 ] , "\< [GreaterEqual] \>" , N [ [Pi] ^ 2 / 8 ] , "\< [Checkmark]\>" ] Print [ "\<\>" ] \
+Print [ Framed [ Column [ { Style [ "\<ANSWER (Part d):\>" , , 14 ] , Style [ , , 12 ] , Style [ , , 12 ] } ] , FrameStyle -> Thick , Background -> LightYellow ] ] Print [ "\<\>" ] \
+Print [ "\<Mean-Square Deviations\>" ] Print [ "\<\>" ] \
+Print [ ] Print [ "\<\>" ] \
+(* Symbolic overlap integrals *) \
+[Psi]0Sym [ x_ ] := ( 1 / Sqrt [ a ] ) * Cos [ [Pi] * x / ( 2 * a ) ] [Psi]bSym [ x_ ] := AB * ( x ^ 2 - a ^ 2 ) \
+Print [ "\<Parabolic function:\>" ] overlapBSym = Integrate [ [Psi]0Sym [ x ] * [Psi]bSym [ x ] , { x , - a , a } ] overlapBSym = Simplify [ overlapBSym ] Print [ , overlapBSym ] msdBSym = Simplify [ 2 * ( 1 - overlapBSym ) ] Print [ "\< Mean-square deviation: [CapitalDelta]^2 = \>" , msdBSym ] Print [ "\<\>" ] \
+Print [ ] Print [ "\<\>" ] \
+(* === === === === === === === === === === === === === === === === === === === === === === === === *) \
+Print [ "\<\>" ] Print [ ] Print [ "\<\>" ] \
+Print [ , rOpt ] Print [ "\<\>" ] \
+Print [ "\<Nodes occur at:\>" ] Print [ ] Print [ ] Print [ "\<\>" ] \
+Print [ "\<Interior node condition: x^2 = -1/r = \>" , Simplify [ - 1 / rOpt ] ] \
+rNum = N [ rOpt ] xSq = N [ - 1 / rNum ] \
+If [ xSq > 0 , Print [ "\<Real interior nodes exist at x^2 = \>" , Simplify [ - 1 / rOpt ] ] ; \
+If [ Simplify [ - 1 / rOpt ] < a ^ 2 , Print [ "\<Location: INSIDE the well (|x| < a)\>" ] , Print [ "\<Location: OUTSIDE the well (|x| > a)\>" ] ] , Print [ "\<No real interior nodes (x^2 < 0)\>" ] ] Print [ "\<\>" ] \
+Print [ "\<Interpretation of Stationary Energy Value\>" ] Print [ "\<\>" ] \
+Print [ ] Print [ "\<At the stationary point (d<E>/dr = 0):\>" ] Print [ "\<\>" ] Print [ ] Print [ ] Print [ ] Print [ "\<\>" ] \
+Print [ "\<Physical significance:\>" ] Print [ ] Print [ ] Print [ ] Print [ ] Print [ ] Print [ ] Print [ "\<\>" ] \
+Print [ Framed [ Column [ { Style [ "\<ANSWER (Part e):\>" , , 14 ] , Style [ , , 12 ] , Style [ , , 12 ] } ] , FrameStyle -> Thick , Background -> LightYellow ] ] Print [ "\<\>" ] \
+In[2285]:= a06db487-bbcc-ab40-b5ac-91c18f68f49b
+\end{lstlisting}
+
+\medskip
+
+
+\noindent\textbf{INFINITE SQUARE WELL VARIATIONAL CALCULATION}
+
+\medskip
+
+Potential: V = 0 for -a < x < a, V = \infty elsewhere $Boundary conditions: \psi(\pm a) = 0$
+
+
+\subsection*{PART (a): TRAPEZOIDAL TRIAL FUNCTION}
+
+
+\subsection*{Trial function:}
+
+$\psi(x) = a - |x| for b \leq |x| \leq a (sloped regions)$ $\psi(x) = a - b for |x| \leq b (flat region)$
+
+
+\subsection*{Case (i): b = 0 (Triangular function)}
+
+
+\subsection*{Normalization integral:}
+
+$N = \int_{-a}^{a} (a - |x|)^2 dx$ $By symmetry: N = 2\int_{0}^{a} (a - x)^2 dx$ $Expanding: \int_{0}^{a} (a^2 - 2ax + x^2) dx$ $= [a^2 x - ax^2 + x^3/3]_{0}^{a}$ $= a^3 - a^3 + a^3/3$ $= a^3/3$
+
+\medskip
+
+
+\subsection*{A = 1/\sqrt{N} =}
+
+
+\subsection*{Kinetic energy calculation:}
+
+$d\psi/dx = -A for 0 < x < a$ $d\psi/dx = +A for -a < x < 0$ $<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx$ $= (\hbar^2/2m) \times 2\int_{0}^{a} A^2 dx$ $= (\hbar^2/2m) \times 2A^2 a$ $= (\hbar^2/2m) \times$
+
+\medskip
+
+$<E> = (\hbar^2/2m) \times 
+/a^2$ $ANSWER (Case i): <E> = [formula] \hbar^2/(2ma^2)$
+
+
+\subsection*{Case (ii): Optimize parameter b}
+
+
+\subsection*{Normalization integral:}
+
+$N = \int_{-a}^{a} \psi^2 dx$ $= \int_{-a}^{-b} (a - |x|)^2 dx + \int_{-b}^{b} (a - b)^2 dx + \int_{b}^{a} (a - |x|)^2 dx$
+
+
+\subsection*{By symmetry of outer regions:}
+
+$= 2\int_{b}^{a} (a - x)^2 dx + (a - b)^2 (2b)$ $= 2[(a - x)^3/(-3)]_{b}^{a} + 2b(a - b)^2$ $= 2(a - b)^3/3 + 2b(a - b)^2$
+
+
+\subsection*{N(b) =}
+
+
+\subsection*{Kinetic energy calculation:}
+
+$d\psi/dx = 0 for |x| < b (flat region contributes nothing)$ $d\psi/dx = -1 for b < x < a$ $d\psi/dx = +1 for -a < x < -b$ $<T> = (\hbar^2/2m) \times 2\int_{b}^{a} (1/N) dx$ $= (\hbar^2/2m) \times 2(a - b)/N$ $= (\hbar^2/2m) \times$
+
+\medskip
+
+
+\subsection*{Optimization:}
+
+$d<E>/db = (\hbar^2/2m) \times$ Since d<E>/db < 0 for 0 < b < a, the energy decreases monotonically. Therefore, the minimum occurs at b = 0 (triangular function).
+
+
+\noindent\textbf{ANSWER (Case ii): Optimal value b = 0 (triangular function gives minimum)}
+
+\medskip
+
+
+\subsection*{PART (b): PARABOLIC TRIAL FUNCTION}
+
+$Trial function: \psi(x) = A(x - a)(x + a) = A(x^2 - a^2)$
+
+
+\subsection*{Normalization integral:}
+
+$N = \int_{-a}^{a} (x^2 - a^2)^2 dx$ $= \int_{-a}^{a} (x^4 - 2a^2 x^2 + a^4) dx$
+
+
+\subsection*{By symmetry (all terms are even):}
+
+$= 2\int_{0}^{a} (x^4 - 2a^2 x^2 + a^4) dx$ $= 2[x^5/5 - 2a^2 x^3/3 + a^4 x]_{0}^{a}$ $= 2(a^5/5 - 2a^5/3 + a^5)$ $= 2a^5(1/5 - 2/3 + 1)$ $= 2a^5(3/15 - 10/15 + 15/15)$ $= 2a^5(8/15)$
+
+\medskip
+
+$Derivative: d\psi/dx = 2Ax$
+
+
+\subsection*{Kinetic energy calculation:}
+
+$<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx$ $= (\hbar^2/2m)\int_{-a}^{a} (2Ax)^2 dx$ $= (\hbar^2/2m) \times 4A^2\int_{-a}^{a} x^2 dx$
+
+
+\subsection*{By symmetry:}
+
+$= (\hbar^2/2m) \times 4A^2 \times 2\int_{0}^{a} x^2 dx$ $= (\hbar^2/2m) \times 8A^2 [x^3/3]_{0}^{a}$ $= (\hbar^2/2m) \times 8A^2 a^3/3$ $= (\hbar^2/2m) \times$ $<E> = (\hbar^2/2m) \times 
+/a^2$ $ANSWER (Part b): <E> = [formula] \hbar^2/(2ma^2)$
+
+\medskip
+
+
+\subsection*{PART (c): QUARTIC TRIAL FUNCTION}
+
+$Trial function: \psi(x) = (a^2 - x^2)(\alpha x^2 + \beta)$ $Variational parameter: r = \alpha/\beta$ $Expanding: \psi(x) = (a^2 - x^2)(\alpha x^2 + \beta) = \alpha a^2 x^2 + \beta a^2 - \alpha x^4 - \beta x^2$
+
+
+\subsection*{Normalization integral:}
+
+$N = \int_{-a}^{a} [(a^2 - x^2)(\alpha x^2 + \beta)]^2 dx$ $= \int_{-a}^{a} [(\alpha a^2 x^2 + \beta a^2)^2 - 2(\alpha a^2 x^2 + \beta a^2)(\alpha x^4 + \beta x^2) + (\alpha x^4 + \beta x^2)^2] dx$
+
+
+\noindent\textbf{(All terms are even functions, so we integrate over symmetric limits)}
+
+\medskip
+
+
+\subsection*{Derivative calculation:}
+
+$d\psi/dx = d/dx[(a^2 - x^2)(\alpha x^2 + \beta)]$ $Using product rule: = (a^2 - x^2)(2\alpha x) + (\alpha x^2 + \beta)(-2x)$ $= 2\alpha x(a^2 - x^2) - 2x(\alpha x^2 + \beta)$ $= 2\alpha a^2 x - 2\alpha x^3 - 2\alpha x^3 - 2\beta x$ $= 2\alpha a^2 x - 4\alpha x^3 - 2\beta x$ $d\psi/dx =$
+
+\medskip
+
+
+\subsection*{Kinetic energy integral:}
+
+$<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx / N$ $= (\hbar^2/2m)\int_{-a}^{a} (2\alpha a^2 x - 4\alpha x^3 - 2\beta x)^2 dx / N$
+
+
+\noindent\textbf{(Even function integrated over symmetric limits)}
+
+\medskip
+
+
+\subsection*{Numerator =}
+
+$<T> = (\hbar^2/2m) \times$ $Energy as function of r = \alpha/\beta:$ $<E>(r) = (\hbar^2/2m) \times$
+
+
+\subsection*{Variational condition d<E>/dr = 0:}
+
+$d<E>/dr = (\hbar^2/2m) \times$ Solutions for optimal r: $r_{1} =$ $r_{2} =$
+
+
+\subsection*{Energy values:}
+
+$At r_{1}: <E> = (\hbar^2/2m) \times 
+/a^2$ $At r_{2}: <E> = (\hbar^2/2m) \times 
+/a^2$ $Selecting r_{2} (minimum energy)$
+
+
+\subsection*{Optimal parameters:}
+
+$r_{opt} =$ $<E> = (\hbar^2/2m) \times 
+/a^2$
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|}
+\hline
+ANSWER (Part c): \\
+\hline
+Optimal r = \[formula] \\
+\hline
+$<E> = \[formula] \hbar^2/(2ma^2)$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+
+PART (d): COMPARISON WITH EXACT RESULT
+
+
+\subsection*{Exact ground state:}
+
+$\psi_{0}(x) = (1/\sqrt{a})cos(\pi x/(2a))$ $E_{0} = \pi^2\hbar^2/(8ma^2) = (\hbar^2/2m) \times$
+
+
+\subsection*{Summary of Variational Estimates}
+
+$Method <E> in units of (\hbar^2/2m)/a^2$
+
+
+\subsection*{Exact}
+
+
+\subsection*{Triangular}
+
+
+\subsection*{Parabolic}
+
+
+\subsection*{Quartic (optimized)}
+
+$Verification: All variational estimates satisfy <E> \geq E_{0}$ $Triangular: 
+ \geq 
+ \checkmark$ $Parabolic: 
+ \geq 
+ \checkmark$ $Quartic: 
+ \geq 
+ \checkmark$
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|}
+\hline
+ANSWER (Part d): \\
+\hline
+$All variational estimates satisfy <E> \geq  E\\_{0}$ \\
+\hline
+The quartic trial function gives the best approximation. \\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+
+
+\subsection*{Mean-Square Deviations}
+
+$Formula: \Delta^2 = \int|\psi_{0} - \psi_{t}|^2 dx = 2(1 - \int\psi_{0}\psi_{t} dx) for normalized functions$
+
+
+\subsection*{Parabolic function:}
+
+$Overlap: \int_{-a}^{a} \psi_{0}\psi_{t} dx =$ $Mean-square deviation: \Delta^2 =$ $Interpretation: Smaller \Delta^2 indicates better approximation to exact ground state.$ PART (e): NODES OF OPTIMAL QUARTIC AND INTERPRETATION $Optimized quartic: \psi(x) = A(a^2 - x^2)(\alpha x^2 + \beta) with r = \alpha/\beta =$
+
+
+\subsection*{Nodes occur at:}
+
+$(1) Boundary: x = \pm a (required by boundary conditions)$ $(2) Interior: where \alpha x^2 + \beta = 0, i.e., x^2 = -\beta/\alpha = -1/r$ $Interior node condition: x^2 = -1/r =$ $Real interior nodes exist at x^2 = 
+Location: INSIDE the well (|x| < a)
+Location: OUTSIDE the well (|x| > a)
+No real interior nodes (x^2 < 0)$
+
+
+\noindent\textbf{Interpretation of Stationary Energy Value}
+
+\medskip
+
+The variational method minimizes <E> within the family of quartic trial functions. At the stationary point (d<E>/dr = 0): $\bullet The energy is minimized with respect to the parameter r$ $\bullet This provides an upper bound: <E> \geq E_{0} (variational theorem)$ $\bullet The optimal function best approximates the true ground state within this family$
+
+
+\subsection*{Physical significance:}
+
+$\bullet The optimization balances kinetic energy (prefers smoothness) with$ $boundary conditions (requires \psi(\pm a) = 0)$ $\bullet The true ground state cos(\pi x/2a) has NO interior nodes$ $\bullet Our quartic approximation may have nodes depending on the parameter space$ $\bullet The stationary condition d<E>/dr = 0 is the variational analog of the$ $Schr\ddot{o}dinger equation, ensuring the functional derivative vanishes$
+
+\medskip
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|}
+\hline
+ANSWER (Part e): \\
+\hline
+$The stationary energy represents the best approximation to E\\_{0}$ \\
+\hline
+$within the chosen family, guaranteed to be \geq  E\\_{0}.$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+
+\end{document}
