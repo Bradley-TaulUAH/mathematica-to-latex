@@ -15,7 +15,7 @@ A Python script that converts Mathematica notebook (.nb) files to LaTeX format, 
 ## Usage
 
 ```bash
-python3 mathematica_to_latex.py <input.nb> [output.tex]
+python3 mathematica_to_latex.py <notebook1.nb> [notebook2.nb ...] [-o output.tex]
 ```
 
 ### Examples
@@ -27,8 +27,15 @@ python3 mathematica_to_latex.py "HW 8-1 pb 8.nb"
 
 Specify output filename:
 ```bash
-python3 mathematica_to_latex.py "HW 8-1 pb 4.nb" "homework4.tex"
+python3 mathematica_to_latex.py "HW 8-1 pb 4.nb" -o "homework4.tex"
 ```
+
+**Combine multiple notebooks into one document:**
+```bash
+python3 mathematica_to_latex.py "HW 8-1 pb 4.nb" "HW 8-1 pb 5-all.nb" "HW 8-1 pb 8.nb" -o combined.tex
+```
+
+When combining multiple notebooks, each notebook becomes a separate `\section{}` in the output document.
 
 ## Requirements
 
@@ -102,8 +109,9 @@ The script has been tested with three quantum mechanics notebooks:
 The generated LaTeX document includes:
 - Standard article document class
 - Required packages: `amsmath`, `amssymb`, `listings`, `graphicx`, `float`
-- Title page with notebook filename
+- Title page with notebook filename (single notebook) or "Combined Homework Problems" (multiple notebooks)
 - Extracted content in order of appearance
+- When combining multiple notebooks, each notebook becomes a separate `\section{}` with the filename as the section title
 
 ## Limitations
 

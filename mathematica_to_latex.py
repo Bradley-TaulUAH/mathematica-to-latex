@@ -536,23 +536,101 @@ class MathematicaToLatexConverter:
         
         print(f"Converted {notebook_path} to {output_path}")
         return output_path
+    
+    def convert_multiple_to_latex(self, notebook_paths: List[str], output_path: str) -> str:
+        """Convert multiple Mathematica notebooks to a single LaTeX document."""
+        # Generate LaTeX document with all notebooks
+        latex_lines = []
+        latex_lines.append(r'\documentclass{article}')
+        latex_lines.append(r'\usepackage[utf8]{inputenc}')
+        latex_lines.append(r'\usepackage{amsmath}')
+        latex_lines.append(r'\usepackage{amssymb}')
+        latex_lines.append(r'\usepackage{listings}')
+        latex_lines.append(r'\usepackage{graphicx}')
+        latex_lines.append(r'\usepackage{float}')
+        latex_lines.append(r'')
+        latex_lines.append(r'\title{Combined Homework Problems}')
+        latex_lines.append(r'\date{}')
+        latex_lines.append(r'')
+        latex_lines.append(r'\begin{document}')
+        latex_lines.append(r'\maketitle')
+        latex_lines.append(r'')
+        
+        # Process each notebook
+        for notebook_path in notebook_paths:
+            if not os.path.exists(notebook_path):
+                print(f"Warning: File not found: {notebook_path}")
+                continue
+            
+            # Add section for this notebook
+            notebook_name = os.path.basename(notebook_path).replace('_', r'\_')
+            latex_lines.append(r'\section{' + notebook_name + '}')
+            latex_lines.append(r'')
+            
+            # Parse the notebook
+            cells = self.parse_notebook(notebook_path)
+            
+            # Process cells
+            for cell in cells:
+                content = self.extract_cell_content(cell)
+                if content and content.strip() and content.strip() != 'Print':
+                    latex_lines.append(content)
+                    latex_lines.append(r'')
+            
+            latex_lines.append(r'')
+            print(f"Processed {notebook_path}")
+        
+        latex_lines.append(r'\end{document}')
+        
+        # Write output
+        latex_content = '\n'.join(latex_lines)
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(latex_content)
+        
+        print(f"Combined {len(notebook_paths)} notebooks into {output_path}")
+        return output_path
 
 
 def main():
     """Main entry point."""
     if len(sys.argv) < 2:
-        print("Usage: python mathematica_to_latex.py <notebook.nb> [output.tex]")
-        sys.exit(1)
-    
-    notebook_path = sys.argv[1]
-    output_path = sys.argv[2] if len(sys.argv) > 2 else None
-    
-    if not os.path.exists(notebook_path):
-        print(f"Error: File not found: {notebook_path}")
+        print("Usage: python mathematica_to_latex.py <notebook1.nb> [notebook2.nb ...] [-o output.tex]")
+        print("\nExamples:")
+        print("  Single notebook:  python mathematica_to_latex.py notebook.nb")
+        print("  Multiple notebooks: python mathematica_to_latex.py nb1.nb nb2.nb nb3.nb -o combined.tex")
         sys.exit(1)
     
     converter = MathematicaToLatexConverter()
-    converter.convert_to_latex(notebook_path, output_path)
+    
+    # Parse arguments
+    notebook_paths = []
+    output_path = None
+    
+    i = 1
+    while i < len(sys.argv):
+        arg = sys.argv[i]
+        if arg == '-o' and i + 1 < len(sys.argv):
+            output_path = sys.argv[i + 1]
+            i += 2
+        else:
+            notebook_paths.append(arg)
+            i += 1
+    
+    # Check if files exist
+    for notebook_path in notebook_paths:
+        if not os.path.exists(notebook_path):
+            print(f"Error: File not found: {notebook_path}")
+            sys.exit(1)
+    
+    # Convert based on number of notebooks
+    if len(notebook_paths) == 1:
+        # Single notebook conversion
+        converter.convert_to_latex(notebook_paths[0], output_path)
+    else:
+        # Multiple notebook conversion
+        if output_path is None:
+            output_path = "combined.tex"
+        converter.convert_multiple_to_latex(notebook_paths, output_path)
 
 
 if __name__ == '__main__':
