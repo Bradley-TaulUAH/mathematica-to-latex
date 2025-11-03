@@ -1,0 +1,350 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs}
+
+\begin{document}
+
+\title{HW 8-1 pb 4}
+\maketitle
+
+INFINITE SQUARE WELL VARIATIONAL CALCULATION
+
+Potential: V = 0 for -a < x < a, V = \infty elsewhere
+
+$Boundary conditions: \psi(\pm a) = 0$
+
+PART (a): TRAPEZOIDAL TRIAL FUNCTION
+
+Trial function:
+
+$\psi(x) = a - |x| for b \leq |x| \leq a (sloped regions)$
+
+$\psi(x) = a - b for |x| \leq b (flat region)$
+
+Case (i): b = 0 (Triangular function)
+
+Normalization integral:
+
+$N = \int_{-a}^{a} (a - |x|)^2 dx$
+
+$By symmetry: N = 2\int_{0}^{a} (a - x)^2 dx$
+
+$Expanding: \int_{0}^{a} (a^2 - 2ax + x^2) dx$
+
+$= [a^2 x - ax^2 + x^3/3]_{0}^{a}$
+
+$= a^3 - a^3 + a^3/3$
+
+$= a^3/3$
+
+A = 1/\sqrt{N} =
+
+Kinetic energy calculation:
+
+$d\psi/dx = -A for 0 < x < a$
+
+$d\psi/dx = +A for -a < x < 0$
+
+$<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx$
+
+$= (\hbar^2/2m) \times 2\int_{0}^{a} A^2 dx$
+
+$= (\hbar^2/2m) \times 2A^2 a$
+
+$= (\hbar^2/2m) \times$
+
+$<E> = (\hbar^2/2m) \times 
+/a^2$
+
+$ANSWER (Case i): <E> = [formula] \hbar^2/(2ma^2)$
+
+Case (ii): Optimize parameter b
+
+Normalization integral:
+
+$N = \int_{-a}^{a} \psi^2 dx$
+
+$= \int_{-a}^{-b} (a - |x|)^2 dx + \int_{-b}^{b} (a - b)^2 dx + \int_{b}^{a} (a - |x|)^2 dx$
+
+By symmetry of outer regions:
+
+$= 2\int_{b}^{a} (a - x)^2 dx + (a - b)^2 (2b)$
+
+$= 2[(a - x)^3/(-3)]_{b}^{a} + 2b(a - b)^2$
+
+$= 2(a - b)^3/3 + 2b(a - b)^2$
+
+N(b) =
+
+Kinetic energy calculation:
+
+$d\psi/dx = 0 for |x| < b (flat region contributes nothing)$
+
+$d\psi/dx = -1 for b < x < a$
+
+$d\psi/dx = +1 for -a < x < -b$
+
+$<T> = (\hbar^2/2m) \times 2\int_{b}^{a} (1/N) dx$
+
+$= (\hbar^2/2m) \times 2(a - b)/N$
+
+$= (\hbar^2/2m) \times$
+
+Optimization:
+
+$d<E>/db = (\hbar^2/2m) \times$
+
+Since d<E>/db < 0 for 0 < b < a, the energy decreases monotonically.
+
+Therefore, the minimum occurs at b = 0 (triangular function).
+
+ANSWER (Case ii): Optimal value b = 0 (triangular function gives minimum)
+
+PART (b): PARABOLIC TRIAL FUNCTION
+
+$Trial function: \psi(x) = A(x - a)(x + a) = A(x^2 - a^2)$
+
+Normalization integral:
+
+$N = \int_{-a}^{a} (x^2 - a^2)^2 dx$
+
+$= \int_{-a}^{a} (x^4 - 2a^2 x^2 + a^4) dx$
+
+By symmetry (all terms are even):
+
+$= 2\int_{0}^{a} (x^4 - 2a^2 x^2 + a^4) dx$
+
+$= 2[x^5/5 - 2a^2 x^3/3 + a^4 x]_{0}^{a}$
+
+$= 2(a^5/5 - 2a^5/3 + a^5)$
+
+$= 2a^5(1/5 - 2/3 + 1)$
+
+$= 2a^5(3/15 - 10/15 + 15/15)$
+
+$= 2a^5(8/15)$
+
+$Derivative: d\psi/dx = 2Ax$
+
+Kinetic energy calculation:
+
+$<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx$
+
+$= (\hbar^2/2m)\int_{-a}^{a} (2Ax)^2 dx$
+
+$= (\hbar^2/2m) \times 4A^2\int_{-a}^{a} x^2 dx$
+
+By symmetry:
+
+$= (\hbar^2/2m) \times 4A^2 \times 2\int_{0}^{a} x^2 dx$
+
+$= (\hbar^2/2m) \times 8A^2 [x^3/3]_{0}^{a}$
+
+$= (\hbar^2/2m) \times 8A^2 a^3/3$
+
+$= (\hbar^2/2m) \times$
+
+$<E> = (\hbar^2/2m) \times 
+/a^2$
+
+$ANSWER (Part b): <E> = [formula] \hbar^2/(2ma^2)$
+
+PART (c): QUARTIC TRIAL FUNCTION
+
+$Trial function: \psi(x) = (a^2 - x^2)(\alpha x^2 + \beta)$
+
+$Variational parameter: r = \alpha/\beta$
+
+$Expanding: \psi(x) = (a^2 - x^2)(\alpha x^2 + \beta) = \alpha a^2 x^2 + \beta a^2 - \alpha x^4 - \beta x^2$
+
+Normalization integral:
+
+$N = \int_{-a}^{a} [(a^2 - x^2)(\alpha x^2 + \beta)]^2 dx$
+
+$= \int_{-a}^{a} [(\alpha a^2 x^2 + \beta a^2)^2 - 2(\alpha a^2 x^2 + \beta a^2)(\alpha x^4 + \beta x^2) + (\alpha x^4 + \beta x^2)^2] dx$
+
+(All terms are even functions, so we integrate over symmetric limits)
+
+Derivative calculation:
+
+$d\psi/dx = d/dx[(a^2 - x^2)(\alpha x^2 + \beta)]$
+
+$Using product rule: = (a^2 - x^2)(2\alpha x) + (\alpha x^2 + \beta)(-2x)$
+
+$= 2\alpha x(a^2 - x^2) - 2x(\alpha x^2 + \beta)$
+
+$= 2\alpha a^2 x - 2\alpha x^3 - 2\alpha x^3 - 2\beta x$
+
+$= 2\alpha a^2 x - 4\alpha x^3 - 2\beta x$
+
+$d\psi/dx =$
+
+Kinetic energy integral:
+
+$<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx / N$
+
+$= (\hbar^2/2m)\int_{-a}^{a} (2\alpha a^2 x - 4\alpha x^3 - 2\beta x)^2 dx / N$
+
+(Even function integrated over symmetric limits)
+
+Numerator =
+
+$<T> = (\hbar^2/2m) \times$
+
+$Energy as function of r = \alpha/\beta:$
+
+$<E>(r) = (\hbar^2/2m) \times$
+
+Variational condition d<E>/dr = 0:
+
+$d<E>/dr = (\hbar^2/2m) \times$
+
+Solutions for optimal r:
+
+$r_{1} =$
+
+$r_{2} =$
+
+Energy values:
+
+$At r_{1}: <E> = (\hbar^2/2m) \times 
+/a^2$
+
+$At r_{2}: <E> = (\hbar^2/2m) \times 
+/a^2$
+
+$Selecting r_{2} (minimum energy)$
+
+Optimal parameters:
+
+$r_{opt} =$
+
+$<E> = (\hbar^2/2m) \times 
+/a^2$
+
+\begin{center}
+\begin{tabular}{l}
+\hline
+ANSWER (Part c): \\
+\hline
+Optimal r = \[formula] \\
+$<E> = \[formula] \hbar^2/(2ma^2)$ \\
+\hline
+\end{tabular}
+\end{center}
+
+PART (d): COMPARISON WITH EXACT RESULT
+
+Exact ground state:
+
+$\psi_{0}(x) = (1/\sqrt{a})cos(\pi x/(2a))$
+
+$E_{0} = \pi^2\hbar^2/(8ma^2) = (\hbar^2/2m) \times$
+
+Summary of Variational Estimates
+
+$Method <E> in units of (\hbar^2/2m)/a^2$
+
+Exact
+
+Triangular
+
+Parabolic
+
+Quartic (optimized)
+
+$Verification: All variational estimates satisfy <E> \geq E_{0}$
+
+$Triangular: 
+ \geq 
+ \checkmark$
+
+$Parabolic: 
+ \geq 
+ \checkmark$
+
+$Quartic: 
+ \geq 
+ \checkmark$
+
+\begin{center}
+\begin{tabular}{l}
+\hline
+ANSWER (Part d): \\
+\hline
+$All variational estimates satisfy <E> \geq  E\\_{0}$ \\
+The quartic trial function gives the best approximation. \\
+\hline
+\end{tabular}
+\end{center}
+
+Mean-Square Deviations
+
+$Formula: \Delta^2 = \int|\psi_{0} - \psi_{t}|^2 dx = 2(1 - \int\psi_{0}\psi_{t} dx) for normalized functions$
+
+Parabolic function:
+
+$Overlap: \int_{-a}^{a} \psi_{0}\psi_{t} dx =$
+
+$Mean-square deviation: \Delta^2 =$
+
+$Interpretation: Smaller \Delta^2 indicates better approximation to exact ground state.$
+
+PART (e): NODES OF OPTIMAL QUARTIC AND INTERPRETATION
+
+$Optimized quartic: \psi(x) = A(a^2 - x^2)(\alpha x^2 + \beta) with r = \alpha/\beta =$
+
+Nodes occur at:
+
+$(1) Boundary: x = \pm a (required by boundary conditions)$
+
+$(2) Interior: where \alpha x^2 + \beta = 0, i.e., x^2 = -\beta/\alpha = -1/r$
+
+$Interior node condition: x^2 = -1/r =$
+
+$Real interior nodes exist at x^2 = 
+Location: INSIDE the well (|x| < a)
+Location: OUTSIDE the well (|x| > a)
+No real interior nodes (x^2 < 0)$
+
+Interpretation of Stationary Energy Value
+
+The variational method minimizes <E> within the family of quartic trial functions.
+
+At the stationary point (d<E>/dr = 0):
+
+$\bullet The energy is minimized with respect to the parameter r$
+
+$\bullet This provides an upper bound: <E> \geq E_{0} (variational theorem)$
+
+$\bullet The optimal function best approximates the true ground state within this family$
+
+Physical significance:
+
+$\bullet The optimization balances kinetic energy (prefers smoothness) with$
+
+$boundary conditions (requires \psi(\pm a) = 0)$
+
+$\bullet The true ground state cos(\pi x/2a) has NO interior nodes$
+
+$\bullet Our quartic approximation may have nodes depending on the parameter space$
+
+$\bullet The stationary condition d<E>/dr = 0 is the variational analog of the$
+
+$Schr\ddot{o}dinger equation, ensuring the functional derivative vanishes$
+
+\begin{center}
+\begin{tabular}{l}
+\hline
+ANSWER (Part e): \\
+\hline
+$The stationary energy represents the best approximation to E\\_{0}$ \\
+$within the chosen family, guaranteed to be \geq  E\\_{0}.$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\end{document}

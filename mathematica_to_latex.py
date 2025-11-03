@@ -122,6 +122,10 @@ SYMBOL_MAP = {
 
 def convert_subscripts(text):
     """Convert Mathematica subscript notation to LaTeX subscripts."""
+    # Pattern for \\[Subscript x] - note the double backslash
+    # This can appear as literal text in the output
+    text = re.sub(r'\\\\?\[Subscript\s+([^\]]+)\]', r'_{\1}', text)
+    
     # Pattern for escaped backslashes followed by [Subscript ...]
     # Example: r\\\\[Subscript 1] -> r_1
     text = re.sub(r'(\w+)\\\\\\\\?\[Subscript\s+([^\]]+)\]', r'\1_{\2}', text)
@@ -146,18 +150,23 @@ def convert_superscripts(text):
 def convert_symbols(text):
     """Convert Mathematica special symbols to LaTeX."""
     for math_symbol, latex_symbol in SYMBOL_MAP.items():
-        text = text.replace(math_symbol, latex_symbol)
+        # Add space after operator symbols to avoid concatenation issues
+        if math_symbol in [r'\[PlusMinus]', r'\[MinusPlus]', r'\[Times]', 
+                          r'\[LessEqual]', r'\[GreaterEqual]', r'\[NotEqual]']:
+            text = text.replace(math_symbol, latex_symbol + ' ')
+        else:
+            text = text.replace(math_symbol, latex_symbol)
     
     # Handle \.b2 (subscript 2 notation)
     text = re.sub(r'\\\.b(\d)', r'^{\1}', text)
     
     # Handle special Unicode characters
-    text = text.replace('≥', r'\geq')
-    text = text.replace('≤', r'\leq')
-    text = text.replace('±', r'\pm')
-    text = text.replace('×', r'\times')
-    text = text.replace('÷', r'\div')
-    text = text.replace('≠', r'\neq')
+    text = text.replace('≥', r'\geq ')
+    text = text.replace('≤', r'\leq ')
+    text = text.replace('±', r'\pm ')
+    text = text.replace('×', r'\times ')
+    text = text.replace('÷', r'\div ')
+    text = text.replace('≠', r'\neq ')
     text = text.replace('∞', r'\infty')
     text = text.replace('∂', r'\partial')
     text = text.replace('∫', r'\int')
@@ -192,6 +201,10 @@ def extract_gridbox_table(text):
     
     grid_content = text[start_pos:pos-1]
     
+    # Remove line continuation characters (backslash followed by newline)
+    # These are part of the file format, not the content
+    grid_content = re.sub(r'\\\n\s*', '', grid_content)
+    
     # Now extract rows - split by comma at top level
     rows = []
     current_row = []
@@ -219,6 +232,8 @@ def extract_gridbox_table(text):
                     for cell in cell_strings:
                         cell = cell.replace('\\n', '\n')
                         cell = cell.replace('\\"', '"')
+                        # Remove FormBox expressions
+                        cell = re.sub(r'\\!\\\\?\(\\\\?\*FormBox\[.*?TraditionalForm\]\\\\?\)', '[formula]', cell, flags=re.DOTALL)
                         cells.append(cell)
                     rows.append(cells)
         
@@ -242,7 +257,11 @@ def extract_string_content(text):
         content = content.replace('\\\\', '\\')
         
         # Remove line continuation backslashes (backslash followed by newline)
-        content = re.sub(r'\\\n', ' ', content)
+        content = re.sub(r'\\\n\s*', '', content)
+        
+        # Remove FormBox expressions early (they can span lines)
+        # These are complex formatted expressions that we can't convert properly
+        content = re.sub(r'\\!\\\\?\(\\\\?\*FormBox\[.*?TraditionalForm\]\\\\?\)', '[formula]', content, flags=re.DOTALL)
         
         # Skip if it's just whitespace or newlines
         if content.strip() and content.strip() not in ['\\', '\n']:
@@ -262,10 +281,48 @@ def is_math_content(text):
         r'\theta', r'\iota', r'\kappa', r'\lambda', r'\mu', r'\nu', r'\xi',
         r'\pi', r'\rho', r'\sigma', r'\tau', r'\upsilon', r'\phi', r'\chi', 
         r'\psi', r'\omega', r'\hbar', r'\times', r'\pm', r'\geq', r'\leq',
+        r'\bullet', r'\checkmark', r'\ddot', r'\dot',
         '_', '^'
     ]
     
     return any(indicator in text for indicator in math_indicators)
+
+
+def fix_math_spacing(text):
+    """Fix spacing issues in mathematical expressions."""
+    # Add space after Greek letters when followed by a letter (not a special char)
+    # Example: \alphax -> \alpha x
+    greek_letters = [
+        'alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 
+        'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi',
+        'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 
+        'psi', 'omega'
+    ]
+    
+    for letter in greek_letters:
+        # Match \letter followed by a lowercase letter (variable name)
+        text = re.sub(rf'(\\{letter})([a-z])', r'\1 \2', text)
+    
+    # Fix common patterns like \sqrtN -> \sqrt{N}
+    text = re.sub(r'\\sqrt([A-Za-z])', r'\\sqrt{\1}', text)
+    
+    return text
+
+
+def clean_formbox_expressions(text):
+    """Remove or simplify Mathematica FormBox expressions."""
+    # Remove FormBox wrapper - these are complex formatted expressions
+    # The pattern can appear with different levels of escaping:
+    # 1. \\!\\(\\*FormBox[...]\\) - in tables/StyleBox
+    # 2. \!\(\*FormBox[...]\) - in simple cells
+    
+    # Handle heavily escaped version (in tables)
+    text = re.sub(r'\\\\!\\\\\\(\\\\\\*FormBox\[.*?TraditionalForm\]\\\\\\)', '[formula]', text, flags=re.DOTALL)
+    
+    # Handle lightly escaped version (in regular cells)
+    text = re.sub(r'\\!\\\\?\(\\\\?\*FormBox\[.*?TraditionalForm\]\\\\?\)', '[formula]', text, flags=re.DOTALL)
+    
+    return text
 
 
 def process_cell_content(cell_text):
@@ -285,12 +342,18 @@ def process_cell_content(cell_text):
     if not content or len(content) < 3:
         return ''
     
+    # Clean up FormBox expressions before other conversions
+    content = clean_formbox_expressions(content)
+    
     # Convert symbols
     content = convert_symbols(content)
     
     # Convert subscripts and superscripts
     content = convert_subscripts(content)
     content = convert_superscripts(content)
+    
+    # Fix math spacing issues
+    content = fix_math_spacing(content)
     
     # Clean up trailing backslashes and dollar signs
     content = re.sub(r'\\\$', '', content)
@@ -392,6 +455,7 @@ def convert_notebook_to_latex(input_file):
                         cell_val = convert_symbols(cell_val)
                         cell_val = convert_subscripts(cell_val)
                         cell_val = convert_superscripts(cell_val)
+                        cell_val = fix_math_spacing(cell_val)
                         if is_math_content(cell_val):
                             cell_val = f'${cell_val}$'
                         converted_row.append(cell_val)
