@@ -377,8 +377,13 @@ def extract_cells_from_notebook(notebook_content):
     return cells
 
 
-def convert_notebook_to_latex(input_file):
-    """Convert a Mathematica notebook to LaTeX with improved formatting."""
+def convert_notebook_to_latex(input_file, display_mode='both'):
+    """Convert a Mathematica notebook to LaTeX with improved formatting.
+    
+    Args:
+        input_file: Path to the Mathematica notebook file
+        display_mode: 'input-only', 'output-only', or 'both' (default: 'both')
+    """
     with open(input_file, 'r', encoding='utf-8', errors='ignore') as f:
         content = f.read()
     
@@ -446,6 +451,10 @@ def convert_notebook_to_latex(input_file):
     for cell in cells:
         # Handle input code cells
         if isinstance(cell, tuple) and cell[0] == 'INPUT':
+            # Skip input cells if display_mode is 'output-only'
+            if display_mode == 'output-only':
+                continue
+                
             if current_paragraph:
                 para_text = ' '.join(current_paragraph)
                 if len(para_text) > 200:
@@ -546,6 +555,10 @@ def convert_notebook_to_latex(input_file):
         if cell in ['\\', '\n', '\\n', '', ' '] or (cell.startswith('\\') and len(cell) <= 2):
             continue
         
+        # Skip output cells if display_mode is 'input-only'
+        if display_mode == 'input-only':
+            continue
+        
         # Check if this is a heading
         is_heading = len(cell) < 80 and not any(word in cell.lower() for word in ['equation', 'where', 'using', 'for', 'with', 'the', 'and'])
         
@@ -639,6 +652,12 @@ def main():
         '-o', '--output',
         help='Output LaTeX file (default: derived from first input file)'
     )
+    parser.add_argument(
+        '--mode',
+        choices=['input-only', 'output-only', 'both'],
+        default='both',
+        help='Display mode: "input-only" (code only), "output-only" (results only), or "both" (default: both)'
+    )
     
     args = parser.parse_args()
     
@@ -650,7 +669,7 @@ def main():
             sys.exit(1)
         
         print(f"Converting {input_file}...")
-        latex_content = convert_notebook_to_latex(input_file)
+        latex_content = convert_notebook_to_latex(input_file, display_mode=args.mode)
         all_latex.append(latex_content)
     
     # Combine outputs

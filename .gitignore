@@ -21,3 +21,9 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Mode test files
+test_input_only.*
+test_output_only.*
+test_both.*
+check_pb4.*
