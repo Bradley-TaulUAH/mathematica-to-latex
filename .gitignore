@@ -1,0 +1,25 @@
+# Generated LaTeX files
+*.tex
+*.pdf
+*.aux
+*.log
+*.out
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

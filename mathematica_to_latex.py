@@ -56,6 +56,9 @@ class MathematicaToLatexConverter:
         '\u2081': r'$_1$',
         '\u2082': r'$_2$',
         '\u00b2': r'$^2$',  # superscript 2
+        '\u00b3': r'$^3$',  # superscript 3
+        '\u207a': r'$^+$',  # superscript plus
+        '\u207b': r'$^-$',  # superscript minus
     }
     
     def __init__(self):
@@ -93,10 +96,45 @@ class MathematicaToLatexConverter:
         return result
     
     def convert_unicode_escapes(self, text: str) -> str:
-        """Convert Unicode characters to LaTeX."""
+        """Convert Unicode characters and Mathematica unicode escapes to LaTeX."""
         result = text
+        
+        # Handle actual Unicode characters
         for unicode_char, latex_equiv in self.UNICODE_ESCAPES.items():
             result = result.replace(unicode_char, latex_equiv)
+        
+        # Handle Mathematica's \:XXXX format (hexadecimal Unicode escapes)
+        # Common subscripts
+        result = re.sub(r'\\:2080', r'$_0$', result)  # subscript 0
+        result = re.sub(r'\\:2081', r'$_1$', result)  # subscript 1
+        result = re.sub(r'\\:2082', r'$_2$', result)  # subscript 2
+        result = re.sub(r'\\:2083', r'$_3$', result)  # subscript 3
+        result = re.sub(r'\\:2084', r'$_4$', result)  # subscript 4
+        
+        # Common superscripts
+        result = re.sub(r'\\:00b2', r'$^2$', result)  # superscript 2
+        result = re.sub(r'\\:00b3', r'$^3$', result)  # superscript 3
+        
+        # Special brackets and symbols
+        result = re.sub(r'\\:27e8', r'$\\langle$', result)  # left angle bracket
+        result = re.sub(r'\\:27e9', r'$\\rangle$', result)  # right angle bracket
+        result = re.sub(r'\\:1d62', r'$i$', result)  # mathematical italic i
+        result = re.sub(r'\\:2c7c', r'$j$', result)  # mathematical italic j
+        result = re.sub(r'\\\.bd', r'$\\hbar^2$', result)  # hbar squared
+        result = re.sub(r'\\\.b2', r'$^2$', result)  # superscript 2
+        
+        # Center dot
+        result = re.sub(r'\\\[CenterDot\]', r'$\\cdot$', result)
+        result = re.sub(r'\\:22c5', r'$\\cdot$', result)
+        
+        # Arrows and other symbols
+        result = re.sub(r'\\\[RightArrow\]', r'$\\rightarrow$', result)
+        result = re.sub(r'\\:2192', r'$\\rightarrow$', result)
+        
+        # Integral sign
+        result = re.sub(r'\\\[Integral\]', r'$\\int$', result)
+        result = re.sub(r'\\:222b', r'$\\int$', result)
+        
         return result
     
     def extract_string_content(self, text: str) -> str:
@@ -136,8 +174,15 @@ class MathematicaToLatexConverter:
         # Extract text from quoted strings first
         strings = re.findall(r'"([^"]*)"', content)
         if strings:
-            # Join strings with spaces
-            result = ' '.join(strings)
+            # Join strings with spaces, filtering out just separator markers
+            filtered_strings = []
+            for s in strings:
+                # Skip pure separator strings
+                if s.strip() in ['===', '=', '-', '*']:
+                    continue
+                filtered_strings.append(s)
+            
+            result = ' '.join(filtered_strings)
             return result
         
         # If no quoted strings, try to clean up the structure
@@ -446,7 +491,7 @@ class MathematicaToLatexConverter:
         # Process cells
         for cell in cells:
             content = self.extract_cell_content(cell)
-            if content:
+            if content and content.strip() and content.strip() != 'Print':
                 latex_lines.append(content)
                 latex_lines.append(r'')
         
