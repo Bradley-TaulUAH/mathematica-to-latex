@@ -9,6 +9,8 @@ import re
 import argparse
 import sys
 import os
+import subprocess
+import shutil
 from pathlib import Path
 
 
@@ -119,6 +121,69 @@ SYMBOL_MAP = {
     r'\[ThickSpace]': r'\;',
     r'\[VeryThinSpace]': r'\!',
 }
+
+
+def check_wolfram_engine():
+    """Check if Wolfram Engine is available on the system."""
+    try:
+        result = subprocess.run(['wolframscript', '--version'], 
+                              capture_output=True, text=True, timeout=5)
+        return result.returncode == 0
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return False
+
+
+def extract_graphics_with_wolfram(notebook_path, output_dir):
+    """Extract graphics from a Mathematica notebook using Wolfram Engine.
+    
+    Args:
+        notebook_path: Path to the .nb file
+        output_dir: Directory to save extracted graphics
+        
+    Returns:
+        List of extracted graphic filenames
+    """
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Create a Wolfram script to extract graphics
+    wolfram_script = f'''
+    nb = Import["{notebook_path}", "NB"];
+    graphics = Cases[nb, _Graphics | _Graphics3D, Infinity];
+    extracted = Table[
+        Export[
+            "{output_dir}/figure_" <> ToString[i] <> ".png",
+            graphics[[i]],
+            ImageResolution -> 300
+        ],
+        {{i, Length[graphics]}}
+    ];
+    Print["EXTRACTED:" <> ToString[Length[graphics]]];
+    '''
+    
+    try:
+        result = subprocess.run(
+            ['wolframscript', '-code', wolfram_script],
+            capture_output=True,
+            text=True,
+            timeout=60
+        )
+        
+        # Parse output to see how many graphics were extracted
+        if result.returncode == 0:
+            match = re.search(r'EXTRACTED:(\d+)', result.stdout)
+            if match:
+                count = int(match.group(1))
+                return [f"figure_{i+1}.png" for i in range(count)]
+        
+        print(f"Warning: Wolfram Engine extraction failed: {result.stderr}", file=sys.stderr)
+        return []
+    except subprocess.TimeoutExpired:
+        print("Warning: Wolfram Engine extraction timed out", file=sys.stderr)
+        return []
+    except Exception as e:
+        print(f"Warning: Error during graphics extraction: {e}", file=sys.stderr)
+        return []
 
 
 def convert_subscripts(text):
@@ -377,12 +442,13 @@ def extract_cells_from_notebook(notebook_content):
     return cells
 
 
-def convert_notebook_to_latex(input_file, display_mode='both'):
+def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_graphics=False):
     """Convert a Mathematica notebook to LaTeX with improved formatting.
     
     Args:
         input_file: Path to the Mathematica notebook file
         display_mode: 'input-only', 'output-only', or 'both' (default: 'both')
+        auto_extract_graphics: If True, attempt to extract graphics using Wolfram Engine
     """
     with open(input_file, 'r', encoding='utf-8', errors='ignore') as f:
         content = f.read()
@@ -391,6 +457,18 @@ def convert_notebook_to_latex(input_file, display_mode='both'):
     figures_dir = f"{output_base}_figures"
     
     graphics_list = extract_graphics(content, figures_dir)
+    
+    # Try to auto-extract graphics if requested and Wolfram Engine is available
+    extracted_graphics = []
+    if auto_extract_graphics and graphics_list:
+        if check_wolfram_engine():
+            print(f"  Extracting {len(graphics_list)} graphics using Wolfram Engine...")
+            extracted_graphics = extract_graphics_with_wolfram(input_file, figures_dir)
+            if extracted_graphics:
+                print(f"  Successfully extracted {len(extracted_graphics)} graphics to {figures_dir}/")
+        else:
+            print("  Warning: Wolfram Engine not found. Graphics will be placeholders.", file=sys.stderr)
+    
     cells = extract_cells_from_notebook(content)
     
     latex_output = []
@@ -491,18 +569,36 @@ def convert_notebook_to_latex(input_file, display_mode='both'):
             
             if graphic_idx < len(graphics_list):
                 graphic = graphics_list[graphic_idx]
-                latex_output.extend([
-                    r'\begin{figure}[H]',
-                    r'\centering',
-                    r'\fbox{\parbox{0.7\textwidth}{\centering\vspace{1cm}\textit{Figure placeholder: Export ' + graphic + r'.png from Mathematica}\vspace{1cm}}}',
-                    r'% \includegraphics[width=0.7\textwidth]{' + figures_dir + '/' + graphic + '.png}',
-                    r'\caption{Figure ' + str(graphic_idx + 1) + '}',
-                    r'\label{fig:' + str(graphic_idx + 1) + '}',
-                    r'\end{figure}',
-                    r'',
-                    r'\medskip',
-                    r''
-                ])
+                
+                # Check if graphic was actually extracted
+                graphic_file = Path(figures_dir) / f"{graphic}.png"
+                if graphic_file.exists() or (graphic_idx < len(extracted_graphics)):
+                    # Use actual extracted graphic
+                    latex_output.extend([
+                        r'\begin{figure}[H]',
+                        r'\centering',
+                        r'\includegraphics[width=0.7\textwidth]{' + figures_dir + '/' + graphic + '.png}',
+                        r'\caption{Figure ' + str(graphic_idx + 1) + '}',
+                        r'\label{fig:' + str(graphic_idx + 1) + '}',
+                        r'\end{figure}',
+                        r'',
+                        r'\medskip',
+                        r''
+                    ])
+                else:
+                    # Use placeholder
+                    latex_output.extend([
+                        r'\begin{figure}[H]',
+                        r'\centering',
+                        r'\fbox{\parbox{0.7\textwidth}{\centering\vspace{1cm}\textit{Figure placeholder: Export ' + graphic + r'.png from Mathematica}\vspace{1cm}}}',
+                        r'% \includegraphics[width=0.7\textwidth]{' + figures_dir + '/' + graphic + '.png}',
+                        r'\caption{Figure ' + str(graphic_idx + 1) + '}',
+                        r'\label{fig:' + str(graphic_idx + 1) + '}',
+                        r'\end{figure}',
+                        r'',
+                        r'\medskip',
+                        r''
+                    ])
                 graphic_idx += 1
             continue
         
@@ -622,16 +718,30 @@ def convert_notebook_to_latex(input_file, display_mode='both'):
         ])
         
         for i in range(graphic_idx, len(graphics_list)):
-            latex_output.extend([
-                r'\begin{figure}[H]',
-                r'\centering',
-                r'\fbox{\parbox{0.7\textwidth}{\centering\vspace{1cm}\textit{Figure ' + str(i+1) + r' placeholder}\vspace{1cm}}}',
-                r'% \includegraphics[width=0.7\textwidth]{' + figures_dir + '/' + graphics_list[i] + '.png}',
-                r'\caption{Figure ' + str(i + 1) + '}',
-                r'\label{fig:' + str(i + 1) + '}',
-                r'\end{figure}',
-                r''
-            ])
+            graphic_file = Path(figures_dir) / f"{graphics_list[i]}.png"
+            if graphic_file.exists() or (i < len(extracted_graphics)):
+                # Use actual extracted graphic
+                latex_output.extend([
+                    r'\begin{figure}[H]',
+                    r'\centering',
+                    r'\includegraphics[width=0.7\textwidth]{' + figures_dir + '/' + graphics_list[i] + '.png}',
+                    r'\caption{Figure ' + str(i + 1) + '}',
+                    r'\label{fig:' + str(i + 1) + '}',
+                    r'\end{figure}',
+                    r''
+                ])
+            else:
+                # Use placeholder
+                latex_output.extend([
+                    r'\begin{figure}[H]',
+                    r'\centering',
+                    r'\fbox{\parbox{0.7\textwidth}{\centering\vspace{1cm}\textit{Figure ' + str(i+1) + r' placeholder}\vspace{1cm}}}',
+                    r'% \includegraphics[width=0.7\textwidth]{' + figures_dir + '/' + graphics_list[i] + '.png}',
+                    r'\caption{Figure ' + str(i + 1) + '}',
+                    r'\label{fig:' + str(i + 1) + '}',
+                    r'\end{figure}',
+                    r''
+                ])
     
     latex_output.append(r'\end{document}')
     
@@ -658,6 +768,11 @@ def main():
         default='both',
         help='Display mode: "input-only" (code only), "output-only" (results only), or "both" (default: both)'
     )
+    parser.add_argument(
+        '--auto-extract-graphics',
+        action='store_true',
+        help='Automatically extract graphics using Wolfram Engine (if available)'
+    )
     
     args = parser.parse_args()
     
@@ -669,7 +784,11 @@ def main():
             sys.exit(1)
         
         print(f"Converting {input_file}...")
-        latex_content = convert_notebook_to_latex(input_file, display_mode=args.mode)
+        latex_content = convert_notebook_to_latex(
+            input_file, 
+            display_mode=args.mode,
+            auto_extract_graphics=args.auto_extract_graphics
+        )
         all_latex.append(latex_content)
     
     # Combine outputs

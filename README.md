@@ -51,6 +51,23 @@ python3 mathematica_to_latex.py "notebook.nb" -o output.tex --mode output-only
 python3 mathematica_to_latex.py "notebook.nb" -o output.tex --mode both
 ```
 
+### Automatic Graphics Extraction (with Wolfram Engine)
+
+If you have Wolfram Engine installed, you can automatically extract graphics:
+
+```bash
+# Automatically extract graphics during conversion
+python3 mathematica_to_latex.py "notebook.nb" -o output.tex --auto-extract-graphics
+```
+
+This will:
+- Detect all graphics in the notebook
+- Use Wolfram Engine to export them as PNG files
+- Include them directly in the LaTeX output (no manual export needed!)
+- Fall back to placeholders if Wolfram Engine is not available
+
+**Benefits for repository users:** If you run the conversion with `--auto-extract-graphics` and commit the generated PNG files, other users can compile the LaTeX without needing Wolfram Engine themselves.
+
 ### Compile to PDF
 
 ```bash
@@ -81,24 +98,39 @@ pdflatex homework8.tex
 
 ## Graphics Handling
 
-**Note**: Mathematica notebook files (`.nb`) store graphics as compressed binary data that cannot be directly extracted by this Python script. Automatic graphics extraction would require the Wolfram Engine or Mathematica installation.
+Mathematica notebook files (`.nb`) store graphics as compressed binary data. This script provides two ways to handle graphics:
 
-### Current Approach
+### Option 1: Automatic Extraction (Recommended - Requires Wolfram Engine)
 
-The script detects graphics in notebooks and creates visible placeholder frames showing where figures should go. To include actual graphics:
+If you have Wolfram Engine installed, use the `--auto-extract-graphics` flag:
 
-1. The script creates placeholder frames in the PDF showing where figures should go
-2. Export the graphics from Mathematica:
+```bash
+python3 mathematica_to_latex.py "notebook.nb" -o output.tex --auto-extract-graphics
+```
+
+**What happens:**
+1. Script detects all graphics in the notebook
+2. Uses Wolfram Engine to automatically extract them as PNG files
+3. Graphics are saved to the figures directory (e.g., `HW_8-1_pb_4_figures/`)
+4. LaTeX code directly references the extracted images
+5. PDF compiles with all graphics included!
+
+**For repository maintainers:** Run the conversion with `--auto-extract-graphics` once and commit both the `.tex` file and the generated PNG files. Other users can then compile the LaTeX without needing Wolfram Engine.
+
+### Option 2: Manual Export (No Wolfram Engine Required)
+
+If Wolfram Engine is not available, the script creates visible placeholder frames:
+
+1. Convert the notebook (placeholders will be created automatically)
+2. Export graphics manually from Mathematica:
    ```mathematica
    Export["figure_1.png", graphicsObject, ImageResolution -> 300]
    ```
-3. Place the PNG files in the appropriate directory (e.g., `HW_8-1_pb_4_figures/`)
+3. Place PNG files in the figures directory (e.g., `HW_8-1_pb_4_figures/`)
 4. Uncomment the `\includegraphics` lines in the `.tex` file
 5. Recompile the LaTeX document
 
-### Alternative: Batch Export from Mathematica
-
-If you have many figures, you can export them all at once in Mathematica:
+**Batch export from Mathematica:**
 ```mathematica
 (* Get all graphics from the current notebook *)
 graphics = Cases[NotebookGet[EvaluationNotebook[]], _Graphics | _Graphics3D, Infinity];
