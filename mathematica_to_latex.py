@@ -168,6 +168,65 @@ def convert_symbols(text):
     return text
 
 
+def extract_gridbox_table(text):
+    """Extract table data from a GridBox structure."""
+    # Look for GridBox[{ rows }]
+    gridbox_match = re.search(r'GridBox\[\{', text, re.DOTALL)
+    if not gridbox_match:
+        return None
+    
+    # Find the matching closing bracket using stack-based parsing
+    start_pos = gridbox_match.end()
+    bracket_count = 1
+    pos = start_pos
+    
+    while pos < len(text) and bracket_count > 0:
+        if text[pos] == '{':
+            bracket_count += 1
+        elif text[pos] == '}':
+            bracket_count -= 1
+        pos += 1
+    
+    if bracket_count != 0:
+        return None
+    
+    grid_content = text[start_pos:pos-1]
+    
+    # Now extract rows - split by comma at top level
+    rows = []
+    current_row = []
+    bracket_count = 0
+    cell_start = 0
+    
+    i = 0
+    while i < len(grid_content):
+        char = grid_content[i]
+        
+        if char == '{':
+            if bracket_count == 0:
+                cell_start = i + 1
+            bracket_count += 1
+        elif char == '}':
+            bracket_count -= 1
+            if bracket_count == 0:
+                # End of a row
+                row_content = grid_content[cell_start:i]
+                
+                # Extract all string literals from this row
+                cell_strings = re.findall(r'\\<\\"(.*?)\\"\\>', row_content, re.DOTALL)
+                if cell_strings:
+                    cells = []
+                    for cell in cell_strings:
+                        cell = cell.replace('\\n', '\n')
+                        cell = cell.replace('\\"', '"')
+                        cells.append(cell)
+                    rows.append(cells)
+        
+        i += 1
+    
+    return rows if rows else None
+
+
 def extract_string_content(text):
     """Extract content from string literals in Mathematica cells."""
     results = []
@@ -181,7 +240,13 @@ def extract_string_content(text):
         content = match.replace('\\n', '\n')
         content = content.replace('\\"', '"')
         content = content.replace('\\\\', '\\')
-        results.append(content)
+        
+        # Remove line continuation backslashes (backslash followed by newline)
+        content = re.sub(r'\\\n', ' ', content)
+        
+        # Skip if it's just whitespace or newlines
+        if content.strip() and content.strip() not in ['\\', '\n']:
+            results.append(content)
     
     if results:
         return '\n'.join(results)
@@ -189,11 +254,30 @@ def extract_string_content(text):
     return ''
 
 
+def is_math_content(text):
+    """Determine if text contains mathematical content that should be in math mode."""
+    # Check for LaTeX math symbols
+    math_indicators = [
+        r'\alpha', r'\beta', r'\gamma', r'\delta', r'\epsilon', r'\zeta', r'\eta', 
+        r'\theta', r'\iota', r'\kappa', r'\lambda', r'\mu', r'\nu', r'\xi',
+        r'\pi', r'\rho', r'\sigma', r'\tau', r'\upsilon', r'\phi', r'\chi', 
+        r'\psi', r'\omega', r'\hbar', r'\times', r'\pm', r'\geq', r'\leq',
+        '_', '^'
+    ]
+    
+    return any(indicator in text for indicator in math_indicators)
+
+
 def process_cell_content(cell_text):
     """Process a single cell's content."""
     # Check if this is a code cell (Input) - skip these
     if '"Input"' in cell_text:
         return ''
+    
+    # Check if this cell contains a GridBox (table)
+    table_data = extract_gridbox_table(cell_text)
+    if table_data:
+        return ('TABLE', table_data)
     
     # Extract string content from Print cells and TextData cells
     content = extract_string_content(cell_text)
@@ -207,6 +291,11 @@ def process_cell_content(cell_text):
     # Convert subscripts and superscripts
     content = convert_subscripts(content)
     content = convert_superscripts(content)
+    
+    # Clean up trailing backslashes and dollar signs
+    content = re.sub(r'\\\$', '', content)
+    content = re.sub(r'\\\s*$', '', content)  # Remove trailing backslash
+    content = re.sub(r'\\$', '', content)
     
     # Clean up whitespace
     content = re.sub(r'[ \t]+', ' ', content)
@@ -241,8 +330,12 @@ def extract_cells_from_notebook(notebook_content):
                 
                 # Process the cell content
                 processed = process_cell_content(cell_content)
-                if processed and len(processed) > 3:  # Only add non-trivial content
-                    cells.append(processed)
+                if processed:
+                    # Could be a string or a tuple ('TABLE', data)
+                    if isinstance(processed, tuple) and processed[0] == 'TABLE':
+                        cells.append(processed)
+                    elif isinstance(processed, str) and len(processed) > 3:
+                        cells.append(processed)
                 
                 in_cell = False
                 cell_lines = []
@@ -280,11 +373,57 @@ def convert_notebook_to_latex(input_file):
     
     # Add cells
     for cell in cells:
-        # Check if cell looks like math (has LaTeX commands)
-        if any(sym in cell for sym in [r'\alpha', r'\beta', r'\gamma', r'\delta', r'\hbar', 
-                                        r'\pi', r'\sigma', r'\theta', r'\omega', '_', '^']):
-            # Wrap in math mode if not already
-            if not (cell.startswith('$') or cell.startswith(r'\[')):
+        # Handle table cells
+        if isinstance(cell, tuple) and cell[0] == 'TABLE':
+            table_data = cell[1]
+            if table_data:
+                # Determine number of columns
+                max_cols = max(len(row) for row in table_data)
+                col_format = 'l' * max_cols
+                
+                latex_output.append(r'\begin{center}')
+                latex_output.append(r'\begin{tabular}{' + col_format + '}')
+                latex_output.append(r'\hline')
+                
+                for i, row in enumerate(table_data):
+                    # Convert symbols in cells
+                    converted_row = []
+                    for cell_val in row:
+                        cell_val = convert_symbols(cell_val)
+                        cell_val = convert_subscripts(cell_val)
+                        cell_val = convert_superscripts(cell_val)
+                        if is_math_content(cell_val):
+                            cell_val = f'${cell_val}$'
+                        converted_row.append(cell_val)
+                    
+                    # Pad row if needed
+                    while len(converted_row) < max_cols:
+                        converted_row.append('')
+                    
+                    latex_output.append(' & '.join(converted_row) + r' \\')
+                    
+                    # Add hline after header row
+                    if i == 0:
+                        latex_output.append(r'\hline')
+                
+                latex_output.append(r'\hline')
+                latex_output.append(r'\end{tabular}')
+                latex_output.append(r'\end{center}')
+                latex_output.append(r'')
+            continue
+        
+        # Skip cells that are just a single backslash or newline or empty
+        if cell in ['\\', '\n', '\\n', '', ' ']:
+            continue
+        
+        # Skip cells that start with backslash and are short (likely formatting artifacts)
+        if cell.startswith('\\') and len(cell) <= 2:
+            continue
+        
+        # Regular text or math content
+        if is_math_content(cell):
+            # Wrap in math mode if not already and contains inline math
+            if not (cell.startswith('$') or cell.startswith(r'\[') or '$' in cell):
                 cell = f'${cell}$'
         
         latex_output.append(cell)
