@@ -8,6 +8,8 @@ Converts Mathematica notebook files (.nb) to LaTeX format with proper formatting
 import re
 import argparse
 import sys
+import base64
+import os
 from pathlib import Path
 
 
@@ -177,6 +179,23 @@ def convert_symbols(text):
     return text
 
 
+def extract_graphics(text, output_dir):
+    """Detect graphics from GraphicsBox structures."""
+    graphics = []
+    
+    # Look for GraphicsBox structures - count them for placeholders
+    graphics_pattern = r'Cell\[GraphicsData\[|Cell\[.*?GraphicsBox\['
+    matches = re.finditer(graphics_pattern, text, re.DOTALL)
+    
+    graphic_count = 0
+    for match in matches:
+        graphic_count += 1
+        # Add placeholder - actual graphics need to be exported from Mathematica
+        graphics.append(f"figure_{graphic_count}")
+    
+    return graphics
+
+
 def extract_gridbox_table(text):
     """Extract table data from a GridBox structure."""
     # Look for GridBox[{ rows }]
@@ -331,6 +350,11 @@ def process_cell_content(cell_text):
     if '"Input"' in cell_text:
         return ''
     
+    # Check if this cell contains a GraphicsBox (but not inside GridBox for legends)
+    # Only treat as graphic if it's a primary GraphicsBox with plot data
+    if ('TagBox[' in cell_text and 'GraphicsBox[{' in cell_text and 'CompressedData[' in cell_text):
+        return ('GRAPHIC', cell_text)
+    
     # Check if this cell contains a GridBox (table)
     table_data = extract_gridbox_table(cell_text)
     if table_data:
@@ -412,6 +436,13 @@ def convert_notebook_to_latex(input_file):
     with open(input_file, 'r', encoding='utf-8', errors='ignore') as f:
         content = f.read()
     
+    # Create output directory for figures
+    output_base = Path(input_file).stem
+    figures_dir = f"{output_base}_figures"
+    
+    # Extract graphics
+    graphics_list = extract_graphics(content, figures_dir)
+    
     # Extract cells
     cells = extract_cells_from_notebook(content)
     
@@ -424,6 +455,7 @@ def convert_notebook_to_latex(input_file):
     latex_output.append(r'\usepackage{graphicx}')
     latex_output.append(r'\usepackage{array}')
     latex_output.append(r'\usepackage{booktabs}')
+    latex_output.append(r'\usepackage{float}')
     latex_output.append(r'')
     latex_output.append(r'\begin{document}')
     latex_output.append(r'')
@@ -434,10 +466,43 @@ def convert_notebook_to_latex(input_file):
     latex_output.append(r'\maketitle')
     latex_output.append(r'')
     
+    # Track graphics index
+    graphic_idx = 0
+    
+    # Group content for better flow
+    current_paragraph = []
+    
     # Add cells
     for cell in cells:
+        # Handle graphic cells
+        if isinstance(cell, tuple) and cell[0] == 'GRAPHIC':
+            # Flush current paragraph
+            if current_paragraph:
+                latex_output.append(' '.join(current_paragraph))
+                latex_output.append(r'')
+                current_paragraph = []
+            
+            # Add figure placeholder
+            if graphic_idx < len(graphics_list):
+                graphic = graphics_list[graphic_idx]
+                latex_output.append(r'\begin{figure}[H]')
+                latex_output.append(r'\centering')
+                latex_output.append(r'% TODO: Export ' + graphic + '.png from Mathematica and place in ' + figures_dir + '/')
+                latex_output.append(r'\includegraphics[width=0.7\textwidth]{' + figures_dir + '/' + graphic + '.png}')
+                latex_output.append(r'\caption{Figure ' + str(graphic_idx + 1) + '}')
+                latex_output.append(r'\end{figure}')
+                latex_output.append(r'')
+                graphic_idx += 1
+            continue
+        
         # Handle table cells
         if isinstance(cell, tuple) and cell[0] == 'TABLE':
+            # Flush current paragraph
+            if current_paragraph:
+                latex_output.append(' '.join(current_paragraph))
+                latex_output.append(r'')
+                current_paragraph = []
+            
             table_data = cell[1]
             if table_data:
                 # Determine number of columns
@@ -484,14 +549,57 @@ def convert_notebook_to_latex(input_file):
         if cell.startswith('\\') and len(cell) <= 2:
             continue
         
-        # Regular text or math content
-        if is_math_content(cell):
-            # Wrap in math mode if not already and contains inline math
-            if not (cell.startswith('$') or cell.startswith(r'\[') or '$' in cell):
-                cell = f'${cell}$'
+        # Check if this is a heading/title (short, possibly bold text)
+        is_heading = len(cell) < 80 and not any(word in cell.lower() for word in ['equation', 'where', 'using', 'for', 'with'])
         
-        latex_output.append(cell)
+        # Regular text or math content
+        if is_heading and not is_math_content(cell):
+            # Flush current paragraph
+            if current_paragraph:
+                latex_output.append(' '.join(current_paragraph))
+                latex_output.append(r'')
+                current_paragraph = []
+            
+            # Add as section or subsection
+            if len(cell) < 40:
+                latex_output.append(r'\subsection*{' + cell + '}')
+            else:
+                latex_output.append(r'\textbf{' + cell + '}')
+            latex_output.append(r'')
+        else:
+            # Regular content - add to paragraph
+            if is_math_content(cell):
+                # Wrap in math mode if not already and contains inline math
+                if not (cell.startswith('$') or cell.startswith(r'\[') or '$' in cell):
+                    cell = f'${cell}$'
+            
+            # Add to current paragraph
+            current_paragraph.append(cell)
+    
+    # Flush final paragraph
+    if current_paragraph:
+        latex_output.append(' '.join(current_paragraph))
         latex_output.append(r'')
+    
+    # Add graphics placeholders if any were found but not inserted
+    if len(graphics_list) > graphic_idx:
+        latex_output.append(r'\section*{Figures}')
+        latex_output.append(r'')
+        latex_output.append(r'% The notebook contains ' + str(len(graphics_list)) + ' figures.')
+        latex_output.append(r'% To include them, export the graphics from Mathematica using:')
+        latex_output.append(r'%   Export["figure_N.png", graphicsObject]')
+        latex_output.append(r'% Then place the PNG files in the ' + figures_dir + '/ directory.')
+        latex_output.append(r'')
+        
+        for i in range(len(graphics_list)):
+            latex_output.append(r'\begin{figure}[H]')
+            latex_output.append(r'\centering')
+            latex_output.append(r'% TODO: Export figure from Mathematica')
+            latex_output.append(r'\includegraphics[width=0.7\textwidth]{' + figures_dir + '/' + graphics_list[i] + '.png}')
+            latex_output.append(r'\caption{Figure ' + str(i + 1) + '}')
+            latex_output.append(r'\label{fig:' + str(i + 1) + '}')
+            latex_output.append(r'\end{figure}')
+            latex_output.append(r'')
     
     latex_output.append(r'\end{document}')
     

@@ -5,6 +5,8 @@ A Python script to convert Mathematica notebook files (.nb) to LaTeX format.
 ## Features
 
 - Converts Mathematica notebooks to compilable LaTeX documents
+- **Improved formatting**: Automatic section headings and paragraph flow for better readability
+- **Graphics detection**: Automatically detects figures and adds placeholders with export instructions
 - Translates Greek letters and special symbols to LaTeX commands
 - Handles subscripts and superscripts
 - Extracts and formats tables from GridBox structures
@@ -63,6 +65,7 @@ The script automatically converts Mathematica symbols to LaTeX:
 
 - **FormBox expressions**: Complex formatted expressions are replaced with `[formula]` placeholders as they contain Mathematica's internal formatting that's difficult to convert automatically
 - **Code cells**: Input code cells are skipped, only output/Print cells are converted
+- **Graphics extraction**: Graphics are detected and placeholders are added, but you must export the actual images from Mathematica using `Export["figure_N.png", graphicsObject]` and place them in the specified directory
 - **Complex tables**: Some table structures may not convert perfectly
 - **Manual review recommended**: Always review and potentially edit the generated LaTeX for best results
 
@@ -81,12 +84,30 @@ Required LaTeX packages (automatically included in the output):
 - array
 - booktabs
 
+## Graphics Export
+
+When the script detects graphics in your notebook, it will:
+1. Add a "Figures" section at the end of the LaTeX document
+2. Create placeholders for each figure with `\includegraphics` commands
+3. Provide instructions in comments
+
+To include the actual graphics:
+1. Open your notebook in Mathematica
+2. For each plot/graphic, export it using:
+   ```mathematica
+   Export["figure_1.png", yourGraphicsObject, ImageResolution -> 300]
+   ```
+3. Create the figures directory (e.g., `HW_8-1_pb_5-all_figures/`)
+4. Place the exported PNG files in that directory
+5. Compile your LaTeX document
+
 ## Known Issues
 
 Some notebooks may have compilation warnings or errors that need manual fixing:
 - Complex mathematical expressions in FormBox format are replaced with placeholders
 - Some spacing around mathematical operators may need adjustment
 - Variable names concatenated with Greek letters (e.g., `\alphax`) are automatically spaced
+- Graphics must be manually exported from Mathematica (automatic extraction not supported)
 
 ## Examples
 

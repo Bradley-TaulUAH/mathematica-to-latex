@@ -4,225 +4,116 @@
 \usepackage{graphicx}
 \usepackage{array}
 \usepackage{booktabs}
+\usepackage{float}
 
 \begin{document}
 
 \title{HW 8-1 pb 4}
 \maketitle
 
-INFINITE SQUARE WELL VARIATIONAL CALCULATION
+\textbf{INFINITE SQUARE WELL VARIATIONAL CALCULATION}
 
-Potential: V = 0 for -a < x < a, V = \infty elsewhere
+Potential: V = 0 for -a < x < a, V = \infty elsewhere $Boundary conditions: \psi(\pm a) = 0$
 
-$Boundary conditions: \psi(\pm a) = 0$
+\subsection*{PART (a): TRAPEZOIDAL TRIAL FUNCTION}
 
-PART (a): TRAPEZOIDAL TRIAL FUNCTION
+\subsection*{Trial function:}
 
-Trial function:
+$\psi(x) = a - |x| for b \leq |x| \leq a (sloped regions)$ $\psi(x) = a - b for |x| \leq b (flat region)$
 
-$\psi(x) = a - |x| for b \leq |x| \leq a (sloped regions)$
+\subsection*{Case (i): b = 0 (Triangular function)}
 
-$\psi(x) = a - b for |x| \leq b (flat region)$
+\subsection*{Normalization integral:}
 
-Case (i): b = 0 (Triangular function)
+$N = \int_{-a}^{a} (a - |x|)^2 dx$ $By symmetry: N = 2\int_{0}^{a} (a - x)^2 dx$ $Expanding: \int_{0}^{a} (a^2 - 2ax + x^2) dx$ $= [a^2 x - ax^2 + x^3/3]_{0}^{a}$ $= a^3 - a^3 + a^3/3$ $= a^3/3$
 
-Normalization integral:
+\subsection*{A = 1/\sqrt{N} =}
 
-$N = \int_{-a}^{a} (a - |x|)^2 dx$
+\subsection*{Kinetic energy calculation:}
 
-$By symmetry: N = 2\int_{0}^{a} (a - x)^2 dx$
+$d\psi/dx = -A for 0 < x < a$ $d\psi/dx = +A for -a < x < 0$ $<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx$ $= (\hbar^2/2m) \times 2\int_{0}^{a} A^2 dx$ $= (\hbar^2/2m) \times 2A^2 a$ $= (\hbar^2/2m) \times$ $<E> = (\hbar^2/2m) \times 
+/a^2$ $ANSWER (Case i): <E> = [formula] \hbar^2/(2ma^2)$
 
-$Expanding: \int_{0}^{a} (a^2 - 2ax + x^2) dx$
+\subsection*{Case (ii): Optimize parameter b}
 
-$= [a^2 x - ax^2 + x^3/3]_{0}^{a}$
+\subsection*{Normalization integral:}
 
-$= a^3 - a^3 + a^3/3$
+$N = \int_{-a}^{a} \psi^2 dx$ $= \int_{-a}^{-b} (a - |x|)^2 dx + \int_{-b}^{b} (a - b)^2 dx + \int_{b}^{a} (a - |x|)^2 dx$
 
-$= a^3/3$
+\subsection*{By symmetry of outer regions:}
 
-A = 1/\sqrt{N} =
+$= 2\int_{b}^{a} (a - x)^2 dx + (a - b)^2 (2b)$ $= 2[(a - x)^3/(-3)]_{b}^{a} + 2b(a - b)^2$ $= 2(a - b)^3/3 + 2b(a - b)^2$
 
-Kinetic energy calculation:
+\subsection*{N(b) =}
 
-$d\psi/dx = -A for 0 < x < a$
+\subsection*{Kinetic energy calculation:}
 
-$d\psi/dx = +A for -a < x < 0$
+$d\psi/dx = 0 for |x| < b (flat region contributes nothing)$ $d\psi/dx = -1 for b < x < a$ $d\psi/dx = +1 for -a < x < -b$ $<T> = (\hbar^2/2m) \times 2\int_{b}^{a} (1/N) dx$ $= (\hbar^2/2m) \times 2(a - b)/N$ $= (\hbar^2/2m) \times$
 
-$<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx$
+\subsection*{Optimization:}
 
-$= (\hbar^2/2m) \times 2\int_{0}^{a} A^2 dx$
+$d<E>/db = (\hbar^2/2m) \times$ Since d<E>/db < 0 for 0 < b < a, the energy decreases monotonically. Therefore, the minimum occurs at b = 0 (triangular function).
 
-$= (\hbar^2/2m) \times 2A^2 a$
+\textbf{ANSWER (Case ii): Optimal value b = 0 (triangular function gives minimum)}
 
-$= (\hbar^2/2m) \times$
-
-$<E> = (\hbar^2/2m) \times 
-/a^2$
-
-$ANSWER (Case i): <E> = [formula] \hbar^2/(2ma^2)$
-
-Case (ii): Optimize parameter b
-
-Normalization integral:
-
-$N = \int_{-a}^{a} \psi^2 dx$
-
-$= \int_{-a}^{-b} (a - |x|)^2 dx + \int_{-b}^{b} (a - b)^2 dx + \int_{b}^{a} (a - |x|)^2 dx$
-
-By symmetry of outer regions:
-
-$= 2\int_{b}^{a} (a - x)^2 dx + (a - b)^2 (2b)$
-
-$= 2[(a - x)^3/(-3)]_{b}^{a} + 2b(a - b)^2$
-
-$= 2(a - b)^3/3 + 2b(a - b)^2$
-
-N(b) =
-
-Kinetic energy calculation:
-
-$d\psi/dx = 0 for |x| < b (flat region contributes nothing)$
-
-$d\psi/dx = -1 for b < x < a$
-
-$d\psi/dx = +1 for -a < x < -b$
-
-$<T> = (\hbar^2/2m) \times 2\int_{b}^{a} (1/N) dx$
-
-$= (\hbar^2/2m) \times 2(a - b)/N$
-
-$= (\hbar^2/2m) \times$
-
-Optimization:
-
-$d<E>/db = (\hbar^2/2m) \times$
-
-Since d<E>/db < 0 for 0 < b < a, the energy decreases monotonically.
-
-Therefore, the minimum occurs at b = 0 (triangular function).
-
-ANSWER (Case ii): Optimal value b = 0 (triangular function gives minimum)
-
-PART (b): PARABOLIC TRIAL FUNCTION
+\subsection*{PART (b): PARABOLIC TRIAL FUNCTION}
 
 $Trial function: \psi(x) = A(x - a)(x + a) = A(x^2 - a^2)$
 
-Normalization integral:
+\subsection*{Normalization integral:}
 
-$N = \int_{-a}^{a} (x^2 - a^2)^2 dx$
+$N = \int_{-a}^{a} (x^2 - a^2)^2 dx$ $= \int_{-a}^{a} (x^4 - 2a^2 x^2 + a^4) dx$
 
-$= \int_{-a}^{a} (x^4 - 2a^2 x^2 + a^4) dx$
+\subsection*{By symmetry (all terms are even):}
 
-By symmetry (all terms are even):
+$= 2\int_{0}^{a} (x^4 - 2a^2 x^2 + a^4) dx$ $= 2[x^5/5 - 2a^2 x^3/3 + a^4 x]_{0}^{a}$ $= 2(a^5/5 - 2a^5/3 + a^5)$ $= 2a^5(1/5 - 2/3 + 1)$ $= 2a^5(3/15 - 10/15 + 15/15)$ $= 2a^5(8/15)$ $Derivative: d\psi/dx = 2Ax$
 
-$= 2\int_{0}^{a} (x^4 - 2a^2 x^2 + a^4) dx$
+\subsection*{Kinetic energy calculation:}
 
-$= 2[x^5/5 - 2a^2 x^3/3 + a^4 x]_{0}^{a}$
+$<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx$ $= (\hbar^2/2m)\int_{-a}^{a} (2Ax)^2 dx$ $= (\hbar^2/2m) \times 4A^2\int_{-a}^{a} x^2 dx$
 
-$= 2(a^5/5 - 2a^5/3 + a^5)$
+\subsection*{By symmetry:}
 
-$= 2a^5(1/5 - 2/3 + 1)$
+$= (\hbar^2/2m) \times 4A^2 \times 2\int_{0}^{a} x^2 dx$ $= (\hbar^2/2m) \times 8A^2 [x^3/3]_{0}^{a}$ $= (\hbar^2/2m) \times 8A^2 a^3/3$ $= (\hbar^2/2m) \times$ $<E> = (\hbar^2/2m) \times 
+/a^2$ $ANSWER (Part b): <E> = [formula] \hbar^2/(2ma^2)$
 
-$= 2a^5(3/15 - 10/15 + 15/15)$
+\subsection*{PART (c): QUARTIC TRIAL FUNCTION}
 
-$= 2a^5(8/15)$
+$Trial function: \psi(x) = (a^2 - x^2)(\alpha x^2 + \beta)$ $Variational parameter: r = \alpha/\beta$ $Expanding: \psi(x) = (a^2 - x^2)(\alpha x^2 + \beta) = \alpha a^2 x^2 + \beta a^2 - \alpha x^4 - \beta x^2$
 
-$Derivative: d\psi/dx = 2Ax$
+\subsection*{Normalization integral:}
 
-Kinetic energy calculation:
+$N = \int_{-a}^{a} [(a^2 - x^2)(\alpha x^2 + \beta)]^2 dx$ $= \int_{-a}^{a} [(\alpha a^2 x^2 + \beta a^2)^2 - 2(\alpha a^2 x^2 + \beta a^2)(\alpha x^4 + \beta x^2) + (\alpha x^4 + \beta x^2)^2] dx$
 
-$<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx$
+\textbf{(All terms are even functions, so we integrate over symmetric limits)}
 
-$= (\hbar^2/2m)\int_{-a}^{a} (2Ax)^2 dx$
+\subsection*{Derivative calculation:}
 
-$= (\hbar^2/2m) \times 4A^2\int_{-a}^{a} x^2 dx$
+$d\psi/dx = d/dx[(a^2 - x^2)(\alpha x^2 + \beta)]$ $Using product rule: = (a^2 - x^2)(2\alpha x) + (\alpha x^2 + \beta)(-2x)$ $= 2\alpha x(a^2 - x^2) - 2x(\alpha x^2 + \beta)$ $= 2\alpha a^2 x - 2\alpha x^3 - 2\alpha x^3 - 2\beta x$ $= 2\alpha a^2 x - 4\alpha x^3 - 2\beta x$ $d\psi/dx =$
 
-By symmetry:
+\subsection*{Kinetic energy integral:}
 
-$= (\hbar^2/2m) \times 4A^2 \times 2\int_{0}^{a} x^2 dx$
+$<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx / N$ $= (\hbar^2/2m)\int_{-a}^{a} (2\alpha a^2 x - 4\alpha x^3 - 2\beta x)^2 dx / N$
 
-$= (\hbar^2/2m) \times 8A^2 [x^3/3]_{0}^{a}$
+\textbf{(Even function integrated over symmetric limits)}
 
-$= (\hbar^2/2m) \times 8A^2 a^3/3$
+\subsection*{Numerator =}
 
-$= (\hbar^2/2m) \times$
+$<T> = (\hbar^2/2m) \times$ $Energy as function of r = \alpha/\beta:$ $<E>(r) = (\hbar^2/2m) \times$
 
-$<E> = (\hbar^2/2m) \times 
-/a^2$
+\subsection*{Variational condition d<E>/dr = 0:}
 
-$ANSWER (Part b): <E> = [formula] \hbar^2/(2ma^2)$
+$d<E>/dr = (\hbar^2/2m) \times$ Solutions for optimal r: $r_{1} =$ $r_{2} =$
 
-PART (c): QUARTIC TRIAL FUNCTION
-
-$Trial function: \psi(x) = (a^2 - x^2)(\alpha x^2 + \beta)$
-
-$Variational parameter: r = \alpha/\beta$
-
-$Expanding: \psi(x) = (a^2 - x^2)(\alpha x^2 + \beta) = \alpha a^2 x^2 + \beta a^2 - \alpha x^4 - \beta x^2$
-
-Normalization integral:
-
-$N = \int_{-a}^{a} [(a^2 - x^2)(\alpha x^2 + \beta)]^2 dx$
-
-$= \int_{-a}^{a} [(\alpha a^2 x^2 + \beta a^2)^2 - 2(\alpha a^2 x^2 + \beta a^2)(\alpha x^4 + \beta x^2) + (\alpha x^4 + \beta x^2)^2] dx$
-
-(All terms are even functions, so we integrate over symmetric limits)
-
-Derivative calculation:
-
-$d\psi/dx = d/dx[(a^2 - x^2)(\alpha x^2 + \beta)]$
-
-$Using product rule: = (a^2 - x^2)(2\alpha x) + (\alpha x^2 + \beta)(-2x)$
-
-$= 2\alpha x(a^2 - x^2) - 2x(\alpha x^2 + \beta)$
-
-$= 2\alpha a^2 x - 2\alpha x^3 - 2\alpha x^3 - 2\beta x$
-
-$= 2\alpha a^2 x - 4\alpha x^3 - 2\beta x$
-
-$d\psi/dx =$
-
-Kinetic energy integral:
-
-$<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx / N$
-
-$= (\hbar^2/2m)\int_{-a}^{a} (2\alpha a^2 x - 4\alpha x^3 - 2\beta x)^2 dx / N$
-
-(Even function integrated over symmetric limits)
-
-Numerator =
-
-$<T> = (\hbar^2/2m) \times$
-
-$Energy as function of r = \alpha/\beta:$
-
-$<E>(r) = (\hbar^2/2m) \times$
-
-Variational condition d<E>/dr = 0:
-
-$d<E>/dr = (\hbar^2/2m) \times$
-
-Solutions for optimal r:
-
-$r_{1} =$
-
-$r_{2} =$
-
-Energy values:
+\subsection*{Energy values:}
 
 $At r_{1}: <E> = (\hbar^2/2m) \times 
-/a^2$
+/a^2$ $At r_{2}: <E> = (\hbar^2/2m) \times 
+/a^2$ $Selecting r_{2} (minimum energy)$
 
-$At r_{2}: <E> = (\hbar^2/2m) \times 
-/a^2$
+\subsection*{Optimal parameters:}
 
-$Selecting r_{2} (minimum energy)$
-
-Optimal parameters:
-
-$r_{opt} =$
-
-$<E> = (\hbar^2/2m) \times 
+$r_{opt} =$ $<E> = (\hbar^2/2m) \times 
 /a^2$
 
 \begin{center}
@@ -238,35 +129,27 @@ $<E> = \[formula] \hbar^2/(2ma^2)$ \\
 
 PART (d): COMPARISON WITH EXACT RESULT
 
-Exact ground state:
+\subsection*{Exact ground state:}
 
-$\psi_{0}(x) = (1/\sqrt{a})cos(\pi x/(2a))$
+$\psi_{0}(x) = (1/\sqrt{a})cos(\pi x/(2a))$ $E_{0} = \pi^2\hbar^2/(8ma^2) = (\hbar^2/2m) \times$
 
-$E_{0} = \pi^2\hbar^2/(8ma^2) = (\hbar^2/2m) \times$
-
-Summary of Variational Estimates
+\subsection*{Summary of Variational Estimates}
 
 $Method <E> in units of (\hbar^2/2m)/a^2$
 
-Exact
+\subsection*{Exact}
 
-Triangular
+\subsection*{Triangular}
 
-Parabolic
+\subsection*{Parabolic}
 
-Quartic (optimized)
+\subsection*{Quartic (optimized)}
 
-$Verification: All variational estimates satisfy <E> \geq E_{0}$
-
-$Triangular: 
+$Verification: All variational estimates satisfy <E> \geq E_{0}$ $Triangular: 
  \geq 
- \checkmark$
-
-$Parabolic: 
+ \checkmark$ $Parabolic: 
  \geq 
- \checkmark$
-
-$Quartic: 
+ \checkmark$ $Quartic: 
  \geq 
  \checkmark$
 
@@ -281,60 +164,36 @@ The quartic trial function gives the best approximation. \\
 \end{tabular}
 \end{center}
 
-Mean-Square Deviations
+\subsection*{Mean-Square Deviations}
 
 $Formula: \Delta^2 = \int|\psi_{0} - \psi_{t}|^2 dx = 2(1 - \int\psi_{0}\psi_{t} dx) for normalized functions$
 
-Parabolic function:
+\subsection*{Parabolic function:}
 
-$Overlap: \int_{-a}^{a} \psi_{0}\psi_{t} dx =$
+$Overlap: \int_{-a}^{a} \psi_{0}\psi_{t} dx =$ $Mean-square deviation: \Delta^2 =$ $Interpretation: Smaller \Delta^2 indicates better approximation to exact ground state.$
 
-$Mean-square deviation: \Delta^2 =$
-
-$Interpretation: Smaller \Delta^2 indicates better approximation to exact ground state.$
-
-PART (e): NODES OF OPTIMAL QUARTIC AND INTERPRETATION
+\textbf{PART (e): NODES OF OPTIMAL QUARTIC AND INTERPRETATION}
 
 $Optimized quartic: \psi(x) = A(a^2 - x^2)(\alpha x^2 + \beta) with r = \alpha/\beta =$
 
-Nodes occur at:
+\subsection*{Nodes occur at:}
 
-$(1) Boundary: x = \pm a (required by boundary conditions)$
-
-$(2) Interior: where \alpha x^2 + \beta = 0, i.e., x^2 = -\beta/\alpha = -1/r$
-
-$Interior node condition: x^2 = -1/r =$
-
-$Real interior nodes exist at x^2 = 
+$(1) Boundary: x = \pm a (required by boundary conditions)$ $(2) Interior: where \alpha x^2 + \beta = 0, i.e., x^2 = -\beta/\alpha = -1/r$ $Interior node condition: x^2 = -1/r =$ $Real interior nodes exist at x^2 = 
 Location: INSIDE the well (|x| < a)
 Location: OUTSIDE the well (|x| > a)
 No real interior nodes (x^2 < 0)$
 
-Interpretation of Stationary Energy Value
+\textbf{Interpretation of Stationary Energy Value}
 
 The variational method minimizes <E> within the family of quartic trial functions.
 
-At the stationary point (d<E>/dr = 0):
+\subsection*{At the stationary point (d<E>/dr = 0):}
 
-$\bullet The energy is minimized with respect to the parameter r$
+$\bullet The energy is minimized with respect to the parameter r$ $\bullet This provides an upper bound: <E> \geq E_{0} (variational theorem)$ $\bullet The optimal function best approximates the true ground state within this family$
 
-$\bullet This provides an upper bound: <E> \geq E_{0} (variational theorem)$
+\subsection*{Physical significance:}
 
-$\bullet The optimal function best approximates the true ground state within this family$
-
-Physical significance:
-
-$\bullet The optimization balances kinetic energy (prefers smoothness) with$
-
-$boundary conditions (requires \psi(\pm a) = 0)$
-
-$\bullet The true ground state cos(\pi x/2a) has NO interior nodes$
-
-$\bullet Our quartic approximation may have nodes depending on the parameter space$
-
-$\bullet The stationary condition d<E>/dr = 0 is the variational analog of the$
-
-$Schr\ddot{o}dinger equation, ensuring the functional derivative vanishes$
+$\bullet The optimization balances kinetic energy (prefers smoothness) with$ $boundary conditions (requires \psi(\pm a) = 0)$ $\bullet The true ground state cos(\pi x/2a) has NO interior nodes$ $\bullet Our quartic approximation may have nodes depending on the parameter space$ $\bullet The stationary condition d<E>/dr = 0 is the variational analog of the$ $Schr\ddot{o}dinger equation, ensuring the functional derivative vanishes$
 
 \begin{center}
 \begin{tabular}{l}
@@ -352,201 +211,187 @@ $within the chosen family, guaranteed to be \geq  E\\_{0}.$ \\
 \title{HW 8-1 pb 5-all}
 \maketitle
 
-Linear Potential V(x) = g|x| - Rayleigh-Ritz Method
+\textbf{Linear Potential V(x) = g|x| - Rayleigh-Ritz Method}
 
-STEP 1: Basis Functions
+\subsection*{STEP 1: Basis Functions}
 
-$f\:2081(x) = exp(-x^{2}/a^{2}) [EVEN function]$
+$f\:2081(x) = exp(-x^{2}/a^{2}) [EVEN function]$ $f\:2082(x) = x\[CenterDot]exp(-x^{2}/a^{2}) [ODD function]$
 
-$f\:2082(x) = x\[CenterDot]exp(-x^{2}/a^{2}) [ODD function]$
+\textbf{STEP 2: Overlap Matrix Elements S\:1d62\:2c7c = \:27e8f\:1d62|f\:2c7c\:27e9}
 
-STEP 2: Overlap Matrix Elements S\:1d62\:2c7c = \:27e8f\:1d62|f\:2c7c\:27e9
-
-$S\:2081\:2081 = \int f\:2081^{2} dx =$
-
-S\:2081\:2082 = \int f\:2081\[CenterDot]f\:2082 dx = "\>", "", "0", 
+$S\:2081\:2081 = \int f\:2081^{2} dx =$ S\:2081\:2082 = \int f\:2081\[CenterDot]f\:2082 dx = "\>", "", "0", 
  "", "\<" (odd integrand \rightarrow 0)
 
-S\:2082\:2081 = S\:2081\:2082 =
+\subsection*{S\:2082\:2081 = S\:2081\:2082 =}
 
 $S\:2082\:2082 = \int f\:2082^{2} dx =$
 
-Overlap Matrix S (symbolic):
+\subsection*{Overlap Matrix S (symbolic):}
 
-Overlap Matrix S (numerical):
+\subsection*{Overlap Matrix S (numerical):}
 
-$STEP 3: Kinetic Energy Matrix T\:1d62\:2c7c = -\.bd\:27e8f\:1d62|d^{2}/dx^{2}|f\:2c7c\:27e9$
+$STEP 3: Kinetic Energy Matrix T\:1d62\:2c7c = -\.bd\:27e8f\:1d62|d^{2}/dx^{2}|f\:2c7c\:27e9$ $d^{2}f\:2081/dx^{2} =$ $d^{2}f\:2082/dx^{2} =$
 
-$d^{2}f\:2081/dx^{2} =$
-
-$d^{2}f\:2082/dx^{2} =$
-
-T\:2081\:2081 = -\.bd\int f\:2081\[CenterDot]f\:2081'' dx =
+\textbf{T\:2081\:2081 = -\.bd\int f\:2081\[CenterDot]f\:2081'' dx =}
 
 T\:2081\:2082 = -\.bd\int f\:2081\[CenterDot]f\:2082'' dx = 
  (parity \rightarrow 0)
 
-T\:2082\:2081 = T\:2081\:2082 =
+\subsection*{T\:2082\:2081 = T\:2081\:2082 =}
 
-T\:2082\:2082 = -\.bd\int f\:2082\[CenterDot]f\:2082'' dx =
+\textbf{T\:2082\:2082 = -\.bd\int f\:2082\[CenterDot]f\:2082'' dx =}
 
-Kinetic Energy Matrix T (symbolic):
+\subsection*{Kinetic Energy Matrix T (symbolic):}
 
-Kinetic Energy Matrix T (numerical):
+\subsection*{Kinetic Energy Matrix T (numerical):}
 
-STEP 4: Potential Energy Matrix V\:1d62\:2c7c = g\:27e8f\:1d62||x||f\:2c7c\:27e9
-
-$V\:2081\:2081 = g\int |x|\[CenterDot]f\:2081^{2} dx =$
-
-V\:2081\:2082 = g\int |x|\[CenterDot]f\:2081\[CenterDot]f\:2082 dx = 
+STEP 4: Potential Energy Matrix V\:1d62\:2c7c = g\:27e8f\:1d62||x||f\:2c7c\:27e9 $V\:2081\:2081 = g\int |x|\[CenterDot]f\:2081^{2} dx =$ V\:2081\:2082 = g\int |x|\[CenterDot]f\:2081\[CenterDot]f\:2082 dx = 
  (parity \rightarrow 0)
 
-V\:2082\:2081 = V\:2081\:2082 =
+\subsection*{V\:2082\:2081 = V\:2081\:2082 =}
 
 $V\:2082\:2082 = g\int |x|\[CenterDot]f\:2082^{2} dx =$
 
-Potential Energy Matrix V (symbolic):
+\subsection*{Potential Energy Matrix V (symbolic):}
 
-Potential Energy Matrix V (numerical):
+\subsection*{Potential Energy Matrix V (numerical):}
 
-STEP 5: Hamiltonian Matrix H = T + V
+\subsection*{STEP 5: Hamiltonian Matrix H = T + V}
 
-Hamiltonian Matrix H (symbolic):
+\subsection*{Hamiltonian Matrix H (symbolic):}
 
-Hamiltonian Matrix H (numerical):
+\subsection*{Hamiltonian Matrix H (numerical):}
 
-*** KEY OBSERVATION: H and S are BLOCK-DIAGONAL! ***
+\textbf{*** KEY OBSERVATION: H and S are BLOCK-DIAGONAL! ***}
 
-All off-diagonal elements are ZERO due to parity symmetry.
+\textbf{All off-diagonal elements are ZERO due to parity symmetry.}
 
 Even function f\:2081 doesn't mix with odd function f\:2082.
 
-STEP 6: Solve HC = SCE
+\subsection*{STEP 6: Solve HC = SCE}
 
-Rayleigh-Ritz Energy Eigenvalues:
+\subsection*{Rayleigh-Ritz Energy Eigenvalues:}
 
-E\:2081 = 
-0.898942
+\subsection*{E\:2081 = 
+0.898942}
 
-E\:2082 = 
-2.29788
+\subsection*{E\:2082 = 
+2.29788}
 
-Eigenvectors (coefficients [c\:2081, c\:2082]):
+\textbf{Eigenvectors (coefficients [c\:2081, c\:2082]):}
 
-Ground state: c = [
+\subsection*{Ground state: c = [
 1.
 , 
 0.
-]
+]}
 
-Excited state: c = [
+\subsection*{Excited state: c = [
 0.
 , 
 1.
-]
+]}
 
 STEP 7: Analytical Energy Formulas (Block-Diagonal)
 
-Since H and S are block-diagonal, eigenvalues are:
+\textbf{Since H and S are block-diagonal, eigenvalues are:}
 
-E\:2081 = H\:2081\:2081/S\:2081\:2081 =
+\subsection*{E\:2081 = H\:2081\:2081/S\:2081\:2081 =}
 
-E\:2082 = H\:2082\:2082/S\:2082\:2082 =
+\subsection*{E\:2082 = H\:2082\:2082/S\:2082\:2082 =}
 
-STEP 8: Comparison with Exact (Analytic) Results
+STEP 8: Comparison with Exact (Analytic) Results For the linear potential V(x) = g|x|, the exact solution
 
-For the linear potential V(x) = g|x|, the exact solution
+\textbf{involves Airy functions. The energy eigenvalues are:}
 
-involves Airy functions. The energy eigenvalues are:
+$E\:2099 = g^(2/3) \[CenterDot] |\alpha\:2099|$ $where \alpha\:2099 are the zeros of the Airy function Ai(-z).$
 
-$E\:2099 = g^(2/3) \[CenterDot] |\alpha\:2099|$
+\textbf{Exact energy levels (from Airy function):}
 
-$where \alpha\:2099 are the zeros of the Airy function Ai(-z).$
+\subsection*{E\:2081(exact) = 
+2.33811}
 
-Exact energy levels (from Airy function):
+\subsection*{E\:2082(exact) = 
+4.08795}
 
-E\:2081(exact) = 
-2.33811
+\subsection*{E\:2083(exact) = 
+5.52056}
 
-E\:2082(exact) = 
-4.08795
+\subsection*{COMPARISON TABLE:}
 
-E\:2083(exact) = 
-5.52056
+\textbf{------------------------------------------------------------------------}
 
-COMPARISON TABLE:
+\subsection*{Level Rayleigh-Ritz Exact Error (%)}
 
-------------------------------------------------------------------------
+\textbf{------------------------------------------------------------------------}
 
-Level Rayleigh-Ritz Exact Error (%)
+\textbf{E\:2081 0.898942 2.33811 \!\(\*RowBox[{\"\\\"61.55\\\"\"}]\)}
 
-------------------------------------------------------------------------
+\textbf{E\:2082 2.29788 4.08795 \!\(\*RowBox[{\"\\\"43.79\\\"\"}]\)}
 
-E\:2081 0.898942 2.33811 \!\(\*RowBox[{\"\\\"61.55\\\"\"}]\)
+\textbf{------------------------------------------------------------------------}
 
-E\:2082 2.29788 4.08795 \!\(\*RowBox[{\"\\\"43.79\\\"\"}]\)
+\subsection*{STEP 9: Visualization of Results}
 
-------------------------------------------------------------------------
+\subsection*{STEP 10: Analysis and Comments}
 
-STEP 9: Visualization of Results
+\subsection*{1. PARITY SYMMETRY:}
 
-E\:2081(RR)=0.899
-E\:2082(RR)=2.3
-E\:2081(exact)=2.34
-E\:2082(exact)=4.09
+$\bullet V(x) = g|x| is EVEN: V(-x) = V(x)$ $\bullet \:27e8f\:2081|O|f\:2082\:27e9 = 0 for any even operator O$
 
-STEP 10: Analysis and Comments
+\subsection*{2. BLOCK-DIAGONAL STRUCTURE:}
 
-1. PARITY SYMMETRY:
+$\bullet Hamiltonian separates into even and odd sectors$ $\bullet Ground state: EVEN parity (only f\:2081, c\:2081\neq 0, c\:2082=0)$ $\bullet First excited: ODD parity (only f\:2082, c\:2081=0, c\:2082\neq 0)$
 
-$\bullet V(x) = g|x| is EVEN: V(-x) = V(x)$
-
-$\bullet \:27e8f\:2081|O|f\:2082\:27e9 = 0 for any even operator O$
-
-2. BLOCK-DIAGONAL STRUCTURE:
-
-$\bullet Hamiltonian separates into even and odd sectors$
-
-$\bullet Ground state: EVEN parity (only f\:2081, c\:2081\neq 0, c\:2082=0)$
-
-$\bullet First excited: ODD parity (only f\:2082, c\:2081=0, c\:2082\neq 0)$
-
-3. ACCURACY OF RAYLEIGH-RITZ:
+\subsection*{3. ACCURACY OF RAYLEIGH-RITZ:}
 
 $\bullet Ground state error: 
 61.55
-%$
-
-$\bullet Excited state error: 
+%$ $\bullet Excited state error: 
 43.79
-%$
+%$ $\bullet Excellent for only 2 basis functions!$ $\bullet RR method provides UPPER BOUNDS to true energies$
 
-$\bullet Excellent for only 2 basis functions!$
+\subsection*{4. VARIATIONAL PRINCIPLE VERIFICATION:}
 
-$\bullet RR method provides UPPER BOUNDS to true energies$
+$\bullet E\:2081(RR) \geq E\:2081(exact)?$ $\bullet E\:2082(RR) \geq E\:2082(exact)?$ $\bullet Approximate energies are indeed upper bounds \checkmark$
 
-4. VARIATIONAL PRINCIPLE VERIFICATION:
+\subsection*{5. PHYSICAL INTERPRETATION:}
 
-$\bullet E\:2081(RR) \geq E\:2081(exact)?$
+$\bullet Linear potential g|x| is a 'V-shaped' well$ $\bullet With g = \hbar^{2}/(ma) = 1, length scale set by a = 1$ $\bullet Ground state: concentrated near x = 0, no nodes$ $\bullet Excited state: has node at x = 0 (odd parity)$
 
-$\bullet E\:2082(RR) \geq E\:2082(exact)?$
+\subsection*{6. WHY THE METHOD WORKS WELL:}
 
-$\bullet Approximate energies are indeed upper bounds \checkmark$
+$\bullet Parity structure exactly preserved$ $\bullet Variational freedom via linear combinations$
 
-5. PHYSICAL INTERPRETATION:
+\section*{Figures}
 
-$\bullet Linear potential g|x| is a 'V-shaped' well$
+% The notebook contains 3 figures.
+% To include them, export the graphics from Mathematica using:
+%   Export["figure_N.png", graphicsObject]
+% Then place the PNG files in the HW 8-1 pb 5-all_figures/ directory.
 
-$\bullet With g = \hbar^{2}/(ma) = 1, length scale set by a = 1$
+\begin{figure}[H]
+\centering
+% TODO: Export figure from Mathematica
+\includegraphics[width=0.7\textwidth]{HW 8-1 pb 5-all_figures/figure_1.png}
+\caption{Figure 1}
+\label{fig:1}
+\end{figure}
 
-$\bullet Ground state: concentrated near x = 0, no nodes$
+\begin{figure}[H]
+\centering
+% TODO: Export figure from Mathematica
+\includegraphics[width=0.7\textwidth]{HW 8-1 pb 5-all_figures/figure_2.png}
+\caption{Figure 2}
+\label{fig:2}
+\end{figure}
 
-$\bullet Excited state: has node at x = 0 (odd parity)$
-
-6. WHY THE METHOD WORKS WELL:
-
-$\bullet Parity structure exactly preserved$
-
-$\bullet Variational freedom via linear combinations$
+\begin{figure}[H]
+\centering
+% TODO: Export figure from Mathematica
+\includegraphics[width=0.7\textwidth]{HW 8-1 pb 5-all_figures/figure_3.png}
+\caption{Figure 3}
+\label{fig:3}
+\end{figure}
 
 \end{document}
