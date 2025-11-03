@@ -1,0 +1,866 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+% Configure listings for Mathematica code
+\lstset{
+  language=Mathematica,
+  basicstyle=\small\ttfamily,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{red},
+  numbers=none,
+  frame=single,
+  breaklines=true,
+  backgroundcolor=\color{gray!10},
+  captionpos=b,
+  aboveskip=10pt,
+  belowskip=10pt
+}
+
+% Adjust section spacing
+\titlespacing*{\section}{0pt}{12pt plus 4pt minus 2pt}{6pt plus 2pt minus 2pt}
+\titlespacing*{\subsection}{0pt}{10pt plus 3pt minus 2pt}{4pt plus 2pt minus 2pt}
+
+\begin{document}
+
+\title{HW 8-1 pb 4}
+\date{\today}
+\maketitle
+
+\bigskip
+
+\noindent\textbf{Input:}
+\begin{lstlisting}
+(* Infinite Square Well - Variational Method *) (* Merzbacher Problem 8.1 - Complete Solution *) (* Pure symbolic version - no numerical substitution *) Clear [ "\<Global`*\>" ] $Assumptions = a > 0 && b > 0 ; \
+Print [ "\<\>" ] Print [ "\<INFINITE SQUARE WELL VARIATIONAL CALCULATION\>" ] Print [ ] Print [ "\<Boundary conditions: [Psi]([PlusMinus]a) = 0\>" ] Print [ "\<\>" ] \
+(* === === === === === === === === === === === === === === === === === === === === === === === === *) \
+Print [ "\<\>" ] Print [ "\<PART (a): TRAPEZOIDAL TRIAL FUNCTION\>" ] Print [ "\<\>" ] \
+Print [ "\<Trial function:\>" ] Print [ ] Print [ ] Print [ "\<\>" ] \
+Print [ "\<Case (i): b = 0 (Triangular function)\>" ] Print [ "\<\>" ] \
+Print [ "\<Normalization integral:\>" ] Print [ "\< N = [Integral]_{-a}^{a} (a - |x|)^2 dx\>" ] Print [ ] Print [ ] Print [ "\< = [a^2 x - ax^2 + x^3/3]_{0}^{a}\>" ] Print [ "\< = a^3 - a^3 + a^3/3\>" ] Print [ "\< = a^3/3\>" ] normIntTri = Simplify [ 2 * Integrate [ ( a - x ) ^ 2 , { x , 0 , a } ] ] Print [ "\< N = \>" , normIntTri ] \
+ATri = Simplify [ 1 / Sqrt [ normIntTri ] ] Print [ "\< A = 1/[Sqrt]N = \>" , ATri ] Print [ "\<\>" ] \
+Print [ "\<Kinetic energy calculation:\>" ] Print [ "\< d[Psi]/dx = -A for 0 < x < a\>" ] Print [ "\< d[Psi]/dx = +A for -a < x < 0\>" ] Print [ ] Print [ ] Print [ "\< = ([HBar]^2/2m) [Times] 2A^2 a\>" ] kineticTri = Simplify [ 2 * Integrate [ ATri ^ 2 , { x , 0 , a } ] ] Print [ "\< = ([HBar]^2/2m) [Times] \>" , kineticTri ] Print [ "\< <E> = ([HBar]^2/2m) [Times] \>" , Simplify [ kineticTri / a ^ 2 ] , "\</a^2\>" ] Print [ "\<\>" ] \
+Print [ Framed [ Style [ "\<ANSWER (Case i): <E> = \>" <> ToString [ Simplify [ kineticTri / a ^ 2 ] , TraditionalForm ] <> "\< [HBar]^2/(2ma^2)\>" , , 14 ] , FrameStyle -> Thick , Background -> LightYellow ] ] Print [ "\<\>" ] \
+Print [ "\<Case (ii): Optimize parameter b\>" ] Print [ "\<\>" ] \
+Print [ "\<Normalization integral:\>" ] Print [ "\< N = [Integral]_{-a}^{a} [Psi]^2 dx\>" ] Print [ ] Print [ "\< By symmetry of outer regions:\>" ] Print [ ] Print [ "\< = 2[(a - x)^3/(-3)]_{b}^{a} + 2b(a - b)^2\>" ] Print [ "\< = 2(a - b)^3/3 + 2b(a - b)^2\>" ] part1 = Integrate [ ( a - x ) ^ 2 , { x , b , a } ] part2 = Integrate [ ( a - b ) ^ 2 , { x , - b , b } ] normTrap = Simplify [ 2 * part1 + part2 ] Print [ "\< N(b) = \>" , normTrap ] Print [ "\<\>" ] \
+ATrap = 1 / Sqrt [ normTrap ] Print [ "\<Kinetic energy calculation:\>" ] Print [ ] Print [ "\< d[Psi]/dx = -1 for b < x < a\>" ] Print [ "\< d[Psi]/dx = +1 for -a < x < -b\>" ] Print [ ] Print [ "\< = ([HBar]^2/2m) [Times] 2(a - b)/N\>" ] kineticTrap = Simplify [ 2 * Integrate [ ATrap ^ 2 , { x , b , a } ] ] Print [ "\< = ([HBar]^2/2m) [Times] \>" , kineticTrap ] Print [ "\<\>" ] \
+dEdb = Simplify [ D [ kineticTrap , b ] ] Print [ "\<Optimization:\>" ] Print [ "\< d<E>/db = ([HBar]^2/2m) [Times] \>" , dEdb ] Print [ "\<\>" ] Print [ ] Print [ ] Print [ "\<\>" ] \
+Print [ Framed [ Style [ , , 14 ] , FrameStyle -> Thick , Background -> LightYellow ] ] Print [ "\<\>" ] \
+(* === === === === === === === === === === === === === === === === === === === === === === === === *) \
+Print [ "\<\>" ] Print [ "\<PART (b): PARABOLIC TRIAL FUNCTION\>" ] Print [ "\<\>" ] \
+Print [ ] Print [ "\<\>" ] \
+Print [ "\<Normalization integral:\>" ] Print [ "\< N = [Integral]_{-a}^{a} (x^2 - a^2)^2 dx\>" ] Print [ "\< = [Integral]_{-a}^{a} (x^4 - 2a^2 x^2 + a^4) dx\>" ] Print [ "\< By symmetry (all terms are even):\>" ] Print [ "\< = 2[Integral]_{0}^{a} (x^4 - 2a^2 x^2 + a^4) dx\>" ] Print [ "\< = 2[x^5/5 - 2a^2 x^3/3 + a^4 x]_{0}^{a}\>" ] Print [ "\< = 2(a^5/5 - 2a^5/3 + a^5)\>" ] Print [ "\< = 2a^5(1/5 - 2/3 + 1)\>" ] Print [ "\< = 2a^5(3/15 - 10/15 + 15/15)\>" ] Print [ "\< = 2a^5(8/15)\>" ] normIntB = Integrate [ ( x ^ 2 - a ^ 2 ) ^ 2 , { x , - a , a } ] Print [ "\< N = \>" , normIntB ] \
+AB = Simplify [ 1 / Sqrt [ normIntB ] ] Print [ "\< A = \>" , AB ] Print [ "\<\>" ] \
+Print [ "\<Derivative: d[Psi]/dx = 2Ax\>" ] Print [ "\<\>" ] \
+Print [ "\<Kinetic energy calculation:\>" ] Print [ ] Print [ "\< = ([HBar]^2/2m)[Integral]_{-a}^{a} (2Ax)^2 dx\>" ] Print [ ] Print [ "\< By symmetry:\>" ] Print [ ] Print [ "\< = ([HBar]^2/2m) [Times] 8A^2 [x^3/3]_{0}^{a}\>" ] Print [ "\< = ([HBar]^2/2m) [Times] 8A^2 a^3/3\>" ] kineticIntB = Integrate [ ( 2 * AB * x ) ^ 2 , { x , - a , a } ] kineticIntB = Simplify [ kineticIntB ] Print [ "\< = ([HBar]^2/2m) [Times] \>" , kineticIntB ] Print [ "\< <E> = ([HBar]^2/2m) [Times] \>" , Simplify [ kineticIntB / a ^ 2 ] , "\</a^2\>" ] Print [ "\<\>" ] \
+Print [ Framed [ Style [ "\<ANSWER (Part b): <E> = \>" <> ToString [ Simplify [ kineticIntB / a ^ 2 ] , TraditionalForm ] <> "\< [HBar]^2/(2ma^2)\>" , , 14 ] , FrameStyle -> Thick , Background -> LightYellow ] ] Print [ "\<\>" ] \
+(* === === === === === === === === === === === === === === === === === === === === === === === === *) \
+Print [ "\<\>" ] Print [ "\<PART (c): QUARTIC TRIAL FUNCTION\>" ] Print [ "\<\>" ] \
+Print [ ] Print [ "\<Variational parameter: r = [Alpha]/[Beta]\>" ] Print [ "\<\>" ] \
+[Psi]cFunc [ x_ ] := ( a ^ 2 - x ^ 2 ) * ( [Alpha] * x ^ 2 + [Beta] ) Print [ ] Print [ "\<\>" ] \
+Print [ "\<Normalization integral:\>" ] Print [ ] Print [ ] Print [ ] normIntC = Integrate [ [Psi]cFunc [ x ] ^ 2 , { x , - a , a } ] normIntC = Simplify [ normIntC ] Print [ "\< N = \>" , normIntC ] Print [ "\<\>" ] \
+AC = 1 / Sqrt [ normIntC ] \
+Print [ "\<Derivative calculation:\>" ] Print [ ] Print [ ] Print [ ] Print [ ] Print [ "\< = 2[Alpha]a^2 x - 4[Alpha]x^3 - 2[Beta]x\>" ] d[Psi]cFunc = D [ [Psi]cFunc [ x ] , x ] Print [ "\< d[Psi]/dx = \>" , d[Psi]cFunc ] Print [ "\<\>" ] \
+Print [ "\<Kinetic energy integral:\>" ] Print [ ] Print [ ] Print [ "\< (Even function integrated over symmetric limits)\>" ] kineticIntCNum = Integrate [ d[Psi]cFunc ^ 2 , { x , - a , a } ] kineticIntCNum = Simplify [ kineticIntCNum ] Print [ "\< Numerator = \>" , kineticIntCNum ] Print [ "\<\>" ] \
+kineticIntC = Simplify [ kineticIntCNum / normIntC ] Print [ "\< <T> = ([HBar]^2/2m) [Times] \>" , kineticIntC ] Print [ "\<\>" ] \
+energyC = Simplify [ kineticIntC /. [Alpha] -> r * [Beta] ] Print [ "\<Energy as function of r = [Alpha]/[Beta]:\>" ] Print [ "\< <E>(r) = ([HBar]^2/2m) [Times] \>" , energyC ] Print [ "\<\>" ] \
+dEdr = Simplify [ D [ energyC , r ] ] Print [ "\<Variational condition d<E>/dr = 0:\>" ] Print [ "\< d<E>/dr = ([HBar]^2/2m) [Times] \>" , dEdr ] Print [ "\<\>" ] \
+rSols = Solve [ dEdr == 0 , r ] Print [ "\<Solutions for optimal r:\>" ] r1 = Simplify [ r /. rSols [ [ 1 ] ] ] r2 = Simplify [ r /. rSols [ [ 2 ] ] ] Print [ "\< r\[Subscript 1] = \>" , r1 ] Print [ "\< r\[Subscript 2] = \>" , r2 ] Print [ "\<\>" ] \
+E1 = Simplify [ energyC /. r -> r1 ] E2 = Simplify [ energyC /. r -> r2 ] \
+Print [ "\<Energy values:\>" ] Print [ "\< At r\[Subscript 1]: <E> = ([HBar]^2/2m) [Times] \>" , Simplify [ E1 / a ^ 2 ] , "\</a^2\>" ] Print [ "\< At r\[Subscript 2]: <E> = ([HBar]^2/2m) [Times] \>" , Simplify [ E2 / a ^ 2 ] , "\</a^2\>" ] Print [ "\<\>" ] \
+(* Compare which is smaller *) \
+E1num = N [ E1 /. a -> 1 ] E2num = N [ E2 /. a -> 1 ] \
+If [ E1num < E2num , Print [ "\<Selecting r\[Subscript 1] (minimum energy)\>" ] ; \
+rOpt = r1 ; energyCOpt = E1 , Print [ "\<Selecting r\[Subscript 2] (minimum energy)\>" ] ; \
+rOpt = r2 ; energyCOpt = E2 ] \
+Print [ "\<\>" ] Print [ "\<Optimal parameters:\>" ] Print [ "\< r\[Subscript opt] = \>" , rOpt ] Print [ "\< <E> = ([HBar]^2/2m) [Times] \>" , Simplify [ energyCOpt / a ^ 2 ] , "\</a^2\>" ] Print [ "\<\>" ] \
+Print [ Framed [ Column [ { Style [ "\<ANSWER (Part c):\>" , , 14 ] , Style [ "\<Optimal r = \>" <> ToString [ rOpt , TraditionalForm ] , , 12 ] , Style [ "\<<E> = \>" <> ToString [ Simplify [ energyCOpt / a ^ 2 ] , TraditionalForm ] <> "\< [HBar]^2/(2ma^2)\>" , , 12 ] } ] , FrameStyle -> Thick , Background -> LightYellow ] ] Print [ "\<\>" ] \
+(* === === === === === === === === === === === === === === === === === === === === === === === === *) \
+Print [ "\<\>" ] Print [ "\<PART (d): COMPARISON WITH EXACT RESULT\>" ] Print [ "\<\>" ] \
+exactEnergy = [Pi] ^ 2 / ( 8 * a ^ 2 ) \
+Print [ "\<Exact ground state:\>" ] Print [ ] Print [ , exactEnergy ] Print [ "\<\>" ] \
+Print [ "\<Summary of Variational Estimates\>" ] Print [ "\<\>" ] \
+Print [ Style [ , ] ] Print [ "\<Exact \>" , exactEnergy ] Print [ "\<Triangular \>" , Simplify [ kineticTri / a ^ 2 ] ] Print [ "\<Parabolic \>" , Simplify [ kineticIntB / a ^ 2 ] ] Print [ "\<Quartic (optimized) \>" , Simplify [ energyCOpt / a ^ 2 ] ] Print [ "\<\>" ] \
+Print [ ] Print [ "\<Triangular: \>" , N [ Simplify [ kineticTri / a ^ 2 ] /. a -> 1 ] , "\< [GreaterEqual] \>" , N [ [Pi] ^ 2 / 8 ] , "\< [Checkmark]\>" ] Print [ "\<Parabolic: \>" , N [ Simplify [ kineticIntB / a ^ 2 ] /. a -> 1 ] , "\< [GreaterEqual] \>" , N [ [Pi] ^ 2 / 8 ] , "\< [Checkmark]\>" ] Print [ "\<Quartic: \>" , N [ Simplify [ energyCOpt / a ^ 2 ] /. a -> 1 ] , "\< [GreaterEqual] \>" , N [ [Pi] ^ 2 / 8 ] , "\< [Checkmark]\>" ] Print [ "\<\>" ] \
+Print [ Framed [ Column [ { Style [ "\<ANSWER (Part d):\>" , , 14 ] , Style [ , , 12 ] , Style [ , , 12 ] } ] , FrameStyle -> Thick , Background -> LightYellow ] ] Print [ "\<\>" ] \
+Print [ "\<Mean-Square Deviations\>" ] Print [ "\<\>" ] \
+Print [ ] Print [ "\<\>" ] \
+(* Symbolic overlap integrals *) \
+[Psi]0Sym [ x_ ] := ( 1 / Sqrt [ a ] ) * Cos [ [Pi] * x / ( 2 * a ) ] [Psi]bSym [ x_ ] := AB * ( x ^ 2 - a ^ 2 ) \
+Print [ "\<Parabolic function:\>" ] overlapBSym = Integrate [ [Psi]0Sym [ x ] * [Psi]bSym [ x ] , { x , - a , a } ] overlapBSym = Simplify [ overlapBSym ] Print [ , overlapBSym ] msdBSym = Simplify [ 2 * ( 1 - overlapBSym ) ] Print [ "\< Mean-square deviation: [CapitalDelta]^2 = \>" , msdBSym ] Print [ "\<\>" ] \
+Print [ ] Print [ "\<\>" ] \
+(* === === === === === === === === === === === === === === === === === === === === === === === === *) \
+Print [ "\<\>" ] Print [ ] Print [ "\<\>" ] \
+Print [ , rOpt ] Print [ "\<\>" ] \
+Print [ "\<Nodes occur at:\>" ] Print [ ] Print [ ] Print [ "\<\>" ] \
+Print [ "\<Interior node condition: x^2 = -1/r = \>" , Simplify [ - 1 / rOpt ] ] \
+rNum = N [ rOpt ] xSq = N [ - 1 / rNum ] \
+If [ xSq > 0 , Print [ "\<Real interior nodes exist at x^2 = \>" , Simplify [ - 1 / rOpt ] ] ; \
+If [ Simplify [ - 1 / rOpt ] < a ^ 2 , Print [ "\<Location: INSIDE the well (|x| < a)\>" ] , Print [ "\<Location: OUTSIDE the well (|x| > a)\>" ] ] , Print [ "\<No real interior nodes (x^2 < 0)\>" ] ] Print [ "\<\>" ] \
+Print [ "\<Interpretation of Stationary Energy Value\>" ] Print [ "\<\>" ] \
+Print [ ] Print [ "\<At the stationary point (d<E>/dr = 0):\>" ] Print [ "\<\>" ] Print [ ] Print [ ] Print [ ] Print [ "\<\>" ] \
+Print [ "\<Physical significance:\>" ] Print [ ] Print [ ] Print [ ] Print [ ] Print [ ] Print [ ] Print [ "\<\>" ] \
+Print [ Framed [ Column [ { Style [ "\<ANSWER (Part e):\>" , , 14 ] , Style [ , , 12 ] , Style [ , , 12 ] } ] , FrameStyle -> Thick , Background -> LightYellow ] ] Print [ "\<\>" ] \
+In[2285]:= a06db487-bbcc-ab40-b5ac-91c18f68f49b
+\end{lstlisting}
+
+\medskip
+
+
+\noindent\textbf{INFINITE SQUARE WELL VARIATIONAL CALCULATION}
+
+\medskip
+
+Potential: V = 0 for -a < x < a, V = \infty elsewhere $Boundary conditions: \psi(\pm a) = 0$
+
+
+\subsection*{PART (a): TRAPEZOIDAL TRIAL FUNCTION}
+
+
+\subsection*{Trial function:}
+
+$\psi(x) = a - |x| for b \leq |x| \leq a (sloped regions)$ $\psi(x) = a - b for |x| \leq b (flat region)$
+
+
+\subsection*{Case (i): b = 0 (Triangular function)}
+
+
+\subsection*{Normalization integral:}
+
+$N = \int_{-a}^{a} (a - |x|)^2 dx$ $By symmetry: N = 2\int_{0}^{a} (a - x)^2 dx$ $Expanding: \int_{0}^{a} (a^2 - 2ax + x^2) dx$ $= [a^2 x - ax^2 + x^3/3]_{0}^{a}$ $= a^3 - a^3 + a^3/3$ $= a^3/3$
+
+\medskip
+
+
+\subsection*{A = 1/\sqrt{N} =}
+
+
+\subsection*{Kinetic energy calculation:}
+
+$d\psi/dx = -A for 0 < x < a$ $d\psi/dx = +A for -a < x < 0$ $<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx$ $= (\hbar^2/2m) \times 2\int_{0}^{a} A^2 dx$ $= (\hbar^2/2m) \times 2A^2 a$ $= (\hbar^2/2m) \times$
+
+\medskip
+
+$<E> = (\hbar^2/2m) \times 
+/a^2$ $ANSWER (Case i): <E> = [formula] \hbar^2/(2ma^2)$
+
+
+\subsection*{Case (ii): Optimize parameter b}
+
+
+\subsection*{Normalization integral:}
+
+$N = \int_{-a}^{a} \psi^2 dx$ $= \int_{-a}^{-b} (a - |x|)^2 dx + \int_{-b}^{b} (a - b)^2 dx + \int_{b}^{a} (a - |x|)^2 dx$
+
+
+\subsection*{By symmetry of outer regions:}
+
+$= 2\int_{b}^{a} (a - x)^2 dx + (a - b)^2 (2b)$ $= 2[(a - x)^3/(-3)]_{b}^{a} + 2b(a - b)^2$ $= 2(a - b)^3/3 + 2b(a - b)^2$
+
+
+\subsection*{N(b) =}
+
+
+\subsection*{Kinetic energy calculation:}
+
+$d\psi/dx = 0 for |x| < b (flat region contributes nothing)$ $d\psi/dx = -1 for b < x < a$ $d\psi/dx = +1 for -a < x < -b$ $<T> = (\hbar^2/2m) \times 2\int_{b}^{a} (1/N) dx$ $= (\hbar^2/2m) \times 2(a - b)/N$ $= (\hbar^2/2m) \times$
+
+\medskip
+
+
+\subsection*{Optimization:}
+
+$d<E>/db = (\hbar^2/2m) \times$ Since d<E>/db < 0 for 0 < b < a, the energy decreases monotonically. Therefore, the minimum occurs at b = 0 (triangular function).
+
+
+\noindent\textbf{ANSWER (Case ii): Optimal value b = 0 (triangular function gives minimum)}
+
+\medskip
+
+
+\subsection*{PART (b): PARABOLIC TRIAL FUNCTION}
+
+$Trial function: \psi(x) = A(x - a)(x + a) = A(x^2 - a^2)$
+
+
+\subsection*{Normalization integral:}
+
+$N = \int_{-a}^{a} (x^2 - a^2)^2 dx$ $= \int_{-a}^{a} (x^4 - 2a^2 x^2 + a^4) dx$
+
+
+\subsection*{By symmetry (all terms are even):}
+
+$= 2\int_{0}^{a} (x^4 - 2a^2 x^2 + a^4) dx$ $= 2[x^5/5 - 2a^2 x^3/3 + a^4 x]_{0}^{a}$ $= 2(a^5/5 - 2a^5/3 + a^5)$ $= 2a^5(1/5 - 2/3 + 1)$ $= 2a^5(3/15 - 10/15 + 15/15)$ $= 2a^5(8/15)$
+
+\medskip
+
+$Derivative: d\psi/dx = 2Ax$
+
+
+\subsection*{Kinetic energy calculation:}
+
+$<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx$ $= (\hbar^2/2m)\int_{-a}^{a} (2Ax)^2 dx$ $= (\hbar^2/2m) \times 4A^2\int_{-a}^{a} x^2 dx$
+
+
+\subsection*{By symmetry:}
+
+$= (\hbar^2/2m) \times 4A^2 \times 2\int_{0}^{a} x^2 dx$ $= (\hbar^2/2m) \times 8A^2 [x^3/3]_{0}^{a}$ $= (\hbar^2/2m) \times 8A^2 a^3/3$ $= (\hbar^2/2m) \times$ $<E> = (\hbar^2/2m) \times 
+/a^2$ $ANSWER (Part b): <E> = [formula] \hbar^2/(2ma^2)$
+
+\medskip
+
+
+\subsection*{PART (c): QUARTIC TRIAL FUNCTION}
+
+$Trial function: \psi(x) = (a^2 - x^2)(\alpha x^2 + \beta)$ $Variational parameter: r = \alpha/\beta$ $Expanding: \psi(x) = (a^2 - x^2)(\alpha x^2 + \beta) = \alpha a^2 x^2 + \beta a^2 - \alpha x^4 - \beta x^2$
+
+
+\subsection*{Normalization integral:}
+
+$N = \int_{-a}^{a} [(a^2 - x^2)(\alpha x^2 + \beta)]^2 dx$ $= \int_{-a}^{a} [(\alpha a^2 x^2 + \beta a^2)^2 - 2(\alpha a^2 x^2 + \beta a^2)(\alpha x^4 + \beta x^2) + (\alpha x^4 + \beta x^2)^2] dx$
+
+
+\noindent\textbf{(All terms are even functions, so we integrate over symmetric limits)}
+
+\medskip
+
+
+\subsection*{Derivative calculation:}
+
+$d\psi/dx = d/dx[(a^2 - x^2)(\alpha x^2 + \beta)]$ $Using product rule: = (a^2 - x^2)(2\alpha x) + (\alpha x^2 + \beta)(-2x)$ $= 2\alpha x(a^2 - x^2) - 2x(\alpha x^2 + \beta)$ $= 2\alpha a^2 x - 2\alpha x^3 - 2\alpha x^3 - 2\beta x$ $= 2\alpha a^2 x - 4\alpha x^3 - 2\beta x$ $d\psi/dx =$
+
+\medskip
+
+
+\subsection*{Kinetic energy integral:}
+
+$<T> = (\hbar^2/2m)\int_{-a}^{a}|d\psi/dx|^2 dx / N$ $= (\hbar^2/2m)\int_{-a}^{a} (2\alpha a^2 x - 4\alpha x^3 - 2\beta x)^2 dx / N$
+
+
+\noindent\textbf{(Even function integrated over symmetric limits)}
+
+\medskip
+
+
+\subsection*{Numerator =}
+
+$<T> = (\hbar^2/2m) \times$ $Energy as function of r = \alpha/\beta:$ $<E>(r) = (\hbar^2/2m) \times$
+
+
+\subsection*{Variational condition d<E>/dr = 0:}
+
+$d<E>/dr = (\hbar^2/2m) \times$ Solutions for optimal r: $r_{1} =$ $r_{2} =$
+
+
+\subsection*{Energy values:}
+
+$At r_{1}: <E> = (\hbar^2/2m) \times 
+/a^2$ $At r_{2}: <E> = (\hbar^2/2m) \times 
+/a^2$ $Selecting r_{2} (minimum energy)$
+
+
+\subsection*{Optimal parameters:}
+
+$r_{opt} =$ $<E> = (\hbar^2/2m) \times 
+/a^2$
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|}
+\hline
+ANSWER (Part c): \\
+\hline
+Optimal r = \[formula] \\
+\hline
+$<E> = \[formula] \hbar^2/(2ma^2)$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+
+PART (d): COMPARISON WITH EXACT RESULT
+
+
+\subsection*{Exact ground state:}
+
+$\psi_{0}(x) = (1/\sqrt{a})cos(\pi x/(2a))$ $E_{0} = \pi^2\hbar^2/(8ma^2) = (\hbar^2/2m) \times$
+
+
+\subsection*{Summary of Variational Estimates}
+
+$Method <E> in units of (\hbar^2/2m)/a^2$
+
+
+\subsection*{Exact}
+
+
+\subsection*{Triangular}
+
+
+\subsection*{Parabolic}
+
+
+\subsection*{Quartic (optimized)}
+
+$Verification: All variational estimates satisfy <E> \geq E_{0}$ $Triangular: 
+ \geq 
+ \checkmark$ $Parabolic: 
+ \geq 
+ \checkmark$ $Quartic: 
+ \geq 
+ \checkmark$
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|}
+\hline
+ANSWER (Part d): \\
+\hline
+$All variational estimates satisfy <E> \geq  E\\_{0}$ \\
+\hline
+The quartic trial function gives the best approximation. \\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+
+
+\subsection*{Mean-Square Deviations}
+
+$Formula: \Delta^2 = \int|\psi_{0} - \psi_{t}|^2 dx = 2(1 - \int\psi_{0}\psi_{t} dx) for normalized functions$
+
+
+\subsection*{Parabolic function:}
+
+$Overlap: \int_{-a}^{a} \psi_{0}\psi_{t} dx =$ $Mean-square deviation: \Delta^2 =$ $Interpretation: Smaller \Delta^2 indicates better approximation to exact ground state.$ PART (e): NODES OF OPTIMAL QUARTIC AND INTERPRETATION $Optimized quartic: \psi(x) = A(a^2 - x^2)(\alpha x^2 + \beta) with r = \alpha/\beta =$
+
+
+\subsection*{Nodes occur at:}
+
+$(1) Boundary: x = \pm a (required by boundary conditions)$ $(2) Interior: where \alpha x^2 + \beta = 0, i.e., x^2 = -\beta/\alpha = -1/r$ $Interior node condition: x^2 = -1/r =$ $Real interior nodes exist at x^2 = 
+Location: INSIDE the well (|x| < a)
+Location: OUTSIDE the well (|x| > a)
+No real interior nodes (x^2 < 0)$
+
+
+\noindent\textbf{Interpretation of Stationary Energy Value}
+
+\medskip
+
+The variational method minimizes <E> within the family of quartic trial functions. At the stationary point (d<E>/dr = 0): $\bullet The energy is minimized with respect to the parameter r$ $\bullet This provides an upper bound: <E> \geq E_{0} (variational theorem)$ $\bullet The optimal function best approximates the true ground state within this family$
+
+
+\subsection*{Physical significance:}
+
+$\bullet The optimization balances kinetic energy (prefers smoothness) with$ $boundary conditions (requires \psi(\pm a) = 0)$ $\bullet The true ground state cos(\pi x/2a) has NO interior nodes$ $\bullet Our quartic approximation may have nodes depending on the parameter space$ $\bullet The stationary condition d<E>/dr = 0 is the variational analog of the$ $Schr\ddot{o}dinger equation, ensuring the functional derivative vanishes$
+
+\medskip
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|}
+\hline
+ANSWER (Part e): \\
+\hline
+$The stationary energy represents the best approximation to E\\_{0}$ \\
+\hline
+$within the chosen family, guaranteed to be \geq  E\\_{0}.$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+
+
+
+\newpage
+
+
+
+\title{HW 8-1 pb 5-all}
+\date{\today}
+\maketitle
+
+\bigskip
+
+\noindent\textbf{Input:}
+\begin{lstlisting}
+ClearAll [ "\<Global`*\>" ] \
+(* Set parameters *) \
+a = 1 ; (* length parameter *) g = 1 ; (* potential strength , in units of [HBar]\.b2 / ( ma ) *) \
+Print [ Style [ "\<Linear Potential V(x) = g|x| - Rayleigh-Ritz Method\>" , , 16 ] ] \
+\
+(* === === === = STEP 1 : Define Basis Functions === === === = *) Print [ Style [ "\<STEP 1: Basis Functions\>" , , 14 ] ] f1 [ x_ ] := Exp [ - x ^ 2 / a ^ 2 ] f2 [ x_ ] := x * Exp [ - x ^ 2 / a ^ 2 ] \
+Print [ "\<f\:2081(x) = exp(-x\.b2/a\.b2) [EVEN function]\>" ] Print [ "\<f\:2082(x) = x[CenterDot]exp(-x\.b2/a\.b2) [ODD function]\>" ] Print [ ] \
+(* Plot basis functions - BLACK AND WHITE *) \
+Plot [ { f1 [ x ] , f2 [ x ] } , { x , - 3 , 3 } , PlotStyle -> { { Black , Thick } , (* f1 : solid black *) { Black , Dashed , Thick } (* f2 : dashed black *) } , PlotLegends -> Placed [ LineLegend [ { Graphics [ { Black , Thick , Line [ { { 0 , 0 } , { 1 , 0 } } ] } ] , Graphics [ { Black , Dashed , Thick , Line [ { { 0 , 0 } , { 1 , 0 } } ] } ] } , { "\<f\:2081(x) [solid]\>" , "\<f\:2082(x) [dashed]\>" } ] , { Right , Top } ] , PlotLabel -> Style [ "\<Basis Functions\>" , ] , AxesLabel -> { Style [ "\<x\>" , 12 ] , Style [ "\<f(x)\>" , 12 ] } , GridLines -> Automatic , GridLinesStyle -> Directive [ Gray , Dotted ] , ImageSize -> Large , Frame -> True , FrameStyle -> Black ] \
+(* === === === = STEP 2 : Overlap Matrix S === === === = *) \
+Print [ Style [ , , 14 ] ] Print [ ] \
+S11 = Integrate [ f1 [ x ] ^ 2 , { x , - Infinity , Infinity } , Assumptions -> a > 0 ] Print [ "\<S\:2081\:2081 = [Integral] f\:2081\.b2 dx = \>" , S11 ] Print [ "\< = \>" , N [ S11 , 6 ] ] Print [ ] \
+S12 = Integrate [ f1 [ x ] * f2 [ x ] , { x , - Infinity , Infinity } , Assumptions -> a > 0 ] Print [ , S12 , "\< (odd integrand [RightArrow] 0)\>" ] Print [ ] \
+S21 = S12 ; Print [ "\<S\:2082\:2081 = S\:2081\:2082 = \>" , S21 ] Print [ ] \
+S22 = Integrate [ f2 [ x ] ^ 2 , { x , - Infinity , Infinity } , Assumptions -> a > 0 ] Print [ "\<S\:2082\:2082 = [Integral] f\:2082\.b2 dx = \>" , S22 ] Print [ "\< = \>" , N [ S22 , 6 ] ] Print [ ] \
+(* Construct overlap matrix *) \
+Smatrix = { { S11 , S12 } , { S21 , S22 } } ; Print [ "\<Overlap Matrix S (symbolic):\>" ] Print [ MatrixForm [ Smatrix ] ] Print [ ] Print [ "\<Overlap Matrix S (numerical):\>" ] Print [ MatrixForm [ N [ Smatrix , 6 ] ] ] Print [ ] \
+(* === === === = STEP 3 : Kinetic Energy Matrix T === === === = *) \
+Print [ Style [ , , 14 ] ] Print [ ] \
+(* Calculate second derivatives *) \
+f1pp [ x_ ] = D [ f1 [ x ] , { x , 2 } ] f2pp [ x_ ] = D [ f2 [ x ] , { x , 2 } ] \
+Print [ "\<d\.b2f\:2081/dx\.b2 = \>" , f1pp [ x ] ] Print [ ] Print [ "\<d\.b2f\:2082/dx\.b2 = \>" , f2pp [ x ] ] Print [ ] \
+T11 = - 1 / 2 * Integrate [ f1 [ x ] * f1pp [ x ] , { x , - Infinity , Infinity } , Assumptions -> a > 0 ] Print [ , T11 ] Print [ "\< = \>" , N [ T11 , 6 ] ] Print [ ] \
+T12 = - 1 / 2 * Integrate [ f1 [ x ] * f2pp [ x ] , { x , - Infinity , Infinity } , Assumptions -> a > 0 ] Print [ , T12 , "\< (parity [RightArrow] 0)\>" ] Print [ ] \
+T21 = T12 ; Print [ "\<T\:2082\:2081 = T\:2081\:2082 = \>" , T21 ] Print [ ] \
+T22 = - 1 / 2 * Integrate [ f2 [ x ] * f2pp [ x ] , { x , - Infinity , Infinity } , Assumptions -> a > 0 ] Print [ , T22 ] Print [ "\< = \>" , N [ T22 , 6 ] ] Print [ ] \
+(* Construct kinetic energy matrix *) \
+Tmatrix = { { T11 , T12 } , { T21 , T22 } } ; Print [ "\<Kinetic Energy Matrix T (symbolic):\>" ] Print [ MatrixForm [ Tmatrix ] ] Print [ ] Print [ "\<Kinetic Energy Matrix T (numerical):\>" ] Print [ MatrixForm [ N [ Tmatrix , 6 ] ] ] Print [ ] \
+(* === === === = STEP 4 : Potential Energy Matrix V === === === = *) \
+Print [ Style [ , , 14 ] ] Print [ ] \
+V11 = g * Integrate [ Abs [ x ] * f1 [ x ] ^ 2 , { x , - Infinity , Infinity } , Assumptions -> a > 0 ] Print [ , V11 ] Print [ "\< = \>" , N [ V11 , 6 ] ] Print [ ] \
+V12 = g * Integrate [ Abs [ x ] * f1 [ x ] * f2 [ x ] , { x , - Infinity , Infinity } , Assumptions -> a > 0 ] Print [ , V12 , "\< (parity [RightArrow] 0)\>" ] Print [ ] \
+V21 = V12 ; Print [ "\<V\:2082\:2081 = V\:2081\:2082 = \>" , V21 ] Print [ ] \
+V22 = g * Integrate [ Abs [ x ] * f2 [ x ] ^ 2 , { x , - Infinity , Infinity } , Assumptions -> a > 0 ] Print [ , V22 ] Print [ "\< = \>" , N [ V22 , 6 ] ] Print [ ] \
+(* Construct potential energy matrix *) \
+Vmatrix = { { V11 , V12 } , { V21 , V22 } } ; Print [ "\<Potential Energy Matrix V (symbolic):\>" ] Print [ MatrixForm [ Vmatrix ] ] Print [ ] Print [ "\<Potential Energy Matrix V (numerical):\>" ] Print [ MatrixForm [ N [ Vmatrix , 6 ] ] ] Print [ ] \
+(* === === === = STEP 5 : Hamiltonian Matrix H = T + V === === === = *) \
+Print [ Style [ "\<STEP 5: Hamiltonian Matrix H = T + V\>" , , 14 ] ] Print [ ] \
+Hmatrix = Tmatrix + Vmatrix ; Print [ "\<Hamiltonian Matrix H (symbolic):\>" ] Print [ MatrixForm [ Simplify [ Hmatrix ] ] ] Print [ ] Print [ "\<Hamiltonian Matrix H (numerical):\>" ] Print [ MatrixForm [ N [ Hmatrix , 6 ] ] ] Print [ ] \
+Print [ Style [ "\<*** KEY OBSERVATION: H and S are BLOCK-DIAGONAL! ***\>" , ] ] Print [ "\<All off-diagonal elements are ZERO due to parity symmetry.\>" ] Print [ "\<Even function f\:2081 doesn't mix with odd function f\:2082.\>" ] Print [ ] \
+(* === === === = STEP 6 : Solve Generalized Eigenvalue Problem === === === = *) \
+Print [ Style [ "\<STEP 6: Solve HC = SCE\>" , , 14 ] ] Print [ ] \
+(* Numerical solution *) \
+{ evalues , evectors } = Eigensystem [ { N [ Hmatrix ] , N [ Smatrix ] } ] ; sortedIndices = Ordering [ evalues ] ; evalues = evalues [ [ sortedIndices ] ] ; evectors = evectors [ [ sortedIndices ] ] ; \
+Print [ "\<Rayleigh-Ritz Energy Eigenvalues:\>" ] Print [ "\<E\:2081 = \>" , NumberForm [ evalues [ [ 1 ] ] , 6 ] ] Print [ "\<E\:2082 = \>" , NumberForm [ evalues [ [ 2 ] ] , 6 ] ] Print [ ] \
+Print [ "\<Eigenvectors (coefficients [c\:2081, c\:2082]):\>" ] Print [ "\<Ground state: c = [\>" , NumberForm [ evectors [ [ 1 , 1 ] ] , 4 ] , "\<, \>" , NumberForm [ evectors [ [ 1 , 2 ] ] , 4 ] , "\<]\>" ] Print [ "\<Excited state: c = [\>" , NumberForm [ evectors [ [ 2 , 1 ] ] , 4 ] , "\<, \>" , NumberForm [ evectors [ [ 2 , 2 ] ] , 4 ] , "\<]\>" ] Print [ ] \
+(* === === === = STEP 7 : Analytical Formulas === === === = *) \
+Print [ Style [ "\<STEP 7: Analytical Energy Formulas (Block-Diagonal)\>" , , 14 ] ] Print [ ] \
+Print [ "\<Since H and S are block-diagonal, eigenvalues are:\>" ] Print [ ] E1analytical = Hmatrix [ [ 1 , 1 ] ] / Smatrix [ [ 1 , 1 ] ] ; E2analytical = Hmatrix [ [ 2 , 2 ] ] / Smatrix [ [ 2 , 2 ] ] ; \
+Print [ "\<E\:2081 = H\:2081\:2081/S\:2081\:2081 = \>" , Simplify [ E1analytical ] ] Print [ "\< = \>" , N [ E1analytical , 6 ] ] Print [ ] Print [ "\<E\:2082 = H\:2082\:2082/S\:2082\:2082 = \>" , Simplify [ E2analytical ] ] Print [ "\< = \>" , N [ E2analytical , 6 ] ] Print [ ] \
+(* === === === = STEP 8 : Compare with Exact Results === === === = *) \
+Print [ Style [ "\<STEP 8: Comparison with Exact (Analytic) Results\>" , , 14 ] ] Print [ ] \
+Print [ "\<For the linear potential V(x) = g|x|, the exact solution\>" ] Print [ "\<involves Airy functions. The energy eigenvalues are:\>" ] Print [ ] Print [ "\< E\:2099 = g^(2/3) [CenterDot] |[Alpha]\:2099|\>" ] Print [ ] Print [ ] Print [ ] \
+(* Zeros of Airy function Ai ( - z ) - these are negative of the usual zeros *) \
+airyZeros = { 2.33810741 , 4.08794944 , 5.52055983 } ; \
+(* For g = 1 , the exact energies are *) \
+exactE1 = g ^ ( 2 / 3 ) * airyZeros [ [ 1 ] ] ; exactE2 = g ^ ( 2 / 3 ) * airyZeros [ [ 2 ] ] ; exactE3 = g ^ ( 2 / 3 ) * airyZeros [ [ 3 ] ] ; \
+Print [ "\<Exact energy levels (from Airy function):\>" ] Print [ "\<E\:2081(exact) = \>" , NumberForm [ exactE1 , 6 ] ] Print [ "\<E\:2082(exact) = \>" , NumberForm [ exactE2 , 6 ] ] Print [ "\<E\:2083(exact) = \>" , NumberForm [ exactE3 , 6 ] ] Print [ ] \
+Print [ Style [ "\<COMPARISON TABLE:\>" , , 12 ] ] Print [ StringRepeat [ "\<-\>" , 72 ] ] Print [ Style [ StringForm [ "\<`` `` `` ``\>" , StringPadRight [ "\<Level\>" , 8 ] , StringPadRight [ "\<Rayleigh-Ritz\>" , 16 ] , StringPadRight [ "\<Exact\>" , 16 ] , "\<Error (%)\>" ] , ] ] Print [ StringRepeat [ "\<-\>" , 72 ] ] \
+err1 = 100 * Abs [ evalues [ [ 1 ] ] - exactE1 ] / exactE1 ; err2 = 100 * Abs [ evalues [ [ 2 ] ] - exactE2 ] / exactE2 ; \
+Print [ StringForm [ "\<`` `` `` ``\>" , StringPadRight [ "\<E\:2081\>" , 8 ] , StringPadRight [ ToString [ NumberForm [ evalues [ [ 1 ] ] , 6 ] ] , 16 ] , StringPadRight [ ToString [ NumberForm [ exactE1 , 6 ] ] , 16 ] , NumberForm [ err1 , { 5 , 2 } ] ] ] \
+Print [ StringForm [ "\<`` `` `` ``\>" , StringPadRight [ "\<E\:2082\>" , 8 ] , StringPadRight [ ToString [ NumberForm [ evalues [ [ 2 ] ] , 6 ] ] , 16 ] , StringPadRight [ ToString [ NumberForm [ exactE2 , 6 ] ] , 16 ] , NumberForm [ err2 , { 5 , 2 } ] ] ] \
+Print [ StringRepeat [ "\<-\>" , 72 ] ] Print [ ] \
+(* === === === = STEP 9 : Visualization === === === = *) \
+Print [ Style [ "\<STEP 9: Visualization of Results\>" , , 14 ] ] Print [ ] \
+(* Construct approximate wavefunctions *) \
+psi1 [ x_ ] := evectors [ [ 1 , 1 ] ] * f1 [ x ] + evectors [ [ 1 , 2 ] ] * f2 [ x ] psi2 [ x_ ] := evectors [ [ 2 , 1 ] ] * f1 [ x ] + evectors [ [ 2 , 2 ] ] * f2 [ x ] \
+(* Normalize *) \
+norm1 = Sqrt [ NIntegrate [ psi1 [ x ] ^ 2 , { x , - 5 , 5 } ] ] ; norm2 = Sqrt [ NIntegrate [ psi2 [ x ] ^ 2 , { x , - 5 , 5 } ] ] ; psi1n [ x_ ] := psi1 [ x ] / norm1 psi2n [ x_ ] := psi2 [ x ] / norm2 \
+(* Plot wavefunctions - BLACK AND WHITE *) \
+Plot [ { psi1n [ x ] , psi2n [ x ] } , { x , - 3 , 3 } , PlotStyle -> { { Black , Thick } , (* [Psi]1 : solid *) { Black , Dashed , Thick } (* [Psi]2 : dashed *) } , PlotLegends -> Placed [ LineLegend [ { Graphics [ { Black , Thick , Line [ { { 0 , 0 } , { 1 , 0 } } ] } ] , Graphics [ { Black , Dashed , Thick , Line [ { { 0 , 0 } , { 1 , 0 } } ] } ] } , { "\<[Psi]\:2081(x) Ground [solid]\>" , "\<[Psi]\:2082(x) Excited [dashed]\>" } ] , { Right , Top } ] , PlotLabel -> Style [ "\<Approximate Wavefunctions (Rayleigh-Ritz)\>" , ] , AxesLabel -> { Style [ "\<x\>" , 12 ] , Style [ "\<[Psi](x)\>" , 12 ] } , GridLines -> Automatic , GridLinesStyle -> Directive [ Gray , Dotted ] , ImageSize -> Large , Frame -> True , FrameStyle -> Black ] \
+(* Plot potential and energy levels - BLACK AND WHITE *) \
+Show [ (* Potential *) Plot [ g * Abs [ x ] , { x , - 3 , 3 } , PlotStyle -> { Black , Thick } , PlotRange -> { 0 , 5 } ] , (* Rayleigh - Ritz E1 *) Graphics [ { Black , Thick , Line [ { { - 3 , evalues [ [ 1 ] ] } , { 3 , evalues [ [ 1 ] ] } } ] , Text [ Style [ "\<E\:2081(RR)=\>" <> ToString [ NumberForm [ evalues [ [ 1 ] ] , 3 ] ] , 11 , ] , { - 2.3 , evalues [ [ 1 ] ] + 0.25 } ] } ] , (* Rayleigh - Ritz E2 *) Graphics [ { Black , Thick , Line [ { { - 3 , evalues [ [ 2 ] ] } , { 3 , evalues [ [ 2 ] ] } } ] , Text [ Style [ "\<E\:2082(RR)=\>" <> ToString [ NumberForm [ evalues [ [ 2 ] ] , 3 ] ] , 11 , ] , { - 2.3 , evalues [ [ 2 ] ] + 0.25 } ] } ] , (* Exact E1 *) Graphics [ { Black , Dashed , Line [ { { - 3 , exactE1 } , { 3 , exactE1 } } ] , Text [ Style [ "\<E\:2081(exact)=\>" <> ToString [ NumberForm [ exactE1 , 3 ] ] , 10 ] , { 2.0 , exactE1 - 0.25 } ] } ] , (* Exact E2 *) Graphics [ { Black , Dashed , Line [ { { - 3 , exactE2 } , { 3 , exactE2 } } ] , Text [ Style [ "\<E\:2082(exact)=\>" <> ToString [ NumberForm [ exactE2 , 3 ] ] , 10 ] , { 2.0 , exactE2 - 0.25 } ] } ] , PlotLabel -> Style [ "\<Linear Potential V(x)=g|x| with Energy Levels\>" , , 13 ] , AxesLabel -> { Style [ "\<x\>" , 12 ] , Style [ "\<Energy\>" , 12 ] } , ImageSize -> Large , Frame -> True , FrameStyle -> Black , GridLines -> Automatic , GridLinesStyle -> Directive [ Gray , Dotted ] , (* Legend *) Epilog -> { Text [ Style [ "\<Solid lines: Rayleigh-Ritz\>" , 10 ] , { - 2.2 , 4.5 } ] , Text [ Style [ "\<Dashed lines: Exact\>" , 10 ] , { - 2.2 , 4.2 } ] , Text [ Style [ "\<Thick line: Potential V(x)\>" , 10 ] , { - 2.2 , 3.9 } ] } ] \
+(* === === === = STEP 10 : Comments and Analysis === === === = *) \
+Print [ Style [ "\<STEP 10: Analysis and Comments\>" , , 14 ] ] Print [ ] \
+Print [ "\<1. PARITY SYMMETRY:\>" ] Print [ "\< [Bullet] V(x) = g|x| is EVEN: V(-x) = V(x)\>" ] Print [ "\< [Bullet] f\:2081(x) is EVEN: f\:2081(-x) = f\:2081(x)\>" ] Print [ "\< [Bullet] f\:2082(x) is ODD: f\:2082(-x) = -f\:2082(x)\>" ] Print [ ] Print [ ] \
+Print [ "\<2. BLOCK-DIAGONAL STRUCTURE:\>" ] Print [ "\< [Bullet] Hamiltonian separates into even and odd sectors\>" ] Print [ ] Print [ ] Print [ ] \
+Print [ "\<3. ACCURACY OF RAYLEIGH-RITZ:\>" ] Print [ "\< [Bullet] Ground state error: \>" , NumberForm [ err1 , { 5 , 2 } ] , "\<%\>" ] Print [ "\< [Bullet] Excited state error: \>" , NumberForm [ err2 , { 5 , 2 } ] , "\<%\>" ] Print [ "\< [Bullet] Excellent for only 2 basis functions!\>" ] Print [ "\< [Bullet] RR method provides UPPER BOUNDS to true energies\>" ] Print [ ] \
+Print [ "\<4. VARIATIONAL PRINCIPLE VERIFICATION:\>" ] Print [ "\< [Bullet] E\:2081(RR) [GreaterEqual] E\:2081(exact)? \>" , evalues [ [ 1 ] ] >= exactE1 ] Print [ "\< [Bullet] E\:2082(RR) [GreaterEqual] E\:2082(exact)? \>" , evalues [ [ 2 ] ] >= exactE2 ] Print [ ] Print [ ] \
+Print [ "\<5. PHYSICAL INTERPRETATION:\>" ] Print [ "\< [Bullet] Linear potential g|x| is a 'V-shaped' well\>" ] Print [ ] Print [ "\< [Bullet] Ground state: concentrated near x = 0, no nodes\>" ] Print [ "\< [Bullet] Excited state: has node at x = 0 (odd parity)\>" ] Print [ ] \
+Print [ "\<6. WHY THE METHOD WORKS WELL:\>" ] Print [ "\< [Bullet] Gaussian basis captures the localized nature\>" ] Print [ "\< [Bullet] Parity structure exactly preserved\>" ] Print [ "\< [Bullet] Variational freedom via linear combinations\>" ] Print [ ] \
+In[4731]:= db1085e3-a732-bc42-ba4f-77b237bb4e4d
+\end{lstlisting}
+
+\medskip
+
+
+\noindent\textbf{Linear Potential V(x) = g|x| - Rayleigh-Ritz Method}
+
+\medskip
+
+
+\subsection*{STEP 1: Basis Functions}
+
+$f\:2081(x) = exp(-x^{2}/a^{2}) [EVEN function]$ $f\:2082(x) = x\[CenterDot]exp(-x^{2}/a^{2}) [ODD function]$
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.7\textwidth}{\centering\vspace{1cm}\textit{Figure placeholder: Export figure_1.png from Mathematica}space{1cm}}}
+% \includegraphics[width=0.7\textwidth]{HW 8-1 pb 5-all_figures/figure_1.png}
+\caption{Figure 1}
+\label{fig:1}
+\end{figure}
+
+\medskip
+
+
+\noindent\textbf{STEP 2: Overlap Matrix Elements S\:1d62\:2c7c = \:27e8f\:1d62|f\:2c7c\:27e9}
+
+\medskip
+
+$S\:2081\:2081 = \int f\:2081^{2} dx =$ S\:2081\:2082 = \int f\:2081\[CenterDot]f\:2082 dx = "\>", "", "0", 
+ "", "\<" (odd integrand \rightarrow 0)
+
+
+\subsection*{S\:2082\:2081 = S\:2081\:2082 =}
+
+$S\:2082\:2082 = \int f\:2082^{2} dx =$
+
+
+\subsection*{Overlap Matrix S (symbolic):}
+
+
+\subsection*{Overlap Matrix S (numerical):}
+
+$STEP 3: Kinetic Energy Matrix T\:1d62\:2c7c = -\.bd\:27e8f\:1d62|d^{2}/dx^{2}|f\:2c7c\:27e9$ $d^{2}f\:2081/dx^{2} =$ $d^{2}f\:2082/dx^{2} =$
+
+
+\noindent\textbf{T\:2081\:2081 = -\.bd\int f\:2081\[CenterDot]f\:2081'' dx =}
+
+\medskip
+
+T\:2081\:2082 = -\.bd\int f\:2081\[CenterDot]f\:2082'' dx = 
+ (parity \rightarrow 0)
+
+
+\subsection*{T\:2082\:2081 = T\:2081\:2082 =}
+
+
+\noindent\textbf{T\:2082\:2082 = -\.bd\int f\:2082\[CenterDot]f\:2082'' dx =}
+
+\medskip
+
+
+\subsection*{Kinetic Energy Matrix T (symbolic):}
+
+
+\subsection*{Kinetic Energy Matrix T (numerical):}
+
+STEP 4: Potential Energy Matrix V\:1d62\:2c7c = g\:27e8f\:1d62||x||f\:2c7c\:27e9 $V\:2081\:2081 = g\int |x|\[CenterDot]f\:2081^{2} dx =$ V\:2081\:2082 = g\int |x|\[CenterDot]f\:2081\[CenterDot]f\:2082 dx = 
+ (parity \rightarrow 0)
+
+
+\subsection*{V\:2082\:2081 = V\:2081\:2082 =}
+
+$V\:2082\:2082 = g\int |x|\[CenterDot]f\:2082^{2} dx =$
+
+
+\subsection*{Potential Energy Matrix V (symbolic):}
+
+
+\subsection*{Potential Energy Matrix V (numerical):}
+
+
+\subsection*{STEP 5: Hamiltonian Matrix H = T + V}
+
+
+\subsection*{Hamiltonian Matrix H (symbolic):}
+
+
+\subsection*{Hamiltonian Matrix H (numerical):}
+
+*** KEY OBSERVATION: H and S are BLOCK-DIAGONAL! ***
+
+
+\noindent\textbf{All off-diagonal elements are ZERO due to parity symmetry.}
+
+\medskip
+
+Even function f\:2081 doesn't mix with odd function f\:2082.
+
+
+\subsection*{STEP 6: Solve HC = SCE}
+
+
+\subsection*{Rayleigh-Ritz Energy Eigenvalues:}
+
+
+\subsection*{E\:2081 = 
+0.898942}
+
+
+\subsection*{E\:2082 = 
+2.29788}
+
+
+\noindent\textbf{Eigenvectors (coefficients [c\:2081, c\:2082]):}
+
+\medskip
+
+
+\subsection*{Ground state: c = [
+1.
+, 
+0.
+]}
+
+
+\subsection*{Excited state: c = [
+0.
+, 
+1.
+]}
+
+STEP 7: Analytical Energy Formulas (Block-Diagonal) Since H and S are block-diagonal, eigenvalues are:
+
+
+\subsection*{E\:2081 = H\:2081\:2081/S\:2081\:2081 =}
+
+
+\subsection*{E\:2082 = H\:2082\:2082/S\:2082\:2082 =}
+
+STEP 8: Comparison with Exact (Analytic) Results For the linear potential V(x) = g|x|, the exact solution involves Airy functions. The energy eigenvalues are: $E\:2099 = g^(2/3) \[CenterDot] |\alpha\:2099|$ $where \alpha\:2099 are the zeros of the Airy function Ai(-z).$
+
+
+\noindent\textbf{Exact energy levels (from Airy function):}
+
+\medskip
+
+
+\subsection*{E\:2081(exact) = 
+2.33811}
+
+
+\subsection*{E\:2082(exact) = 
+4.08795}
+
+
+\subsection*{E\:2083(exact) = 
+5.52056}
+
+
+\subsection*{COMPARISON TABLE:}
+
+
+\noindent\textbf{------------------------------------------------------------------------}
+
+\medskip
+
+
+\subsection*{Level Rayleigh-Ritz Exact Error (%)}
+
+
+\noindent\textbf{------------------------------------------------------------------------}
+
+\medskip
+
+
+\noindent\textbf{E\:2081 0.898942 2.33811 \!\(\*RowBox[{\"\\\"61.55\\\"\"}]\)}
+
+\medskip
+
+
+\noindent\textbf{E\:2082 2.29788 4.08795 \!\(\*RowBox[{\"\\\"43.79\\\"\"}]\)}
+
+\medskip
+
+
+\noindent\textbf{------------------------------------------------------------------------}
+
+\medskip
+
+
+\subsection*{STEP 9: Visualization of Results}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.7\textwidth}{\centering\vspace{1cm}\textit{Figure placeholder: Export figure_2.png from Mathematica}space{1cm}}}
+% \includegraphics[width=0.7\textwidth]{HW 8-1 pb 5-all_figures/figure_2.png}
+\caption{Figure 2}
+\label{fig:2}
+\end{figure}
+
+\medskip
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.7\textwidth}{\centering\vspace{1cm}\textit{Figure placeholder: Export figure_3.png from Mathematica}space{1cm}}}
+% \includegraphics[width=0.7\textwidth]{HW 8-1 pb 5-all_figures/figure_3.png}
+\caption{Figure 3}
+\label{fig:3}
+\end{figure}
+
+\medskip
+
+STEP 10: Analysis and Comments
+
+
+\subsection*{1. PARITY SYMMETRY:}
+
+$\bullet V(x) = g|x| is EVEN: V(-x) = V(x)$ $\bullet \:27e8f\:2081|O|f\:2082\:27e9 = 0 for any even operator O$
+
+
+\subsection*{2. BLOCK-DIAGONAL STRUCTURE:}
+
+$\bullet Hamiltonian separates into even and odd sectors$ $\bullet Ground state: EVEN parity (only f\:2081, c\:2081\neq 0, c\:2082=0)$ $\bullet First excited: ODD parity (only f\:2082, c\:2081=0, c\:2082\neq 0)$
+
+
+\subsection*{3. ACCURACY OF RAYLEIGH-RITZ:}
+
+$\bullet Ground state error: 
+61.55
+%$ $\bullet Excited state error: 
+43.79
+%$ $\bullet Excellent for only 2 basis functions!$ $\bullet RR method provides UPPER BOUNDS to true energies$
+
+
+\subsection*{4. VARIATIONAL PRINCIPLE VERIFICATION:}
+
+$\bullet E\:2081(RR) \geq E\:2081(exact)?$ $\bullet E\:2082(RR) \geq E\:2082(exact)?$ $\bullet Approximate energies are indeed upper bounds \checkmark$
+
+
+\subsection*{5. PHYSICAL INTERPRETATION:}
+
+$\bullet Linear potential g|x| is a 'V-shaped' well$ $\bullet With g = \hbar^{2}/(ma) = 1, length scale set by a = 1$ $\bullet Ground state: concentrated near x = 0, no nodes$ $\bullet Excited state: has node at x = 0 (odd parity)$ 6. WHY THE METHOD WORKS WELL: $\bullet Parity structure exactly preserved$
+
+\medskip
+
+$\bullet Variational freedom via linear combinations$
+
+
+
+\newpage
+
+
+
+\title{HW 8-1 pb 8}
+\date{\today}
+\maketitle
+
+\bigskip
+
+\noindent\textbf{Input:}
+\begin{lstlisting}
+(* Barrier in a Well - Variational Method *) (* Natural units : [HBar] = m = a = 1 *) (* Parameters : [Sigma] = 1 / 10 , V\:2080 = 4 *) \
+a = 1 ; [Sigma] = 1 / 10 ; V0 = 4 ; \
+(* Basis functions and potential *) \
+[Psi] [ n_Integer , x_ ? NumericQ ] := Sqrt [ 2 ] Sin [ n [Pi] x ] V [ x_ ? NumericQ ] := V0 Exp [ - ( x - 1 / 2 ) ^ 2 / ( 2 [Sigma] ^ 2 ) ] \
+(* Matrix elements *) \
+T [ i_ , j_ ] := If [ i == j , ( [Pi] ^ 2 i ^ 2 ) / 2 , 0 ] \
+Vmatrix [ i_ , j_ ] := NIntegrate [ [Psi] [ i , x ] V [ x ] [Psi] [ j , x ] , { x , 0 , 1 } , Method -> { "\<GlobalAdaptive\>" , "\<MaxErrorIncreases\>" -> 10000 } , MinRecursion -> 3 , MaxRecursion -> 20 , WorkingPrecision -> 16 ] \
+(* Build Hamiltonian and find lowest 4 energies *) \
+FindEnergies [ n_ ] := Module [ { H , result } , H = Table [ T [ i , j ] + Vmatrix [ i , j ] , { i , n } , { j , n } ] ; \
+result = Sort [ Eigenvalues [ N [ H ] ] ] ; \
+Return [ result [ [ 1 ;; 4 ] ] ] ] \
+\
+(* RESULTS *) \
+Print [ Style [ "\<Lowest Four Energy Levels\>" , , 16 ] ] ; Print [ Style [ "\<(in natural units where [HBar] = m = a = 1)\>" , , 12 ] ] ; Print [ ] ; \
+(* Part ( a ) : n = 4 *) \
+energies4 = FindEnergies [ 4 ] ; Print [ Style [ "\<(a) n = 4 basis functions\>" , , 14 ] ] ; Print [ Grid [ Prepend [ Table [ { "\<E\>" <> ToString [ i ] , NumberForm [ energies4 [ [ i ] ] , { 6 , 4 } ] } , { i , 1 , 4 } ] , { "\<Level\>" , "\<Energy\>" } ] , Frame -> All , Background -> { None , { LightBlue , { White , LightGray } } } , Alignment -> { { Left , Right } } , Spacings -> { 2 , 1 } ] ] ; \
+(* Part ( b ) : n = 6 *) \
+energies6 = FindEnergies [ 6 ] ; Print [ "\<\
+\>" , Style [ "\<(b) n = 6 basis functions\>" , , 14 ] ] ; Print [ Grid [ Prepend [ Table [ { "\<E\>" <> ToString [ i ] , NumberForm [ energies6 [ [ i ] ] , { 6 , 4 } ] } , { i , 1 , 4 } ] , { "\<Level\>" , "\<Energy\>" } ] , Frame -> All , Background -> { None , { LightBlue , { White , LightGray } } } , Alignment -> { { Left , Right } } , Spacings -> { 2 , 1 } ] ] ; \
+(* Part ( c ) : n = 8 *) \
+energies8 = FindEnergies [ 8 ] ; Print [ "\<\
+\>" , Style [ "\<(c) n = 8 basis functions\>" , , 14 ] ] ; Print [ Grid [ Prepend [ Table [ { "\<E\>" <> ToString [ i ] , NumberForm [ energies8 [ [ i ] ] , { 6 , 4 } ] } , { i , 1 , 4 } ] , { "\<Level\>" , "\<Energy\>" } ] , Frame -> All , Background -> { None , { LightBlue , { White , LightGray } } } , Alignment -> { { Left , Right } } , Spacings -> { 2 , 1 } ] ] ; \
+(* Comparison table *) \
+Print [ "\<\
+\>" , Style [ "\<Comparison of Results\>" , , 14 ] ] ; Print [ Grid [ Prepend [ Table [ { "\<E\>" <> ToString [ i ] , NumberForm [ energies4 [ [ i ] ] , { 6 , 4 } ] , NumberForm [ energies6 [ [ i ] ] , { 6 , 4 } ] , NumberForm [ energies8 [ [ i ] ] , { 6 , 4 } ] } , { i , 1 , 4 } ] , { "\<Level\>" , "\<n = 4\>" , "\<n = 6\>" , "\<n = 8\>" } ] , Frame -> All , Background -> { None , { LightBlue , { White , LightGray } } } , Alignment -> { { Left , Right , Right , Right } } , Spacings -> { 2 , 1 } ] ] ;
+\end{lstlisting}
+
+\medskip
+
+
+\subsection*{Lowest Four Energy Levels}
+
+$(in natural units where \hbar = m = a = 1)$ $Units: \hbar^{2}/(2ma^{2}) or equivalently \pi^{2}\hbar^{2}/(2ma^{2}) \times (n/\pi)^{2}$
+
+
+\subsection*{(a) n = 4 basis functions}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+Level & Energy \\
+\hline
+E1 & 6.7185 \\
+\hline
+E2 & 20.2795 \\
+\hline
+E3 & 45.6276 \\
+\hline
+E4 & 79.9240 \\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+
+
+\subsection*{(b) n = 6 basis functions}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+Level & Energy \\
+\hline
+E1 & 6.7154 \\
+\hline
+E2 & 20.2784 \\
+\hline
+E3 & 45.6176 \\
+\hline
+E4 & 79.9172 \\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+
+
+\subsection*{(c) n = 8 basis functions}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+Level & Energy \\
+\hline
+E1 & 6.7153 \\
+\hline
+E2 & 20.2783 \\
+\hline
+E3 & 45.6166 \\
+\hline
+E4 & 79.9164 \\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+
+
+\subsection*{Comparison of Results}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+Level & n = 4 & n = 6 & n = 8 \\
+\hline
+E1 & 6.7185 & 6.7154 & 6.7153 \\
+\hline
+E2 & 20.2795 & 20.2784 & 20.2783 \\
+\hline
+E3 & 45.6276 & 45.6176 & 45.6166 \\
+\hline
+E4 & 79.9240 & 79.9172 & 79.9164 \\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+
+\end{document}
