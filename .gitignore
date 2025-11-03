@@ -1,0 +1,18 @@
+# LaTeX build artifacts
+*.aux
+*.log
+*.pdf
+*.out
+*.toc
+*.synctex.gz
+
+# Test files
+test.*
+combined_output.*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
