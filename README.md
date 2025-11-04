@@ -7,10 +7,16 @@
 
 A powerful Python tool that converts Wolfram Mathematica notebook files (`.nb`) into well-formatted LaTeX documents. Perfect for academic papers, reports, and documentation that need to include Mathematica computations.
 
+**Now with multiple interface options: Command-Line, Desktop GUI, and Web Interface!**
+
 ## 📑 Table of Contents
 
 - [Features](#features)
 - [Quick Start](#quick-start)
+- [Usage Options](#usage-options)
+  - [Command Line Interface](#command-line-interface-cli)
+  - [Desktop GUI](#desktop-gui-tkinter)
+  - [Web Interface](#web-interface-flask)
 - [Symbol Conversions](#symbol-conversions)
 - [Limitations](#limitations--known-issues)
 - [Compiling the Output](#compiling-the-output)
@@ -31,12 +37,14 @@ A powerful Python tool that converts Wolfram Mathematica notebook files (`.nb`) 
 - 📊 **Table Support**: Extracts and formats tables from GridBox structures
 - 🔄 **Batch Processing**: Convert multiple notebooks into a single document
 - 🧹 **Clean Output**: Removes formatting artifacts and normalizes line breaks
+- 🖥️ **Multiple Interfaces**: CLI, Desktop GUI, and Web-based options
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Python 3.7 or higher (no additional packages required)
+- Python 3.7 or higher
+- For GUI interfaces: `tkinter` (usually included with Python) or `Flask` for web interface
 
 ### Installation
 
@@ -44,10 +52,18 @@ Clone this repository:
 
 ```bash
 git clone https://github.com/Bradley-TaulUAH/mathematica-to-latex.git
-cd mathematica-to-latex
+dcd mathematica-to-latex
 ```
 
-### Basic Usage
+Install optional dependencies for GUI/Web interfaces:
+
+```bash
+pip install -r requirements.txt
+```
+
+## 💡 Usage Options
+
+### Command Line Interface (CLI)
 
 **Convert a single notebook:**
 
@@ -66,6 +82,43 @@ python mathematica_to_latex.py "file1.nb" "file2.nb" "file3.nb" -o combined.tex
 ```bash
 python mathematica_to_latex.py "examples/HW 8-1 pb 8.nb" -o output.tex
 ```
+
+### Desktop GUI (Tkinter)
+
+**Launch the desktop GUI application:**
+
+```bash
+python run_gui.py
+```
+
+or
+
+```bash
+python mathematica_gui.py
+```
+
+**Features:**
+- Browse and select Mathematica notebook files
+- Visual file selection with drag-and-drop support
+- Real-time conversion progress
+- Preview generated LaTeX
+- Save output to your chosen location
+
+### Web Interface (Flask)
+
+**Start the web-based interface:**
+
+```bash
+python web_gui.py
+```
+
+Then open your browser to `http://localhost:5000`
+
+**Features:**
+- Upload `.nb` files through your browser
+- Convert files from any device on your network
+- Download converted LaTeX files
+- No installation required on client devices
 
 ## 🔤 Symbol Conversions
 
