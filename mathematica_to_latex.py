@@ -410,6 +410,22 @@ def extract_input_code(cell_text):
         # Clean up other Mathematica-specific escape sequences
         cleaned = cleaned.replace('\\`', '`')
         
+        # Handle Unicode escape sequences like \:2080 (subscript 0 -> V_0)
+        # Remove or convert these as they can cause LaTeX compilation issues
+        # \:2080-\:2089 are subscript digits 0-9
+        cleaned = re.sub(r'\\:2080', '_0', cleaned)  # subscript 0
+        cleaned = re.sub(r'\\:2081', '_1', cleaned)  # subscript 1
+        cleaned = re.sub(r'\\:2082', '_2', cleaned)  # subscript 2
+        cleaned = re.sub(r'\\:2083', '_3', cleaned)  # subscript 3
+        cleaned = re.sub(r'\\:2084', '_4', cleaned)  # subscript 4
+        cleaned = re.sub(r'\\:2085', '_5', cleaned)  # subscript 5
+        cleaned = re.sub(r'\\:2086', '_6', cleaned)  # subscript 6
+        cleaned = re.sub(r'\\:2087', '_7', cleaned)  # subscript 7
+        cleaned = re.sub(r'\\:2088', '_8', cleaned)  # subscript 8
+        cleaned = re.sub(r'\\:2089', '_9', cleaned)  # subscript 9
+        # Remove any other Unicode escapes that might cause issues
+        cleaned = re.sub(r'\\:[0-9a-fA-F]{4}', '', cleaned)
+        
         if cleaned.strip():
             code_parts.append(cleaned)
     
