@@ -782,13 +782,14 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
             if len(cell) < 40:
                 latex_output.extend([
                     r'\section{' + cell + '}',
-                    r'\paragraph{}'
+                    r''
                 ])
             else:
                 latex_output.extend([
                     r'',
-                    r'\paragraph{}',
-                    r'\textbf{' + cell + '}',
+                    r'\noindent\textbf{' + cell + '}',
+                    r'',
+                    r'\medskip',
                     r''
                 ])
         else:
@@ -800,8 +801,9 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
                 
                 # Flush any pending paragraph before adding result box
                 if current_paragraph:
-                    latex_output.append(r'\paragraph{}')
                     latex_output.append(' '.join(current_paragraph))
+                    latex_output.append(r'')
+                    latex_output.append(r'\medskip')
                     latex_output.append(r'')
                     current_paragraph = []
                 
@@ -816,8 +818,9 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
                 if len(cell) > 50:  # Longer output gets a box
                     # Flush any pending paragraph
                     if current_paragraph:
-                        latex_output.append(r'\paragraph{}')
                         latex_output.append(' '.join(current_paragraph))
+                        latex_output.append(r'')
+                        latex_output.append(r'\medskip')
                         latex_output.append(r'')
                         current_paragraph = []
                     
@@ -833,15 +836,17 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
                     
                     # Break paragraphs that get too long
                     if len(current_paragraph) > 5:
-                        latex_output.append(r'\paragraph{}')
                         latex_output.append(' '.join(current_paragraph))
+                        latex_output.append(r'')
+                        latex_output.append(r'\medskip')
                         latex_output.append(r'')
                         current_paragraph = []
     
     # Flush final paragraph
     if current_paragraph:
-        latex_output.append(r'\paragraph{}')
         latex_output.append(' '.join(current_paragraph))
+        latex_output.append(r'')
+        latex_output.append(r'\medskip')
         latex_output.append(r'')
     
     # Add graphics section if needed
