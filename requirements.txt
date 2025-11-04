@@ -1,0 +1,4 @@
+# Requirements for Mathematica to LaTeX/Markdown Converter
+# Web-based GUI dependencies
+flask>=2.0.0
+werkzeug>=2.0.0

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathematica to LaTeX/Markdown Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .upload-section {
+            border: 3px dashed #667eea;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .upload-section:hover {
+            border-color: #764ba2;
+            background: #f8f9ff;
+        }
+
+        .upload-section.dragging {
+            background: #f0f2ff;
+            border-color: #764ba2;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-label {
+            cursor: pointer;
+            color: #667eea;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .upload-label:hover {
+            color: #764ba2;
+        }
+
+        .file-info {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .selected-file {
+            display: none;
+            margin-top: 15px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 6px;
+            color: #2e7d32;
+            font-size: 14px;
+        }
+
+        .format-section {
+            margin-bottom: 30px;
+        }
+
+        .format-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .format-options {
+            display: flex;
+            gap: 15px;
+        }
+
+        .format-option {
+            flex: 1;
+        }
+
+        .format-option input[type="radio"] {
+            display: none;
+        }
+
+        .format-option label {
+            display: block;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .format-option input[type="radio"]:checked + label {
+            border-color: #667eea;
+            background: #f0f2ff;
+            color: #667eea;
+        }
+
+        .format-option label:hover {
+            border-color: #667eea;
+        }
+
+        .button-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .convert-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .convert-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .results h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .result-file {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .result-file-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .result-file h4 {
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .download-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .download-btn:hover {
+            background: #764ba2;
+        }
+
+        .preview {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 12px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 Mathematica to LaTeX/Markdown Converter</h1>
+            <p>Convert your Mathematica notebook files to LaTeX and Markdown formats</p>
+        </div>
+
+        <div class="content">
+            <div id="alert-container"></div>
+
+            <div class="upload-section" id="upload-area">
+                <div class="upload-icon">📄</div>
+                <label for="file-input" class="upload-label">
+                    Click to select or drag and drop a Mathematica notebook file (.nb)
+                </label>
+                <input type="file" id="file-input" class="file-input" accept=".nb">
+                <div class="file-info">Maximum file size: 16MB</div>
+                <div class="selected-file" id="selected-file">
+                    <strong>Selected file:</strong> <span id="filename"></span>
+                </div>
+            </div>
+
+            <div class="format-section">
+                <h3>📋 Select Output Format</h3>
+                <div class="format-options">
+                    <div class="format-option">
+                        <input type="radio" id="format-latex" name="format" value="latex">
+                        <label for="format-latex">
+                            <strong>LaTeX Only</strong><br>
+                            <small>.tex file</small>
+                        </label>
+                    </div>
+                    <div class="format-option">
+                        <input type="radio" id="format-markdown" name="format" value="markdown">
+                        <label for="format-markdown">
+                            <strong>Markdown Only</strong><br>
+                            <small>.md file</small>
+                        </label>
+                    </div>
+                    <div class="format-option">
+                        <input type="radio" id="format-both" name="format" value="both" checked>
+                        <label for="format-both">
+                            <strong>Both Formats</strong><br>
+                            <small>.tex & .md files</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-section">
+                <button class="convert-btn" id="convert-btn" disabled>Convert</button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Converting your file, please wait...</p>
+            </div>
+
+            <div class="results" id="results">
+                <h3>✅ Conversion Results</h3>
+                <div id="results-content"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Mathematica to LaTeX/Markdown Converter | Open Source Project</p>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const uploadArea = document.getElementById('upload-area');
+        const selectedFile = document.getElementById('selected-file');
+        const filenameSpan = document.getElementById('filename');
+        const convertBtn = document.getElementById('convert-btn');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const resultsContent = document.getElementById('results-content');
+        const alertContainer = document.getElementById('alert-container');
+
+        let selectedFileData = null;
+
+        // File input change handler
+        fileInput.addEventListener('change', (e) => {
+            handleFileSelect(e.target.files[0]);
+        });
+
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragging');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragging');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragging');
+            handleFileSelect(e.dataTransfer.files[0]);
+        });
+
+        function handleFileSelect(file) {
+            if (!file) return;
+
+            if (!file.name.endsWith('.nb')) {
+                showAlert('Please select a Mathematica notebook file (.nb)', 'error');
+                return;
+            }
+
+            selectedFileData = file;
+            filenameSpan.textContent = file.name;
+            selectedFile.style.display = 'block';
+            convertBtn.disabled = false;
+            hideAlert();
+        }
+
+        // Convert button handler
+        convertBtn.addEventListener('click', async () => {
+            if (!selectedFileData) {
+                showAlert('Please select a file first', 'error');
+                return;
+            }
+
+            const format = document.querySelector('input[name="format"]:checked').value;
+
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('file', selectedFileData);
+            formData.append('format', format);
+
+            // Show loading
+            loading.style.display = 'block';
+            results.style.display = 'none';
+            convertBtn.disabled = true;
+            hideAlert();
+
+            try {
+                const response = await fetch('/convert', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('Conversion completed successfully!', 'success');
+                    displayResults(data.files);
+                } else {
+                    showAlert('Conversion failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showAlert('An error occurred: ' + error.message, 'error');
+            } finally {
+                loading.style.display = 'none';
+                convertBtn.disabled = false;
+            }
+        });
+
+        function displayResults(files) {
+            resultsContent.innerHTML = '';
+
+            if (files.latex) {
+                resultsContent.innerHTML += createResultFile(
+                    'LaTeX Output',
+                    files.latex.filename,
+                    files.latex.content,
+                    'latex'
+                );
+            }
+
+            if (files.markdown) {
+                resultsContent.innerHTML += createResultFile(
+                    'Markdown Output',
+                    files.markdown.filename,
+                    files.markdown.content,
+                    'markdown'
+                );
+            }
+
+            results.style.display = 'block';
+        }
+
+        function createResultFile(title, filename, content, type) {
+            const preview = content.substring(0, 1000) + (content.length > 1000 ? '...' : '');
+            
+            return `
+                <div class="result-file">
+                    <div class="result-file-header">
+                        <h4>${title}: ${filename}</h4>
+                        <button class="download-btn" onclick="downloadFile('${type}', '${filename}')">
+                            Download
+                        </button>
+                    </div>
+                    <div class="preview">${escapeHtml(preview)}</div>
+                </div>
+            `;
+        }
+
+        function downloadFile(type, filename) {
+            window.location.href = `/download/${type}/${filename}`;
+        }
+
+        function showAlert(message, type) {
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            alertContainer.innerHTML = `
+                <div class="alert ${alertClass}">
+                    ${message}
+                </div>
+            `;
+        }
+
+        function hideAlert() {
+            alertContainer.innerHTML = '';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
