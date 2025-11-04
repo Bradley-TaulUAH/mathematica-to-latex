@@ -1,133 +1,152 @@
 # Mathematica to LaTeX Converter
 
-A Python script to convert Mathematica notebook files (.nb) to LaTeX format.
+[![Python Version](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+A powerful Python tool that converts Wolfram Mathematica notebook files (`.nb`) into well-formatted LaTeX documents. Perfect for academic papers, reports, and documentation that need to include Mathematica computations.
 
-- Converts Mathematica notebooks to compilable LaTeX documents
-- **Shows code and results**: Includes both Mathematica input code and output results in formatted code blocks
-- **Improved formatting**: Automatic section headings and paragraph flow for better readability
-- **Graphics detection**: Automatically detects figures and adds placeholders with export instructions
-- Translates Greek letters and special symbols to LaTeX commands
-- Handles subscripts and superscripts
-- Extracts and formats tables from GridBox structures
-- Cleans up formatting issues and line breaks
-- Supports multiple input files
+## ✨ Features
 
-## Installation
+- 📝 **Complete Conversion**: Transforms Mathematica notebooks into compilable LaTeX documents
+- 💻 **Code & Results**: Preserves both input code and output with proper formatting
+- 🎨 **Smart Formatting**: Automatic section headings and improved readability
+- 🖼️ **Graphics Handling**: Detects figures and provides export instructions
+- 🔣 **Symbol Translation**: Comprehensive Greek letters and mathematical symbols conversion
+- ⬆️⬇️ **Subscripts/Superscripts**: Proper handling of mathematical notation
+- 📊 **Table Support**: Extracts and formats tables from GridBox structures
+- 🔄 **Batch Processing**: Convert multiple notebooks into a single document
+- 🧹 **Clean Output**: Removes formatting artifacts and normalizes line breaks
 
-No installation required. Just Python 3.6+ is needed.
+## 🚀 Quick Start
 
-## Usage
+### Prerequisites
 
-### Convert a single notebook
+- Python 3.6 or higher (no additional packages required)
+
+### Installation
+
+Clone this repository:
+
+```bash
+git clone https://github.com/Bradley-TaulUAH/mathematica-to-latex.git
+cd mathematica-to-latex
+```
+
+### Basic Usage
+
+**Convert a single notebook:**
 
 ```bash
 python mathematica_to_latex.py "notebook.nb" -o output.tex
 ```
 
-### Convert multiple notebooks into one document
+**Convert multiple notebooks into one document:**
 
 ```bash
 python mathematica_to_latex.py "file1.nb" "file2.nb" "file3.nb" -o combined.tex
 ```
 
-### Example with the provided notebooks
+**Try with the provided examples:**
 
 ```bash
-python mathematica_to_latex.py "HW 8-1 pb 8.nb" -o hw8-pb8.tex
+python mathematica_to_latex.py "examples/HW 8-1 pb 8.nb" -o output.tex
 ```
 
-## Symbol Conversions
+## 🔤 Symbol Conversions
 
-The script automatically converts Mathematica symbols to LaTeX:
+The script automatically converts Mathematica notation to LaTeX equivalents:
 
-### Greek Letters
-- `\[Alpha]` → `\alpha`
-- `\[Beta]` → `\beta`
-- `\[Pi]` → `\pi`
-- `\[Sigma]` → `\sigma`
-- `\[CapitalDelta]` → `\Delta`
-- And many more...
+| Type | Mathematica | LaTeX | Description |
+|------|-------------|-------|-------------|
+| Greek Letters | `\[Alpha]`, `\[Beta]`, `\[Gamma]` | `\alpha`, `\beta`, `\gamma` | All Greek letters supported |
+| Capitals | `\[CapitalDelta]`, `\[CapitalPi]` | `\Delta`, `\Pi` | Greek capitals |
+| Special | `\[HBar]`, `\[Times]`, `\[PlusMinus]` | `\hbar`, `\times`, `\pm` | Mathematical operators |
+| Comparisons | `\[GreaterEqual]`, `\[LessEqual]` | `\geq`, `\leq` | Relational operators |
+| Subscripts | `\[Subscript x, 0]` | `x_{0}` | Subscript notation |
+| Superscripts | `\.b2` | `^{2}` | Superscript notation |
 
-### Special Symbols
-- `\[HBar]` → `\hbar`
-- `\[Times]` → `\times`
-- `\[PlusMinus]` → `\pm`
-- `\[GreaterEqual]` → `\geq`
-- `\[Bullet]` → `\bullet`
-- `\[Checkmark]` → `\checkmark`
+See the full list of conversions in the [comparison.md](comparison.md) file.
 
-### Subscripts and Superscripts
-- `\\[Subscript 0]` → `_{0}`
-- `\.b2` → `^{2}`
+## ⚠️ Limitations & Known Issues
 
-## Limitations
+- **FormBox expressions**: Complex formatted expressions are replaced with `[formula]` placeholders
+- **Graphics**: Graphics are detected but must be manually exported from Mathematica
+- **Complex tables**: Some advanced table structures may need manual adjustment
+- **Manual review**: Always review the generated LaTeX before final use
 
-- **FormBox expressions**: Complex formatted expressions are replaced with `[formula]` placeholders as they contain Mathematica's internal formatting that's difficult to convert automatically
-- **Code formatting**: Input code is shown with minimal formatting cleanup - some Mathematica internal markers may appear
-- **Graphics extraction**: Graphics are detected and placeholders are added, but you must export the actual images from Mathematica using `Export["figure_N.png", graphicsObject]` and place them in the specified directory
-- **Complex tables**: Some table structures may not convert perfectly
-- **Manual review recommended**: Always review and potentially edit the generated LaTeX for best results
+For detailed limitations, see the sections below.
 
-## Compiling the Output
+## 📦 Compiling the Output
 
-The generated LaTeX can be compiled with standard LaTeX distributions:
+Compile the generated LaTeX with any standard LaTeX distribution:
 
 ```bash
 pdflatex output.tex
 ```
 
-Required LaTeX packages (automatically included in the output):
-- amsmath
-- amssymb
-- graphicx
-- array
-- booktabs
-- listings (for code blocks)
-- xcolor (for syntax highlighting)
+**Required LaTeX packages** (automatically included in the output):
+- `amsmath`, `amssymb` - Mathematical symbols and equations
+- `graphicx` - Image inclusion
+- `array`, `booktabs` - Table formatting
+- `listings` - Code blocks with syntax highlighting
+- `xcolor` - Color support
 
-## Graphics Export
+## 🖼️ Working with Graphics
 
-When the script detects graphics in your notebook, it will:
-1. Add a "Figures" section at the end of the LaTeX document
-2. Create placeholders for each figure with `\includegraphics` commands
-3. Provide instructions in comments
+The converter automatically detects graphics and adds placeholders. To include actual images:
 
-To include the actual graphics:
-1. Open your notebook in Mathematica
-2. For each plot/graphic, export it using:
+1. **Export from Mathematica:**
    ```mathematica
    Export["figure_1.png", yourGraphicsObject, ImageResolution -> 300]
    ```
-3. Create the figures directory (e.g., `HW_8-1_pb_5-all_figures/`)
-4. Place the exported PNG files in that directory
-5. Compile your LaTeX document
 
-## Known Issues
+2. **Organize files:**
+   - Create a figures directory (e.g., `notebook_figures/`)
+   - Place exported PNG files there
 
-Some notebooks may have compilation warnings or errors that need manual fixing:
-- Complex mathematical expressions in FormBox format are replaced with placeholders
-- Some spacing around mathematical operators may need adjustment
-- Variable names concatenated with Greek letters (e.g., `\alphax`) are automatically spaced
-- Graphics must be manually exported from Mathematica (automatic extraction not supported)
+3. **Compile:** The LaTeX document will reference these images automatically
 
-## Examples
+## 📚 Examples
 
-### Input (Mathematica)
-```
+The `examples/` directory contains sample Mathematica notebooks and their converted LaTeX output. These demonstrate the converter's capabilities with real-world homework problems.
+
+### Example Conversion
+
+**Mathematica Input:**
+```mathematica
 Print["Boundary conditions: \[Psi](\[PlusMinus]a) = 0"]
 ```
 
-### Output (LaTeX)
+**LaTeX Output:**
 ```latex
 $Boundary conditions: \psi(\pm a) = 0$
 ```
 
-## License
+## 🤝 Contributing
 
-This tool is provided as-is for educational and research purposes.
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-## Contributing
+### How to Contribute
+- Report bugs and request features via [GitHub Issues](https://github.com/Bradley-TaulUAH/mathematica-to-latex/issues)
+- Submit pull requests for improvements
+- Share example notebooks for testing
 
-Feel free to submit issues or pull requests for improvements.
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built for converting academic Mathematica notebooks to LaTeX
+- Designed to handle physics and mathematics coursework
+- Contributions and feedback welcome!
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/Bradley-TaulUAH/mathematica-to-latex/issues)
+- **Documentation**: See this README and example files
+- **Questions**: Open a GitHub issue for help
+
+---
+
+**Note**: This is a utility tool for educational and research purposes. Always review and test the generated LaTeX before using it in production documents.

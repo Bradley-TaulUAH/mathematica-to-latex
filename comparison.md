@@ -1,6 +1,9 @@
 # Formatting Improvements
 
-## Before (Linear/Plain Format):
+This document demonstrates the improvements made by the converter when transforming Mathematica notebooks to LaTeX.
+
+## Before (Plain Format)
+
 ```latex
 Lowest Four Energy Levels
 
@@ -15,7 +18,8 @@ $Units: \hbar^{2}/(2ma^{2}) or equivalently \pi^{2}\hbar^{2}/(2ma^{2}) \times (n
 ...
 ```
 
-## After (Structured Format with Sections):
+## After (Structured Format with Sections)
+
 ```latex
 \subsection*{Lowest Four Energy Levels}
 
@@ -28,9 +32,12 @@ $(in natural units where \hbar = m = a = 1)$ $Units: \hbar^{2}/(2ma^{2}) or equi
 ...
 ```
 
-## Key Improvements:
-1. **Section headings** using `\subsection*{}` for better structure
-2. **Paragraph flow** - related content is kept together
-3. **Automatic graphics detection** - adds figure placeholders
-4. **Better visual hierarchy** in the compiled PDF
+## Key Improvements
+
+1. **Section headings** - Automatic `\subsection*{}` for better document structure
+2. **Paragraph flow** - Related content is grouped appropriately  
+3. **Graphics detection** - Automatic figure placeholders with export instructions
+4. **Visual hierarchy** - Improved readability in the compiled PDF
+5. **Symbol conversion** - Greek letters and special symbols properly translated
+6. **Code blocks** - Input and output formatted with syntax highlighting
 
