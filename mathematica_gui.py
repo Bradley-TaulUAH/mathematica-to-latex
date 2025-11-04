@@ -97,7 +97,7 @@ class MathematicaConverterGUI:
         
         mode_input = ttk.Radiobutton(
             mode_frame, 
-            text="Input Only (Code)", 
+            text="Input Cells Only (Code)", 
             variable=self.display_mode, 
             value="input-only"
         )
@@ -105,7 +105,7 @@ class MathematicaConverterGUI:
         
         mode_output = ttk.Radiobutton(
             mode_frame, 
-            text="Output Only (Results)", 
+            text="Output Cells Only (Results)", 
             variable=self.display_mode, 
             value="output-only"
         )
@@ -113,7 +113,7 @@ class MathematicaConverterGUI:
         
         mode_both = ttk.Radiobutton(
             mode_frame, 
-            text="Both (Code + Results)", 
+            text="Input & Output Cells (Code + Results)", 
             variable=self.display_mode, 
             value="both"
         )
