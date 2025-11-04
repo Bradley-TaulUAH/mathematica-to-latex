@@ -13,7 +13,7 @@ A user-friendly GUI application for converting Mathematica notebook files (.nb) 
 ## Requirements
 
 - Python 3.7 or higher
-- Flask and Werkzeug (for web GUI)
+- tkinter (usually comes pre-installed with Python)
 
 ## Installation
 
@@ -23,45 +23,63 @@ git clone https://github.com/Bradley-TaulUAH/mathematica-to-latex.git
 cd mathematica-to-latex
 ```
 
-2. Install dependencies:
+2. Verify tkinter is available (optional):
 ```bash
-pip install -r requirements.txt
+python -c "import tkinter; print('tkinter is available')"
 ```
+
+That's it! No external dependencies required for the GUI.
 
 ## Usage
 
-### Web GUI Mode (Recommended)
+### Quick Start
 
-The web-based GUI provides an easy-to-use interface that works in any modern browser.
+The easiest way to launch the GUI:
 
-1. Start the web server:
 ```bash
-python web_gui.py
+python run_gui.py
 ```
 
-2. Open your browser and navigate to:
-```
-http://localhost:5000
-```
+This will automatically launch the desktop GUI popup window (or fallback to web GUI if tkinter is not available).
 
-3. In the web interface:
-   - Click or drag-and-drop your Mathematica notebook (.nb) file
-   - Select the desired output format:
-     - **LaTeX only**: Generates .tex file
-     - **Markdown only**: Generates .md file  
-     - **Both formats**: Generates both .tex and .md files
-   - Click "Convert" to start the conversion
-   - View previews and download the converted files
+### Desktop GUI Mode (Recommended)
 
-### Desktop GUI Mode (Alternative)
-
-For systems with tkinter installed, you can use the desktop GUI:
+To explicitly run the desktop GUI:
 
 ```bash
 python mathematica_gui.py
 ```
 
-Note: tkinter comes pre-installed with Python on most systems, but may need to be installed separately on some Linux distributions.
+In the GUI window:
+- Click "Browse..." to select your Mathematica notebook (.nb) file
+- Choose the output directory (defaults to the same location as input file)
+- Select the desired output format:
+  - **LaTeX only**: Generates .tex file
+  - **Markdown only**: Generates .md file  
+  - **Both formats**: Generates both .tex and .md files
+- Click "Convert" to start the conversion
+- View the results in the status area at the bottom
+
+**Note:** tkinter comes pre-installed with Python on Windows and macOS. On Linux, you may need to install it:
+- Ubuntu/Debian: `sudo apt-get install python3-tk`
+- Fedora: `sudo dnf install python3-tkinter`
+- Arch: `sudo pacman -S tk`
+
+### Web GUI Mode (Alternative)
+
+If you prefer a web interface or tkinter is not available, you can use the web-based GUI:
+
+1. Install Flask:
+```bash
+pip install flask werkzeug
+```
+
+2. Start the web server:
+```bash
+python web_gui.py
+```
+
+3. Open your browser to `http://localhost:5000`
 
 ### Command-Line Mode
 
@@ -116,10 +134,10 @@ The converter:
 - Very complex nested structures may not convert perfectly
 - Some advanced Mathematica-specific features may not have direct LaTeX/Markdown equivalents
 
-## Screenshots
+## Screenshot
 
-### Main GUI Interface
-![GUI Screenshot](docs/gui_screenshot.png)
+### Desktop GUI Interface
+The application provides a clean, easy-to-use popup window interface for converting Mathematica notebooks.
 
 ## Contributing
 
