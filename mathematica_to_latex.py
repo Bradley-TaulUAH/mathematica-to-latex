@@ -1,0 +1,745 @@
+#!/usr/bin/env python3
+"""
+Mathematica to LaTeX Converter
+
+Converts Mathematica notebook files (.nb) to LaTeX format with proper formatting.
+"""
+
+import re
+import argparse
+import sys
+import base64
+import os
+from pathlib import Path
+
+
+# Mathematica symbol to LaTeX conversion dictionary
+SYMBOL_MAP = {
+    # Greek letters (lowercase)
+    r'\[Alpha]': r'\alpha',
+    r'\[Beta]': r'\beta',
+    r'\[Gamma]': r'\gamma',
+    r'\[Delta]': r'\delta',
+    r'\[Epsilon]': r'\epsilon',
+    r'\[Zeta]': r'\zeta',
+    r'\[Eta]': r'\eta',
+    r'\[Theta]': r'\theta',
+    r'\[Iota]': r'\iota',
+    r'\[Kappa]': r'\kappa',
+    r'\[Lambda]': r'\lambda',
+    r'\[Mu]': r'\mu',
+    r'\[Nu]': r'\nu',
+    r'\[Xi]': r'\xi',
+    r'\[Omicron]': r'o',
+    r'\[Pi]': r'\pi',
+    r'\[Rho]': r'\rho',
+    r'\[Sigma]': r'\sigma',
+    r'\[Tau]': r'\tau',
+    r'\[Upsilon]': r'\upsilon',
+    r'\[Phi]': r'\phi',
+    r'\[Chi]': r'\chi',
+    r'\[Psi]': r'\psi',
+    r'\[Omega]': r'\omega',
+    
+    # Greek letters (uppercase)
+    r'\[CapitalAlpha]': r'A',
+    r'\[CapitalBeta]': r'B',
+    r'\[CapitalGamma]': r'\Gamma',
+    r'\[CapitalDelta]': r'\Delta',
+    r'\[CapitalEpsilon]': r'E',
+    r'\[CapitalZeta]': r'Z',
+    r'\[CapitalEta]': r'H',
+    r'\[CapitalTheta]': r'\Theta',
+    r'\[CapitalIota]': r'I',
+    r'\[CapitalKappa]': r'K',
+    r'\[CapitalLambda]': r'\Lambda',
+    r'\[CapitalMu]': r'M',
+    r'\[CapitalNu]': r'N',
+    r'\[CapitalXi]': r'\Xi',
+    r'\[CapitalOmicron]': r'O',
+    r'\[CapitalPi]': r'\Pi',
+    r'\[CapitalRho]': r'P',
+    r'\[CapitalSigma]': r'\Sigma',
+    r'\[CapitalTau]': r'T',
+    r'\[CapitalUpsilon]': r'\Upsilon',
+    r'\[CapitalPhi]': r'\Phi',
+    r'\[CapitalChi]': r'X',
+    r'\[CapitalPsi]': r'\Psi',
+    r'\[CapitalOmega]': r'\Omega',
+    
+    # Special characters
+    r'\[HBar]': r'\hbar',
+    r'\[Bullet]': r'\bullet',
+    r'\[Checkmark]': r'\checkmark',
+    r'\[Times]': r'\times',
+    r'\[PlusMinus]': r'\pm',
+    r'\[MinusPlus]': r'\mp',
+    r'\[LessEqual]': r'\leq',
+    r'\[GreaterEqual]': r'\geq',
+    r'\[NotEqual]': r'\neq',
+    r'\[Infinity]': r'\infty',
+    r'\[PartialD]': r'\partial',
+    r'\[Integral]': r'\int',
+    r'\[Sum]': r'\sum',
+    r'\[Product]': r'\prod',
+    r'\[Element]': r'\in',
+    r'\[NotElement]': r'\notin',
+    r'\[Subset]': r'\subset',
+    r'\[Superset]': r'\supset',
+    r'\[Union]': r'\cup',
+    r'\[Intersection]': r'\cap',
+    r'\[ForAll]': r'\forall',
+    r'\[Exists]': r'\exists',
+    r'\[RightArrow]': r'\rightarrow',
+    r'\[LeftArrow]': r'\leftarrow',
+    r'\[LeftRightArrow]': r'\leftrightarrow',
+    r'\[Implies]': r'\Rightarrow',
+    r'\[DoubleRightArrow]': r'\Rightarrow',
+    r'\[DoubleLeftRightArrow]': r'\Leftrightarrow',
+    r'\[Proportion]': r'\propto',
+    r'\[Proportional]': r'\propto',
+    r'\[EmptySet]': r'\emptyset',
+    r'\[Perpendicular]': r'\perp',
+    r'\[Parallel]': r'\parallel',
+    r'\[Angle]': r'\angle',
+    r'\[Degree]': r'^\circ',
+    r'\[Sqrt]': r'\sqrt',
+    
+    # Diacritics
+    r'\[ODoubleDot]': r'\ddot{o}',
+    r'\[UDoubleDot]': r'\ddot{u}',
+    r'\[ADoubleDot]': r'\ddot{a}',
+    
+    # Formatting
+    r'\[IndentingNewLine]': '\n',
+    r'\[NewLine]': '\n',
+    r'\[InvisibleSpace]': '',
+    r'\[NonBreakingSpace]': '~',
+    r'\[ThinSpace]': r'\,',
+    r'\[MediumSpace]': r'\:',
+    r'\[ThickSpace]': r'\;',
+    r'\[VeryThinSpace]': r'\!',
+}
+
+
+def convert_subscripts(text):
+    """Convert Mathematica subscript notation to LaTeX subscripts."""
+    # Pattern for \\[Subscript x] - note the double backslash
+    # This can appear as literal text in the output
+    text = re.sub(r'\\\\?\[Subscript\s+([^\]]+)\]', r'_{\1}', text)
+    
+    # Pattern for escaped backslashes followed by [Subscript ...]
+    # Example: r\\\\[Subscript 1] -> r_1
+    text = re.sub(r'(\w+)\\\\\\\\?\[Subscript\s+([^\]]+)\]', r'\1_{\2}', text)
+    
+    # Pattern for Subscript[base, sub]
+    text = re.sub(r'Subscript\[([^,]+),\s*([^\]]+)\]', r'\1_{\2}', text)
+    
+    return text
+
+
+def convert_superscripts(text):
+    """Convert Mathematica superscript notation to LaTeX superscripts."""
+    # Pattern for Superscript[base, super]
+    text = re.sub(r'Superscript\[([^,]+),\s*([^\]]+)\]', r'\1^{\2}', text)
+    
+    # Pattern for Power[base, exponent]
+    text = re.sub(r'Power\[([^,]+),\s*([^\]]+)\]', r'\1^{\2}', text)
+    
+    return text
+
+
+def convert_symbols(text):
+    """Convert Mathematica special symbols to LaTeX."""
+    for math_symbol, latex_symbol in SYMBOL_MAP.items():
+        # Add space after operator symbols to avoid concatenation issues
+        if math_symbol in [r'\[PlusMinus]', r'\[MinusPlus]', r'\[Times]', 
+                          r'\[LessEqual]', r'\[GreaterEqual]', r'\[NotEqual]']:
+            text = text.replace(math_symbol, latex_symbol + ' ')
+        else:
+            text = text.replace(math_symbol, latex_symbol)
+    
+    # Handle \.b2 (subscript 2 notation)
+    text = re.sub(r'\\\.b(\d)', r'^{\1}', text)
+    
+    # Handle special Unicode characters
+    text = text.replace('≥', r'\geq ')
+    text = text.replace('≤', r'\leq ')
+    text = text.replace('±', r'\pm ')
+    text = text.replace('×', r'\times ')
+    text = text.replace('÷', r'\div ')
+    text = text.replace('≠', r'\neq ')
+    text = text.replace('∞', r'\infty')
+    text = text.replace('∂', r'\partial')
+    text = text.replace('∫', r'\int')
+    text = text.replace('∑', r'\sum')
+    text = text.replace('∏', r'\prod')
+    text = text.replace('√', r'\sqrt')
+    
+    return text
+
+
+def extract_graphics(text, output_dir):
+    """Detect graphics from GraphicsBox structures."""
+    graphics = []
+    
+    # Look for GraphicsBox structures - count them for placeholders
+    graphics_pattern = r'Cell\[GraphicsData\[|Cell\[.*?GraphicsBox\['
+    matches = re.finditer(graphics_pattern, text, re.DOTALL)
+    
+    graphic_count = 0
+    for match in matches:
+        graphic_count += 1
+        # Add placeholder - actual graphics need to be exported from Mathematica
+        graphics.append(f"figure_{graphic_count}")
+    
+    return graphics
+
+
+def extract_gridbox_table(text):
+    """Extract table data from a GridBox structure."""
+    # Look for GridBox[{ rows }]
+    gridbox_match = re.search(r'GridBox\[\{', text, re.DOTALL)
+    if not gridbox_match:
+        return None
+    
+    # Find the matching closing bracket using stack-based parsing
+    start_pos = gridbox_match.end()
+    bracket_count = 1
+    pos = start_pos
+    
+    while pos < len(text) and bracket_count > 0:
+        if text[pos] == '{':
+            bracket_count += 1
+        elif text[pos] == '}':
+            bracket_count -= 1
+        pos += 1
+    
+    if bracket_count != 0:
+        return None
+    
+    grid_content = text[start_pos:pos-1]
+    
+    # Remove line continuation characters (backslash followed by newline)
+    # These are part of the file format, not the content
+    grid_content = re.sub(r'\\\n\s*', '', grid_content)
+    
+    # Now extract rows - split by comma at top level
+    rows = []
+    current_row = []
+    bracket_count = 0
+    cell_start = 0
+    
+    i = 0
+    while i < len(grid_content):
+        char = grid_content[i]
+        
+        if char == '{':
+            if bracket_count == 0:
+                cell_start = i + 1
+            bracket_count += 1
+        elif char == '}':
+            bracket_count -= 1
+            if bracket_count == 0:
+                # End of a row
+                row_content = grid_content[cell_start:i]
+                
+                # Extract all string literals from this row
+                cell_strings = re.findall(r'\\<\\"(.*?)\\"\\>', row_content, re.DOTALL)
+                if cell_strings:
+                    cells = []
+                    for cell in cell_strings:
+                        cell = cell.replace('\\n', '\n')
+                        cell = cell.replace('\\"', '"')
+                        # Remove FormBox expressions
+                        cell = re.sub(r'\\!\\\\?\(\\\\?\*FormBox\[.*?TraditionalForm\]\\\\?\)', '[formula]', cell, flags=re.DOTALL)
+                        cells.append(cell)
+                    rows.append(cells)
+        
+        i += 1
+    
+    return rows if rows else None
+
+
+def extract_string_content(text):
+    """Extract content from string literals in Mathematica cells."""
+    results = []
+    
+    # Extract content between Mathematica string delimiters "\<\"...\"\>"
+    # This is the format used in Print statements and output cells
+    # In raw file: \<\"...\"\> but when read, becomes: \\<\\"...\\">\\>
+    matches = re.findall(r'\\<\\"(.*?)\\"\\>', text, re.DOTALL)
+    for match in matches:
+        # Clean up escaped characters
+        content = match.replace('\\n', '\n')
+        content = content.replace('\\"', '"')
+        content = content.replace('\\\\', '\\')
+        
+        # Remove line continuation backslashes (backslash followed by newline)
+        content = re.sub(r'\\\n\s*', '', content)
+        
+        # Remove FormBox expressions early (they can span lines)
+        # These are complex formatted expressions that we can't convert properly
+        content = re.sub(r'\\!\\\\?\(\\\\?\*FormBox\[.*?TraditionalForm\]\\\\?\)', '[formula]', content, flags=re.DOTALL)
+        
+        # Skip if it's just whitespace or newlines
+        if content.strip() and content.strip() not in ['\\', '\n']:
+            results.append(content)
+    
+    if results:
+        return '\n'.join(results)
+    
+    return ''
+
+
+def is_math_content(text):
+    """Determine if text contains mathematical content that should be in math mode."""
+    # Check for LaTeX math symbols
+    math_indicators = [
+        r'\alpha', r'\beta', r'\gamma', r'\delta', r'\epsilon', r'\zeta', r'\eta', 
+        r'\theta', r'\iota', r'\kappa', r'\lambda', r'\mu', r'\nu', r'\xi',
+        r'\pi', r'\rho', r'\sigma', r'\tau', r'\upsilon', r'\phi', r'\chi', 
+        r'\psi', r'\omega', r'\hbar', r'\times', r'\pm', r'\geq', r'\leq',
+        r'\bullet', r'\checkmark', r'\ddot', r'\dot',
+        '_', '^'
+    ]
+    
+    return any(indicator in text for indicator in math_indicators)
+
+
+def fix_math_spacing(text):
+    """Fix spacing issues in mathematical expressions."""
+    # Add space after Greek letters when followed by a letter (not a special char)
+    # Example: \alphax -> \alpha x
+    greek_letters = [
+        'alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 
+        'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi',
+        'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 
+        'psi', 'omega'
+    ]
+    
+    for letter in greek_letters:
+        # Match \letter followed by a lowercase letter (variable name)
+        text = re.sub(rf'(\\{letter})([a-z])', r'\1 \2', text)
+    
+    # Fix common patterns like \sqrtN -> \sqrt{N}
+    text = re.sub(r'\\sqrt([A-Za-z])', r'\\sqrt{\1}', text)
+    
+    return text
+
+
+def clean_formbox_expressions(text):
+    """Remove or simplify Mathematica FormBox expressions."""
+    # Remove FormBox wrapper - these are complex formatted expressions
+    # The pattern can appear with different levels of escaping:
+    # 1. \\!\\(\\*FormBox[...]\\) - in tables/StyleBox
+    # 2. \!\(\*FormBox[...]\) - in simple cells
+    
+    # Handle heavily escaped version (in tables)
+    text = re.sub(r'\\\\!\\\\\\(\\\\\\*FormBox\[.*?TraditionalForm\]\\\\\\)', '[formula]', text, flags=re.DOTALL)
+    
+    # Handle lightly escaped version (in regular cells)
+    text = re.sub(r'\\!\\\\?\(\\\\?\*FormBox\[.*?TraditionalForm\]\\\\?\)', '[formula]', text, flags=re.DOTALL)
+    
+    return text
+
+
+def extract_input_code(cell_text):
+    """Extract code from an Input cell."""
+    # Look for RowBox patterns which contain the actual code
+    # Pattern: RowBox[{"code", "parts", ...}]
+    code_parts = []
+    
+    # Find all string literals in RowBox
+    matches = re.findall(r'"([^"\\]*(?:\\.[^"\\]*)*)"', cell_text)
+    for match in matches:
+        # Skip style markers and metadata
+        if match in ['Input', 'Code', 'Bold', 'Italic'] or match.startswith('FontWeight'):
+            continue
+        # Skip empty or whitespace-only strings
+        if not match or match.isspace():
+            continue
+        # Clean up the code
+        cleaned = match.replace('\\n', '\n')
+        cleaned = cleaned.replace('\\"', '"')
+        
+        # Replace Mathematica formatting codes with spaces
+        cleaned = re.sub(r'\[IndentingNewLine\]', '\n', cleaned)
+        cleaned = re.sub(r'\[?Continuation\]?', '', cleaned)
+        
+        # Convert bracket notations to actual brackets
+        cleaned = cleaned.replace('\\[', '[')
+        cleaned = cleaned.replace('\\]', ']')
+        cleaned = cleaned.replace('\\(', '(')
+        cleaned = cleaned.replace('\\)', ')')
+        
+        if cleaned.strip():
+            code_parts.append(cleaned)
+    
+    if code_parts:
+        # Join with spaces, but preserve newlines
+        result = ' '.join(code_parts)
+        # Clean up multiple spaces
+        result = re.sub(r' +', ' ', result)
+        # Clean up spacing around newlines
+        result = re.sub(r' *\n *', '\n', result)
+        return result
+    return ''
+
+
+def process_cell_content(cell_text):
+    """Process a single cell's content."""
+    # Check if this is a code cell (Input) - now we include these
+    if '"Input"' in cell_text:
+        code = extract_input_code(cell_text)
+        if code:
+            return ('INPUT', code)
+        return ''
+    
+    # Check if this cell contains a GraphicsBox (but not inside GridBox for legends)
+    # Only treat as graphic if it's a primary GraphicsBox with plot data
+    if ('TagBox[' in cell_text and 'GraphicsBox[{' in cell_text and 'CompressedData[' in cell_text):
+        return ('GRAPHIC', cell_text)
+    
+    # Check if this cell contains a GridBox (table)
+    table_data = extract_gridbox_table(cell_text)
+    if table_data:
+        return ('TABLE', table_data)
+    
+    # Extract string content from Print cells and TextData cells
+    content = extract_string_content(cell_text)
+    
+    if not content or len(content) < 3:
+        return ''
+    
+    # Clean up FormBox expressions before other conversions
+    content = clean_formbox_expressions(content)
+    
+    # Convert symbols
+    content = convert_symbols(content)
+    
+    # Convert subscripts and superscripts
+    content = convert_subscripts(content)
+    content = convert_superscripts(content)
+    
+    # Fix math spacing issues
+    content = fix_math_spacing(content)
+    
+    # Clean up trailing backslashes and dollar signs
+    content = re.sub(r'\\\$', '', content)
+    content = re.sub(r'\\\s*$', '', content)  # Remove trailing backslash
+    content = re.sub(r'\\$', '', content)
+    
+    # Clean up whitespace
+    content = re.sub(r'[ \t]+', ' ', content)
+    content = re.sub(r'\n\n+', '\n\n', content)
+    
+    return content.strip()
+
+
+def extract_cells_from_notebook(notebook_content):
+    """Extract cells from a Mathematica notebook."""
+    cells = []
+    
+    # Split by Cell[ markers - handle nested structures
+    # Look for Cell[BoxData[...]] or Cell[TextData[...]] or Cell["string", ...]
+    lines = notebook_content.split('\n')
+    in_cell = False
+    cell_lines = []
+    bracket_count = 0
+    
+    for line in lines:
+        if line.startswith('Cell['):
+            in_cell = True
+            cell_lines = [line]
+            bracket_count = line.count('[') - line.count(']')
+        elif in_cell:
+            cell_lines.append(line)
+            bracket_count += line.count('[') - line.count(']')
+            
+            if bracket_count <= 0:
+                # End of cell
+                cell_content = '\n'.join(cell_lines)
+                
+                # Process the cell content
+                processed = process_cell_content(cell_content)
+                if processed:
+                    # Could be a string or a tuple ('TABLE', data) or ('INPUT', code) or ('GRAPHIC', data)
+                    if isinstance(processed, tuple):
+                        cells.append(processed)
+                    elif isinstance(processed, str) and len(processed) > 3:
+                        cells.append(processed)
+                
+                in_cell = False
+                cell_lines = []
+                bracket_count = 0
+    
+    return cells
+
+
+def convert_notebook_to_latex(input_file):
+    """Convert a Mathematica notebook to LaTeX."""
+    with open(input_file, 'r', encoding='utf-8', errors='ignore') as f:
+        content = f.read()
+    
+    # Create output directory for figures
+    output_base = Path(input_file).stem
+    figures_dir = f"{output_base}_figures"
+    
+    # Extract graphics
+    graphics_list = extract_graphics(content, figures_dir)
+    
+    # Extract cells
+    cells = extract_cells_from_notebook(content)
+    
+    # Build LaTeX document
+    latex_output = []
+    
+    latex_output.append(r'\documentclass{article}')
+    latex_output.append(r'\usepackage{amsmath}')
+    latex_output.append(r'\usepackage{amssymb}')
+    latex_output.append(r'\usepackage{graphicx}')
+    latex_output.append(r'\usepackage{array}')
+    latex_output.append(r'\usepackage{booktabs}')
+    latex_output.append(r'\usepackage{float}')
+    latex_output.append(r'\usepackage{listings}')
+    latex_output.append(r'\usepackage{xcolor}')
+    latex_output.append(r'')
+    latex_output.append(r'% Configure listings for Mathematica code')
+    latex_output.append(r'\lstset{')
+    latex_output.append(r'  language=Mathematica,')
+    latex_output.append(r'  basicstyle=\small\ttfamily,')
+    latex_output.append(r'  keywordstyle=\color{blue},')
+    latex_output.append(r'  commentstyle=\color{green!60!black},')
+    latex_output.append(r'  stringstyle=\color{red},')
+    latex_output.append(r'  numbers=none,')
+    latex_output.append(r'  frame=single,')
+    latex_output.append(r'  breaklines=true,')
+    latex_output.append(r'  backgroundcolor=\color{gray!10},')
+    latex_output.append(r'  captionpos=b')
+    latex_output.append(r'}')
+    latex_output.append(r'')
+    latex_output.append(r'\begin{document}')
+    latex_output.append(r'')
+    
+    # Add title
+    filename = Path(input_file).stem
+    latex_output.append(r'\title{' + filename + '}')
+    latex_output.append(r'\maketitle')
+    latex_output.append(r'')
+    
+    # Track graphics index
+    graphic_idx = 0
+    
+    # Group content for better flow
+    current_paragraph = []
+    
+    # Add cells
+    for cell in cells:
+        # Handle input code cells
+        if isinstance(cell, tuple) and cell[0] == 'INPUT':
+            # Flush current paragraph
+            if current_paragraph:
+                latex_output.append(' '.join(current_paragraph))
+                latex_output.append(r'')
+                current_paragraph = []
+            
+            # Add code block
+            code = cell[1]
+            latex_output.append(r'\begin{lstlisting}')
+            latex_output.append(code)
+            latex_output.append(r'\end{lstlisting}')
+            latex_output.append(r'')
+            continue
+        
+        # Handle graphic cells
+        if isinstance(cell, tuple) and cell[0] == 'GRAPHIC':
+            # Flush current paragraph
+            if current_paragraph:
+                latex_output.append(' '.join(current_paragraph))
+                latex_output.append(r'')
+                current_paragraph = []
+            
+            # Add figure placeholder
+            if graphic_idx < len(graphics_list):
+                graphic = graphics_list[graphic_idx]
+                latex_output.append(r'\begin{figure}[H]')
+                latex_output.append(r'\centering')
+                latex_output.append(r'% TODO: Export ' + graphic + '.png from Mathematica and place in ' + figures_dir + '/')
+                latex_output.append(r'\includegraphics[width=0.7\textwidth]{' + figures_dir + '/' + graphic + '.png}')
+                latex_output.append(r'\caption{Figure ' + str(graphic_idx + 1) + '}')
+                latex_output.append(r'\end{figure}')
+                latex_output.append(r'')
+                graphic_idx += 1
+            continue
+        
+        # Handle table cells
+        if isinstance(cell, tuple) and cell[0] == 'TABLE':
+            # Flush current paragraph
+            if current_paragraph:
+                latex_output.append(' '.join(current_paragraph))
+                latex_output.append(r'')
+                current_paragraph = []
+            
+            table_data = cell[1]
+            if table_data:
+                # Determine number of columns
+                max_cols = max(len(row) for row in table_data)
+                col_format = 'l' * max_cols
+                
+                latex_output.append(r'\begin{center}')
+                latex_output.append(r'\begin{tabular}{' + col_format + '}')
+                latex_output.append(r'\hline')
+                
+                for i, row in enumerate(table_data):
+                    # Convert symbols in cells
+                    converted_row = []
+                    for cell_val in row:
+                        cell_val = convert_symbols(cell_val)
+                        cell_val = convert_subscripts(cell_val)
+                        cell_val = convert_superscripts(cell_val)
+                        cell_val = fix_math_spacing(cell_val)
+                        if is_math_content(cell_val):
+                            cell_val = f'${cell_val}$'
+                        converted_row.append(cell_val)
+                    
+                    # Pad row if needed
+                    while len(converted_row) < max_cols:
+                        converted_row.append('')
+                    
+                    latex_output.append(' & '.join(converted_row) + r' \\')
+                    
+                    # Add hline after header row
+                    if i == 0:
+                        latex_output.append(r'\hline')
+                
+                latex_output.append(r'\hline')
+                latex_output.append(r'\end{tabular}')
+                latex_output.append(r'\end{center}')
+                latex_output.append(r'')
+            continue
+        
+        # Skip cells that are just a single backslash or newline or empty
+        if cell in ['\\', '\n', '\\n', '', ' ']:
+            continue
+        
+        # Skip cells that start with backslash and are short (likely formatting artifacts)
+        if cell.startswith('\\') and len(cell) <= 2:
+            continue
+        
+        # Check if this is a heading/title (short, possibly bold text)
+        is_heading = len(cell) < 80 and not any(word in cell.lower() for word in ['equation', 'where', 'using', 'for', 'with'])
+        
+        # Regular text or math content
+        if is_heading and not is_math_content(cell):
+            # Flush current paragraph
+            if current_paragraph:
+                latex_output.append(' '.join(current_paragraph))
+                latex_output.append(r'')
+                current_paragraph = []
+            
+            # Add as section or subsection
+            if len(cell) < 40:
+                latex_output.append(r'\subsection*{' + cell + '}')
+            else:
+                latex_output.append(r'\textbf{' + cell + '}')
+            latex_output.append(r'')
+        else:
+            # Regular content - add to paragraph
+            if is_math_content(cell):
+                # Wrap in math mode if not already and contains inline math
+                if not (cell.startswith('$') or cell.startswith(r'\[') or '$' in cell):
+                    cell = f'${cell}$'
+            
+            # Add to current paragraph
+            current_paragraph.append(cell)
+    
+    # Flush final paragraph
+    if current_paragraph:
+        latex_output.append(' '.join(current_paragraph))
+        latex_output.append(r'')
+    
+    # Add graphics placeholders if any were found but not inserted
+    if len(graphics_list) > graphic_idx:
+        latex_output.append(r'\section*{Figures}')
+        latex_output.append(r'')
+        latex_output.append(r'% The notebook contains ' + str(len(graphics_list)) + ' figures.')
+        latex_output.append(r'% To include them, export the graphics from Mathematica using:')
+        latex_output.append(r'%   Export["figure_N.png", graphicsObject]')
+        latex_output.append(r'% Then place the PNG files in the ' + figures_dir + '/ directory.')
+        latex_output.append(r'')
+        
+        for i in range(len(graphics_list)):
+            latex_output.append(r'\begin{figure}[H]')
+            latex_output.append(r'\centering')
+            latex_output.append(r'% TODO: Export figure from Mathematica')
+            latex_output.append(r'\includegraphics[width=0.7\textwidth]{' + figures_dir + '/' + graphics_list[i] + '.png}')
+            latex_output.append(r'\caption{Figure ' + str(i + 1) + '}')
+            latex_output.append(r'\label{fig:' + str(i + 1) + '}')
+            latex_output.append(r'\end{figure}')
+            latex_output.append(r'')
+    
+    latex_output.append(r'\end{document}')
+    
+    return '\n'.join(latex_output)
+
+
+def main():
+    """Main function."""
+    parser = argparse.ArgumentParser(
+        description='Convert Mathematica notebook files to LaTeX format'
+    )
+    parser.add_argument(
+        'input_files',
+        nargs='+',
+        help='Input Mathematica notebook file(s) (.nb)'
+    )
+    parser.add_argument(
+        '-o', '--output',
+        help='Output LaTeX file (default: derived from first input file)'
+    )
+    
+    args = parser.parse_args()
+    
+    # Process each input file
+    all_latex = []
+    
+    for input_file in args.input_files:
+        if not Path(input_file).exists():
+            print(f"Error: File not found: {input_file}", file=sys.stderr)
+            sys.exit(1)
+        
+        print(f"Converting {input_file}...")
+        latex_content = convert_notebook_to_latex(input_file)
+        all_latex.append(latex_content)
+    
+    # Combine outputs
+    if len(all_latex) > 1:
+        # Merge multiple documents
+        combined = all_latex[0]
+        for latex in all_latex[1:]:
+            # Extract content between \begin{document} and \end{document}
+            content_match = re.search(r'\\begin\{document\}(.*?)\\end\{document\}', 
+                                     latex, re.DOTALL)
+            if content_match:
+                combined = combined.replace(r'\end{document}', 
+                                          content_match.group(1) + r'\end{document}')
+        final_latex = combined
+    else:
+        final_latex = all_latex[0]
+    
+    # Determine output filename
+    if args.output:
+        output_file = args.output
+    else:
+        output_file = Path(args.input_files[0]).stem + '.tex'
+    
+    # Write output
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(final_latex)
+    
+    print(f"LaTeX output written to {output_file}")
+
+
+if __name__ == '__main__':
+    main()
