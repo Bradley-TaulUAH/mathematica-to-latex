@@ -7,7 +7,7 @@ This document shows examples of content extracted from the Mathematica notebooks
 ### Comments Extracted
 ```
 Barrier in a Well
-Natural units : ℏ
+Natural units: ℏ
 Parameters : σ
 Basis functions and potential
 Matrix elements
