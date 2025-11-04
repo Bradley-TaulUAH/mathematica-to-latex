@@ -36,7 +36,7 @@ class MathematicaToLatexConverter:
         r'\[Mu]': r'$\mu$',
         r'\[Nu]': r'$\nu$',
         r'\[Xi]': r'$\xi$',
-        r'\[Omicron]': r'$\omicron$',
+        r'\[Omicron]': r'$o$',
         r'\[Pi]': r'$\pi$',
         r'\[Rho]': r'$\rho$',
         r'\[Sigma]': r'$\sigma$',
@@ -283,7 +283,8 @@ class MathematicaToLatexConverter:
                     
                     # Look for patterns like "\<\"content\"\>"
                     # Pattern: \<\"...\"\> extracts content between the escaped quotes
-                    string_matches = re.findall(r'\\<\\"([^"\\\\]+)\\"', row_content)
+                    # Updated pattern handles escaped characters within cell content
+                    string_matches = re.findall(r'\\<\\"((?:[^"\\]|\\.)*)\\"', row_content)
                     if string_matches:
                         cells.extend(string_matches)
                     
@@ -429,9 +430,13 @@ class MathematicaToLatexConverter:
                 # Process the string
                 result = self.convert_greek_letters(string_content)
                 result = self.convert_unicode_escapes(result)
-                # Clean up special sequences like \.b2 (which is a unicode marker)
+                # Clean up special sequences like \.b2.
+                # In Mathematica's internal string representation, sequences like \.b2 represent Unicode characters
+                # using a backslash, dot, and two hex digits (here, 'b2' = U+00B2, superscript 2).
+                # These are sometimes left in exported notebook text. We remove them here because Unicode
+                # superscripts are already handled by convert_unicode_escapes().
                 result = re.sub(r'\\\.b2', '', result)
-                result = re.sub(r'\\n', '', result)
+                result = result.replace('\n', '')
                 # Apply styling
                 if self.is_bold_or_title(content):
                     result = r'\textbf{' + result + '}'
@@ -513,7 +518,7 @@ class MathematicaToLatexConverter:
         latex_lines.append(r'\usepackage{graphicx}')
         latex_lines.append(r'\usepackage{float}')
         latex_lines.append(r'')
-        latex_lines.append(r'\title{' + os.path.basename(notebook_path).replace('_', r'\_') + '}')
+        latex_lines.append(r'\title{' + self.escape_latex_chars(os.path.basename(notebook_path)) + '}')
         latex_lines.append(r'\date{}')
         latex_lines.append(r'')
         latex_lines.append(r'\begin{document}')
@@ -563,7 +568,7 @@ class MathematicaToLatexConverter:
                 continue
             
             # Add section for this notebook
-            notebook_name = os.path.basename(notebook_path).replace('_', r'\_')
+            notebook_name = self.escape_latex_chars(os.path.basename(notebook_path))
             latex_lines.append(r'\section{' + notebook_name + '}')
             latex_lines.append(r'')
             
