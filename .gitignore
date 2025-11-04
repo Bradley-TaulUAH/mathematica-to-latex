@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Generated LaTeX files
 *.tex
 *.pdf
@@ -6,16 +7,63 @@
 *.out
 
 # Python cache
+=======
+# LaTeX build artifacts
+*.aux
+*.log
+*.pdf
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+
+# Test files
+test.*
+combined_output.*
+
+# Python
+>>>>>>> origin/main
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+<<<<<<< HEAD
 
 # Virtual environments
 venv/
 ENV/
 env/
+=======
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+>>>>>>> origin/main
 
 # IDE
 .vscode/
@@ -23,3 +71,11 @@ env/
 *.swp
 *.swo
 *~
+<<<<<<< HEAD
+=======
+.DS_Store
+
+# Temporary files
+*.tmp
+.cache/
+>>>>>>> origin/main

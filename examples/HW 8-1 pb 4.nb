@@ -1,0 +1,3673 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[    142263,       3663]
+NotebookOptionsPosition[    117618,       3357]
+NotebookOutlinePosition[    118037,       3373]
+CellTagsIndexPosition[    117994,       3370]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Infinite", " ", "Square", " ", "Well"}], "-", 
+    RowBox[{"Variational", " ", "Method"}]}], "*)"}], 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Merzbacher", " ", "Problem", " ", "8.1"}], "-", 
+    RowBox[{"Complete", " ", "Solution"}]}], "*)"}], 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Pure", " ", "symbolic", " ", "version"}], "-", 
+    RowBox[{"no", " ", "numerical", " ", "substitution"}]}], "*)"}], 
+  RowBox[{
+   RowBox[{"Clear", "[", "\"\<Global`*\>\"", "]"}], "\n", 
+   RowBox[{
+    RowBox[{"$Assumptions", "=", 
+     RowBox[{
+      RowBox[{"a", ">", "0"}], "&&", 
+      RowBox[{"b", ">", "0"}]}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<INFINITE SQUARE WELL VARIATIONAL CALCULATION\>\"", 
+    "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<Potential: V = 0 for -a < x < a, V = \[Infinity] \
+elsewhere\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<Boundary conditions: \[Psi](\[PlusMinus]a) = 0\>\"", 
+    "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "===", "===", "===", "===", "===", "===", "===", "===", "===", "===", "===",
+      "===", "===", "===", "===", "===", "===", "===", "===", "===", "===", "===",
+      "===", "==="}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<PART (a): TRAPEZOIDAL TRIAL FUNCTION\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Trial function:\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<         \[Psi](x) = a - |x|    for b \[LessEqual] |x| \
+\[LessEqual] a  (sloped regions)\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<         \[Psi](x) = a - b      for |x| \[LessEqual] b  \
+    (flat region)\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+   "Print", "[", "\"\<Case (i): b = 0 (Triangular function)\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Normalization integral:\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  N = \[Integral]_{-a}^{a} (a - |x|)^2 dx\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  By symmetry: N = 2\[Integral]_{0}^{a} (a - x)^2 \
+dx\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  Expanding: \[Integral]_{0}^{a} (a^2 - 2ax + x^2) dx\>\
+\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<  = [a^2 x - ax^2 + x^3/3]_{0}^{a}\>\"", "]"}], 
+   "\n", 
+   RowBox[{"Print", "[", "\"\<  = a^3 - a^3 + a^3/3\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<  = a^3/3\>\"", "]"}], "\n", 
+   RowBox[{"normIntTri", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{"2", "*", 
+      RowBox[{"Integrate", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"a", "-", "x"}], ")"}], "^", "2"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"x", ",", "0", ",", "a"}], "}"}]}], "]"}]}], "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  N = \>\"", ",", "normIntTri"}], "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"ATri", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{"1", "/", 
+      RowBox[{"Sqrt", "[", "normIntTri", "]"}]}], "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  A = 1/\[Sqrt]N = \>\"", ",", "ATri"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Kinetic energy calculation:\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<  d\[Psi]/dx = -A  for 0 < x < a\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<  d\[Psi]/dx = +A  for -a < x < 0\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  <T> = \
+(\[HBar]^2/2m)\[Integral]_{-a}^{a}|d\[Psi]/dx|^2 dx\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = (\[HBar]^2/2m) \[Times] 2\[Integral]_{0}^{a} A^2 dx\
+\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<  = (\[HBar]^2/2m) \[Times] 2A^2 a\>\"", "]"}], 
+   "\n", 
+   RowBox[{"kineticTri", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{"2", "*", 
+      RowBox[{"Integrate", "[", 
+       RowBox[{
+        RowBox[{"ATri", "^", "2"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"x", ",", "0", ",", "a"}], "}"}]}], "]"}]}], "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  = (\[HBar]^2/2m) \[Times] \>\"", ",", "kineticTri"}], 
+    "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  <E> = (\[HBar]^2/2m) \[Times] \>\"", ",", 
+     RowBox[{"Simplify", "[", 
+      RowBox[{"kineticTri", "/", 
+       RowBox[{"a", "^", "2"}]}], "]"}], ",", "\"\</a^2\>\""}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", 
+    RowBox[{"Framed", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"\"\<ANSWER (Case i): <E> = \>\"", "<>", 
+         RowBox[{"ToString", "[", 
+          RowBox[{
+           RowBox[{"Simplify", "[", 
+            RowBox[{"kineticTri", "/", 
+             RowBox[{"a", "^", "2"}]}], "]"}], ",", "TraditionalForm"}], 
+          "]"}], "<>", "\"\< \[HBar]^2/(2ma^2)\>\""}], ",", "Bold", ",", 
+        "14"}], "]"}], ",", 
+      RowBox[{"FrameStyle", "->", "Thick"}], ",", 
+      RowBox[{"Background", "->", "LightYellow"}]}], "]"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Case (ii): Optimize parameter b\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Normalization integral:\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  N = \[Integral]_{-a}^{a} \[Psi]^2 dx\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = \[Integral]_{-a}^{-b} (a - |x|)^2 dx + \
+\[Integral]_{-b}^{b} (a - b)^2 dx + \[Integral]_{b}^{a} (a - |x|)^2 dx\>\"", 
+    "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<  By symmetry of outer regions:\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = 2\[Integral]_{b}^{a} (a - x)^2 dx + (a - b)^2 \
+(2b)\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = 2[(a - x)^3/(-3)]_{b}^{a} + 2b(a - b)^2\>\"", "]"}],
+    "\n", 
+   RowBox[{"Print", "[", "\"\<  = 2(a - b)^3/3 + 2b(a - b)^2\>\"", "]"}], "\n", 
+   RowBox[{"part1", "=", 
+    RowBox[{"Integrate", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"a", "-", "x"}], ")"}], "^", "2"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", "b", ",", "a"}], "}"}]}], "]"}]}], "\n", 
+   RowBox[{"part2", "=", 
+    RowBox[{"Integrate", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"a", "-", "b"}], ")"}], "^", "2"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", 
+        RowBox[{"-", "b"}], ",", "b"}], "}"}]}], "]"}]}], "\n", 
+   RowBox[{"normTrap", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{
+      RowBox[{"2", "*", "part1"}], "+", "part2"}], "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  N(b) = \>\"", ",", "normTrap"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"ATrap", "=", 
+    RowBox[{"1", "/", 
+     RowBox[{"Sqrt", "[", "normTrap", "]"}]}]}], "\n", 
+   RowBox[{"Print", "[", "\"\<Kinetic energy calculation:\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  d\[Psi]/dx = 0  for |x| < b  (flat region contributes \
+nothing)\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<  d\[Psi]/dx = -1  for b < x < a\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<  d\[Psi]/dx = +1  for -a < x < -b\>\"", "]"}], 
+   "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  <T> = (\[HBar]^2/2m) \[Times] 2\[Integral]_{b}^{a} \
+(1/N) dx\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = (\[HBar]^2/2m) \[Times] 2(a - b)/N\>\"", "]"}], "\n", 
+   RowBox[{"kineticTrap", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{"2", "*", 
+      RowBox[{"Integrate", "[", 
+       RowBox[{
+        RowBox[{"ATrap", "^", "2"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"x", ",", "b", ",", "a"}], "}"}]}], "]"}]}], "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  = (\[HBar]^2/2m) \[Times] \>\"", ",", "kineticTrap"}], 
+    "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"dEdb", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{"D", "[", 
+      RowBox[{"kineticTrap", ",", "b"}], "]"}], "]"}]}], "\n", 
+   RowBox[{"Print", "[", "\"\<Optimization:\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  d<E>/db = (\[HBar]^2/2m) \[Times] \>\"", ",", "dEdb"}], 
+    "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  Since d<E>/db < 0 for 0 < b < a, the energy decreases \
+monotonically.\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  Therefore, the minimum occurs at b = 0 (triangular \
+function).\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", 
+    RowBox[{"Framed", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{"\"\<ANSWER (Case ii): Optimal value b = 0 (triangular \
+function gives minimum)\>\"", ",", "Bold", ",", "14"}], "]"}], ",", 
+      RowBox[{"FrameStyle", "->", "Thick"}], ",", 
+      RowBox[{"Background", "->", "LightYellow"}]}], "]"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "===", "===", "===", "===", "===", "===", "===", "===", "===", "===", "===",
+      "===", "===", "===", "===", "===", "===", "===", "===", "===", "===", "===",
+      "===", "==="}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<PART (b): PARABOLIC TRIAL FUNCTION\>\"", "]"}], 
+   "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+   "Print", "[", "\"\<Trial function: \[Psi](x) = A(x - a)(x + a) = A(x^2 - \
+a^2)\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Normalization integral:\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  N = \[Integral]_{-a}^{a} (x^2 - a^2)^2 dx\>\"", "]"}],
+    "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = \[Integral]_{-a}^{a} (x^4 - 2a^2 x^2 + a^4) dx\>\"",
+     "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<  By symmetry (all terms are even):\>\"", "]"}],
+    "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = 2\[Integral]_{0}^{a} (x^4 - 2a^2 x^2 + a^4) dx\>\"",
+     "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = 2[x^5/5 - 2a^2 x^3/3 + a^4 x]_{0}^{a}\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<  = 2(a^5/5 - 2a^5/3 + a^5)\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<  = 2a^5(1/5 - 2/3 + 1)\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<  = 2a^5(3/15 - 10/15 + 15/15)\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<  = 2a^5(8/15)\>\"", "]"}], "\n", 
+   RowBox[{"normIntB", "=", 
+    RowBox[{"Integrate", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"x", "^", "2"}], "-", 
+         RowBox[{"a", "^", "2"}]}], ")"}], "^", "2"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", 
+        RowBox[{"-", "a"}], ",", "a"}], "}"}]}], "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  N = \>\"", ",", "normIntB"}], "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"AB", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{"1", "/", 
+      RowBox[{"Sqrt", "[", "normIntB", "]"}]}], "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  A = \>\"", ",", "AB"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Derivative: d\[Psi]/dx = 2Ax\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Kinetic energy calculation:\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  <T> = \
+(\[HBar]^2/2m)\[Integral]_{-a}^{a}|d\[Psi]/dx|^2 dx\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = (\[HBar]^2/2m)\[Integral]_{-a}^{a} (2Ax)^2 dx\>\"", 
+    "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = (\[HBar]^2/2m) \[Times] 4A^2\[Integral]_{-a}^{a} \
+x^2 dx\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<  By symmetry:\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = (\[HBar]^2/2m) \[Times] 4A^2 \[Times] \
+2\[Integral]_{0}^{a} x^2 dx\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = (\[HBar]^2/2m) \[Times] 8A^2 [x^3/3]_{0}^{a}\>\"", 
+    "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = (\[HBar]^2/2m) \[Times] 8A^2 a^3/3\>\"", "]"}], "\n", 
+   RowBox[{"kineticIntB", "=", 
+    RowBox[{"Integrate", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"2", "*", "AB", "*", "x"}], ")"}], "^", "2"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", 
+        RowBox[{"-", "a"}], ",", "a"}], "}"}]}], "]"}]}], "\n", 
+   RowBox[{"kineticIntB", "=", 
+    RowBox[{"Simplify", "[", "kineticIntB", "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  = (\[HBar]^2/2m) \[Times] \>\"", ",", "kineticIntB"}], 
+    "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  <E> = (\[HBar]^2/2m) \[Times] \>\"", ",", 
+     RowBox[{"Simplify", "[", 
+      RowBox[{"kineticIntB", "/", 
+       RowBox[{"a", "^", "2"}]}], "]"}], ",", "\"\</a^2\>\""}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", 
+    RowBox[{"Framed", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{
+        RowBox[{"\"\<ANSWER (Part b): <E> = \>\"", "<>", 
+         RowBox[{"ToString", "[", 
+          RowBox[{
+           RowBox[{"Simplify", "[", 
+            RowBox[{"kineticIntB", "/", 
+             RowBox[{"a", "^", "2"}]}], "]"}], ",", "TraditionalForm"}], 
+          "]"}], "<>", "\"\< \[HBar]^2/(2ma^2)\>\""}], ",", "Bold", ",", 
+        "14"}], "]"}], ",", 
+      RowBox[{"FrameStyle", "->", "Thick"}], ",", 
+      RowBox[{"Background", "->", "LightYellow"}]}], "]"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "===", "===", "===", "===", "===", "===", "===", "===", "===", "===", "===",
+      "===", "===", "===", "===", "===", "===", "===", "===", "===", "===", "===",
+      "===", "==="}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<PART (c): QUARTIC TRIAL FUNCTION\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+   "Print", "[", "\"\<Trial function: \[Psi](x) = (a^2 - x^2)(\[Alpha]x^2 + \
+\[Beta])\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<Variational parameter: r = \[Alpha]/\[Beta]\>\"", "]"}],
+    "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"\[Psi]cFunc", "[", "x_", "]"}], ":=", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"a", "^", "2"}], "-", 
+       RowBox[{"x", "^", "2"}]}], ")"}], "*", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"\[Alpha]", "*", 
+        RowBox[{"x", "^", "2"}]}], "+", "\[Beta]"}], ")"}]}]}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<Expanding: \[Psi](x) = (a^2 - x^2)(\[Alpha]x^2 + \
+\[Beta]) = \[Alpha]a^2 x^2 + \[Beta]a^2 - \[Alpha]x^4 - \[Beta]x^2\>\"", 
+    "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Normalization integral:\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  N = \[Integral]_{-a}^{a} [(a^2 - x^2)(\[Alpha]x^2 + \
+\[Beta])]^2 dx\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = \[Integral]_{-a}^{a} [(\[Alpha]a^2 x^2 + \
+\[Beta]a^2)^2 - 2(\[Alpha]a^2 x^2 + \[Beta]a^2)(\[Alpha]x^4 + \[Beta]x^2) + (\
+\[Alpha]x^4 + \[Beta]x^2)^2] dx\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  (All terms are even functions, so we integrate over \
+symmetric limits)\>\"", "]"}], "\n", 
+   RowBox[{"normIntC", "=", 
+    RowBox[{"Integrate", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"\[Psi]cFunc", "[", "x", "]"}], "^", "2"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", 
+        RowBox[{"-", "a"}], ",", "a"}], "}"}]}], "]"}]}], "\n", 
+   RowBox[{"normIntC", "=", 
+    RowBox[{"Simplify", "[", "normIntC", "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  N = \>\"", ",", "normIntC"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"AC", "=", 
+    RowBox[{"1", "/", 
+     RowBox[{"Sqrt", "[", "normIntC", "]"}]}]}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Derivative calculation:\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  d\[Psi]/dx = d/dx[(a^2 - x^2)(\[Alpha]x^2 + \[Beta])]\
+\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  Using product rule: = (a^2 - x^2)(2\[Alpha]x) + (\
+\[Alpha]x^2 + \[Beta])(-2x)\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = 2\[Alpha]x(a^2 - x^2) - 2x(\[Alpha]x^2 + \[Beta])\>\
+\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = 2\[Alpha]a^2 x - 2\[Alpha]x^3 - 2\[Alpha]x^3 - 2\
+\[Beta]x\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = 2\[Alpha]a^2 x - 4\[Alpha]x^3 - 2\[Beta]x\>\"", 
+    "]"}], "\n", 
+   RowBox[{"d\[Psi]cFunc", "=", 
+    RowBox[{"D", "[", 
+     RowBox[{
+      RowBox[{"\[Psi]cFunc", "[", "x", "]"}], ",", "x"}], "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  d\[Psi]/dx = \>\"", ",", "d\[Psi]cFunc"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Kinetic energy integral:\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  <T> = \
+(\[HBar]^2/2m)\[Integral]_{-a}^{a}|d\[Psi]/dx|^2 dx / N\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  = (\[HBar]^2/2m)\[Integral]_{-a}^{a} (2\[Alpha]a^2 x \
+- 4\[Alpha]x^3 - 2\[Beta]x)^2 dx / N\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  (Even function integrated over symmetric limits)\>\"",
+     "]"}], "\n", 
+   RowBox[{"kineticIntCNum", "=", 
+    RowBox[{"Integrate", "[", 
+     RowBox[{
+      RowBox[{"d\[Psi]cFunc", "^", "2"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", 
+        RowBox[{"-", "a"}], ",", "a"}], "}"}]}], "]"}]}], "\n", 
+   RowBox[{"kineticIntCNum", "=", 
+    RowBox[{"Simplify", "[", "kineticIntCNum", "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  Numerator = \>\"", ",", "kineticIntCNum"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"kineticIntC", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{"kineticIntCNum", "/", "normIntC"}], "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  <T> = (\[HBar]^2/2m) \[Times] \>\"", ",", "kineticIntC"}], 
+    "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"energyC", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{"kineticIntC", "/.", " ", 
+      RowBox[{"\[Alpha]", "->", 
+       RowBox[{"r", "*", "\[Beta]"}]}]}], "]"}]}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<Energy as function of r = \[Alpha]/\[Beta]:\>\"", "]"}],
+    "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  <E>(r) = (\[HBar]^2/2m) \[Times] \>\"", ",", "energyC"}], "]"}]\
+, "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"dEdr", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{"D", "[", 
+      RowBox[{"energyC", ",", "r"}], "]"}], "]"}]}], "\n", 
+   RowBox[{"Print", "[", "\"\<Variational condition d<E>/dr = 0:\>\"", "]"}], 
+   "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  d<E>/dr = (\[HBar]^2/2m) \[Times] \>\"", ",", "dEdr"}], 
+    "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"rSols", "=", 
+    RowBox[{"Solve", "[", 
+     RowBox[{
+      RowBox[{"dEdr", "==", "0"}], ",", "r"}], "]"}]}], "\n", 
+   RowBox[{"Print", "[", "\"\<Solutions for optimal r:\>\"", "]"}], "\n", 
+   RowBox[{"r1", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{"r", "/.", " ", 
+      RowBox[{"rSols", "[", 
+       RowBox[{"[", "1", "]"}], "]"}]}], "]"}]}], "\n", 
+   RowBox[{"r2", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{"r", "/.", " ", 
+      RowBox[{"rSols", "[", 
+       RowBox[{"[", "2", "]"}], "]"}]}], "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  r\\[Subscript 1] = \>\"", ",", "r1"}], "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  r\\[Subscript 2] = \>\"", ",", "r2"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"E1", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{"energyC", "/.", " ", 
+      RowBox[{"r", "->", "r1"}]}], "]"}]}], "\n", 
+   RowBox[{"E2", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{"energyC", "/.", " ", 
+      RowBox[{"r", "->", "r2"}]}], "]"}]}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Energy values:\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  At r\\[Subscript 1]: <E> = (\[HBar]^2/2m) \[Times] \>\"", ",", 
+     RowBox[{"Simplify", "[", 
+      RowBox[{"E1", "/", 
+       RowBox[{"a", "^", "2"}]}], "]"}], ",", "\"\</a^2\>\""}], "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  At r\\[Subscript 2]: <E> = (\[HBar]^2/2m) \[Times] \>\"", ",", 
+     RowBox[{"Simplify", "[", 
+      RowBox[{"E2", "/", 
+       RowBox[{"a", "^", "2"}]}], "]"}], ",", "\"\</a^2\>\""}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", 
+    RowBox[{"Compare", " ", "which", " ", "is", " ", "smaller"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"E1num", "=", 
+    RowBox[{"N", "[", 
+     RowBox[{"E1", "/.", " ", 
+      RowBox[{"a", "->", "1"}]}], "]"}]}], "\n", 
+   RowBox[{"E2num", "=", 
+    RowBox[{"N", "[", 
+     RowBox[{"E2", "/.", " ", 
+      RowBox[{"a", "->", "1"}]}], "]"}]}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"E1num", "<", "E2num"}], ",", 
+     RowBox[{
+      RowBox[{
+      "Print", "[", "\"\<Selecting r\\[Subscript 1] (minimum energy)\>\"", 
+       "]"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"rOpt", "=", "r1"}], ";", 
+      RowBox[{"energyCOpt", "=", "E1"}]}], ",", 
+     RowBox[{
+      RowBox[{
+      "Print", "[", "\"\<Selecting r\\[Subscript 2] (minimum energy)\>\"", 
+       "]"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"rOpt", "=", "r2"}], ";", 
+      RowBox[{"energyCOpt", "=", "E2"}]}]}], "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<Optimal parameters:\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  r\\[Subscript opt] = \>\"", ",", "rOpt"}], "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  <E> = (\[HBar]^2/2m) \[Times] \>\"", ",", 
+     RowBox[{"Simplify", "[", 
+      RowBox[{"energyCOpt", "/", 
+       RowBox[{"a", "^", "2"}]}], "]"}], ",", "\"\</a^2\>\""}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", 
+    RowBox[{"Framed", "[", 
+     RowBox[{
+      RowBox[{"Column", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"Style", "[", 
+          RowBox[{"\"\<ANSWER (Part c):\>\"", ",", "Bold", ",", "14"}], "]"}],
+          ",", 
+         RowBox[{"Style", "[", 
+          RowBox[{
+           RowBox[{"\"\<Optimal r = \>\"", "<>", 
+            RowBox[{"ToString", "[", 
+             RowBox[{"rOpt", ",", "TraditionalForm"}], "]"}]}], ",", "Bold", ",",
+            "12"}], "]"}], ",", 
+         RowBox[{"Style", "[", 
+          RowBox[{
+           RowBox[{"\"\<<E> = \>\"", "<>", 
+            RowBox[{"ToString", "[", 
+             RowBox[{
+              RowBox[{"Simplify", "[", 
+               RowBox[{"energyCOpt", "/", 
+                RowBox[{"a", "^", "2"}]}], "]"}], ",", "TraditionalForm"}], 
+             "]"}], "<>", "\"\< \[HBar]^2/(2ma^2)\>\""}], ",", "Bold", ",", 
+           "12"}], "]"}]}], "}"}], "]"}], ",", 
+      RowBox[{"FrameStyle", "->", "Thick"}], ",", 
+      RowBox[{"Background", "->", "LightYellow"}]}], "]"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "===", "===", "===", "===", "===", "===", "===", "===", "===", "===", "===",
+      "===", "===", "===", "===", "===", "===", "===", "===", "===", "===", "===",
+      "===", "==="}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<PART (d): COMPARISON WITH EXACT RESULT\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"exactEnergy", "=", 
+    RowBox[{
+     RowBox[{"\[Pi]", "^", "2"}], "/", 
+     RowBox[{"(", 
+      RowBox[{"8", "*", 
+       RowBox[{"a", "^", "2"}]}], ")"}]}]}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Exact ground state:\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  \[Psi]\\[Subscript 0](x) = \
+(1/\[Sqrt]a)cos(\[Pi]x/(2a))\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  E\\[Subscript 0] = \[Pi]^2\[HBar]^2/(8ma^2) = \
+(\[HBar]^2/2m) \[Times] \>\"", ",", "exactEnergy"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Summary of Variational Estimates\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", 
+    RowBox[{"Style", "[", 
+     RowBox[{"\"\<Method                     <E> in units of \
+(\[HBar]^2/2m)/a^2\>\"", ",", "Bold"}], "]"}], "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<Exact                      \>\"", ",", "exactEnergy"}], 
+    "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<Triangular                 \>\"", ",", 
+     RowBox[{"Simplify", "[", 
+      RowBox[{"kineticTri", "/", 
+       RowBox[{"a", "^", "2"}]}], "]"}]}], "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<Parabolic                  \>\"", ",", 
+     RowBox[{"Simplify", "[", 
+      RowBox[{"kineticIntB", "/", 
+       RowBox[{"a", "^", "2"}]}], "]"}]}], "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<Quartic (optimized)        \>\"", ",", 
+     RowBox[{"Simplify", "[", 
+      RowBox[{"energyCOpt", "/", 
+       RowBox[{"a", "^", "2"}]}], "]"}]}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+   "Print", "[", "\"\<Verification: All variational estimates satisfy <E> \
+\[GreaterEqual] E\\[Subscript 0]\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<Triangular:  \>\"", ",", 
+     RowBox[{"N", "[", 
+      RowBox[{
+       RowBox[{"Simplify", "[", 
+        RowBox[{"kineticTri", "/", 
+         RowBox[{"a", "^", "2"}]}], "]"}], "/.", " ", 
+       RowBox[{"a", "->", "1"}]}], "]"}], ",", "\"\< \[GreaterEqual] \>\"", ",", 
+     RowBox[{"N", "[", 
+      RowBox[{
+       RowBox[{"\[Pi]", "^", "2"}], "/", "8"}], "]"}], 
+     ",", "\"\< \[Checkmark]\>\""}], "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<Parabolic:   \>\"", ",", 
+     RowBox[{"N", "[", 
+      RowBox[{
+       RowBox[{"Simplify", "[", 
+        RowBox[{"kineticIntB", "/", 
+         RowBox[{"a", "^", "2"}]}], "]"}], "/.", " ", 
+       RowBox[{"a", "->", "1"}]}], "]"}], ",", "\"\< \[GreaterEqual] \>\"", ",", 
+     RowBox[{"N", "[", 
+      RowBox[{
+       RowBox[{"\[Pi]", "^", "2"}], "/", "8"}], "]"}], 
+     ",", "\"\< \[Checkmark]\>\""}], "]"}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<Quartic:     \>\"", ",", 
+     RowBox[{"N", "[", 
+      RowBox[{
+       RowBox[{"Simplify", "[", 
+        RowBox[{"energyCOpt", "/", 
+         RowBox[{"a", "^", "2"}]}], "]"}], "/.", " ", 
+       RowBox[{"a", "->", "1"}]}], "]"}], ",", "\"\< \[GreaterEqual] \>\"", ",", 
+     RowBox[{"N", "[", 
+      RowBox[{
+       RowBox[{"\[Pi]", "^", "2"}], "/", "8"}], "]"}], 
+     ",", "\"\< \[Checkmark]\>\""}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", 
+    RowBox[{"Framed", "[", 
+     RowBox[{
+      RowBox[{"Column", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"Style", "[", 
+          RowBox[{"\"\<ANSWER (Part d):\>\"", ",", "Bold", ",", "14"}], "]"}],
+          ",", 
+         RowBox[{"Style", "[", 
+          
+          RowBox[{"\"\<All variational estimates satisfy <E> \[GreaterEqual] \
+E\\[Subscript 0]\>\"", ",", "Bold", ",", "12"}], "]"}], ",", 
+         RowBox[{"Style", "[", 
+          
+          RowBox[{"\"\<The quartic trial function gives the best \
+approximation.\>\"", ",", "Bold", ",", "12"}], "]"}]}], "}"}], "]"}], ",", 
+      RowBox[{"FrameStyle", "->", "Thick"}], ",", 
+      RowBox[{"Background", "->", "LightYellow"}]}], "]"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Mean-Square Deviations\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+   "Print", "[", "\"\<Formula: \[CapitalDelta]^2 = \
+\[Integral]|\[Psi]\\[Subscript 0] - \[Psi]\\[Subscript t]|^2 dx = 2(1 - \
+\[Integral]\[Psi]\\[Subscript 0]\[Psi]\\[Subscript t] dx) for normalized \
+functions\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", 
+    RowBox[{"Symbolic", " ", "overlap", " ", "integrals"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"\[Psi]0Sym", "[", "x_", "]"}], ":=", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"1", "/", 
+       RowBox[{"Sqrt", "[", "a", "]"}]}], ")"}], "*", 
+     RowBox[{"Cos", "[", 
+      RowBox[{"\[Pi]", "*", 
+       RowBox[{"x", "/", 
+        RowBox[{"(", 
+         RowBox[{"2", "*", "a"}], ")"}]}]}], "]"}]}]}], "\n", 
+   RowBox[{
+    RowBox[{"\[Psi]bSym", "[", "x_", "]"}], ":=", 
+    RowBox[{"AB", "*", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"x", "^", "2"}], "-", 
+       RowBox[{"a", "^", "2"}]}], ")"}]}]}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Parabolic function:\>\"", "]"}], "\n", 
+   RowBox[{"overlapBSym", "=", 
+    RowBox[{"Integrate", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"\[Psi]0Sym", "[", "x", "]"}], "*", 
+       RowBox[{"\[Psi]bSym", "[", "x", "]"}]}], ",", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", 
+        RowBox[{"-", "a"}], ",", "a"}], "}"}]}], "]"}]}], "\n", 
+   RowBox[{"overlapBSym", "=", 
+    RowBox[{"Simplify", "[", "overlapBSym", "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  Overlap: \[Integral]_{-a}^{a} \[Psi]\\[Subscript \
+0]\[Psi]\\[Subscript t] dx = \>\"", ",", "overlapBSym"}], "]"}], "\n", 
+   RowBox[{"msdBSym", "=", 
+    RowBox[{"Simplify", "[", 
+     RowBox[{"2", "*", 
+      RowBox[{"(", 
+       RowBox[{"1", "-", "overlapBSym"}], ")"}]}], "]"}]}], "\n", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<  Mean-square deviation: \[CapitalDelta]^2 = \>\"", ",", 
+     "msdBSym"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+   "Print", "[", "\"\<Interpretation: Smaller \[CapitalDelta]^2 indicates \
+better approximation to exact ground state.\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "===", "===", "===", "===", "===", "===", "===", "===", "===", "===", "===",
+      "===", "===", "===", "===", "===", "===", "===", "===", "===", "===", "===",
+      "===", "==="}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<PART (e): NODES OF OPTIMAL QUARTIC AND INTERPRETATION\>\
+\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<Optimized quartic: \[Psi](x) = A(a^2 - x^2)(\[Alpha]x^2 + \
+\[Beta]) with r = \[Alpha]/\[Beta] = \>\"", ",", "rOpt"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Nodes occur at:\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  (1) Boundary: x = \[PlusMinus]a (required by boundary \
+conditions)\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  (2) Interior: where \[Alpha]x^2 + \[Beta] = 0, i.e., \
+x^2 = -\[Beta]/\[Alpha] = -1/r\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", 
+    RowBox[{"\"\<Interior node condition: x^2 = -1/r = \>\"", ",", 
+     RowBox[{"Simplify", "[", 
+      RowBox[{
+       RowBox[{"-", "1"}], "/", "rOpt"}], "]"}]}], "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"rNum", "=", 
+    RowBox[{"N", "[", "rOpt", "]"}]}], "\n", 
+   RowBox[{"xSq", "=", 
+    RowBox[{"N", "[", 
+     RowBox[{
+      RowBox[{"-", "1"}], "/", "rNum"}], "]"}]}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"If", "[", 
+    RowBox[{
+     RowBox[{"xSq", ">", "0"}], ",", 
+     RowBox[{
+      RowBox[{"Print", "[", 
+       RowBox[{"\"\<Real interior nodes exist at x^2 = \>\"", ",", 
+        RowBox[{"Simplify", "[", 
+         RowBox[{
+          RowBox[{"-", "1"}], "/", "rOpt"}], "]"}]}], "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Simplify", "[", 
+          RowBox[{
+           RowBox[{"-", "1"}], "/", "rOpt"}], "]"}], "<", 
+         RowBox[{"a", "^", "2"}]}], ",", 
+        RowBox[{
+        "Print", "[", "\"\<Location: INSIDE the well (|x| < a)\>\"", "]"}], ",", 
+        RowBox[{
+        "Print", "[", "\"\<Location: OUTSIDE the well (|x| > a)\>\"", "]"}]}],
+        "]"}]}], ",", 
+     RowBox[{
+     "Print", "[", "\"\<No real interior nodes (x^2 < 0)\>\"", "]"}]}], "]"}],
+    "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+   "Print", "[", "\"\<Interpretation of Stationary Energy Value\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{
+   "Print", "[", "\"\<The variational method minimizes <E> within the family \
+of quartic trial functions.\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<At the stationary point (d<E>/dr = 0):\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  \[Bullet] The energy is minimized with respect to the \
+parameter r\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  \[Bullet] This provides an upper bound: <E> \
+\[GreaterEqual] E\\[Subscript 0] (variational theorem)\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  \[Bullet] The optimal function best approximates the \
+true ground state within this family\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", "\"\<Physical significance:\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  \[Bullet] The optimization balances kinetic energy \
+(prefers smoothness) with\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<    boundary conditions (requires \[Psi](\[PlusMinus]a) \
+= 0)\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  \[Bullet] The true ground state cos(\[Pi]x/2a) has NO \
+interior nodes\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  \[Bullet] Our quartic approximation may have nodes \
+depending on the parameter space\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<  \[Bullet] The stationary condition d<E>/dr = 0 is the \
+variational analog of the\>\"", "]"}], "\n", 
+   RowBox[{
+   "Print", "[", "\"\<    Schr\[ODoubleDot]dinger equation, ensuring the \
+functional derivative vanishes\>\"", "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"Print", "[", 
+    RowBox[{"Framed", "[", 
+     RowBox[{
+      RowBox[{"Column", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"Style", "[", 
+          RowBox[{"\"\<ANSWER (Part e):\>\"", ",", "Bold", ",", "14"}], "]"}],
+          ",", 
+         RowBox[{"Style", "[", 
+          
+          RowBox[{"\"\<The stationary energy represents the best \
+approximation to E\\[Subscript 0]\>\"", ",", "Bold", ",", "12"}], "]"}], ",", 
+         RowBox[{"Style", "[", 
+          
+          RowBox[{"\"\<within the chosen family, guaranteed to be \
+\[GreaterEqual] E\\[Subscript 0].\>\"", ",", "Bold", ",", "12"}], "]"}]}], 
+        "}"}], "]"}], ",", 
+      RowBox[{"FrameStyle", "->", "Thick"}], ",", 
+      RowBox[{"Background", "->", "LightYellow"}]}], "]"}], "]"}], "\n", 
+   RowBox[{"Print", "[", "\"\<\>\"", "]"}], "\[IndentingNewLine]", 
+   "\n"}]}]], "Input",
+ CellChangeTimes->{{3.9711077705694466`*^9, 3.971107774441332*^9}},
+ CellLabel->
+  "In[2285]:=",ExpressionUUID->"a06db487-bbcc-ab40-b5ac-91c18f68f49b"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107775229847*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"6e6bda0a-6ff5-7a43-913e-ecc2773815f3"],
+
+Cell[BoxData["\<\"INFINITE SQUARE WELL VARIATIONAL CALCULATION\"\>"], "Print",
+ CellChangeTimes->{3.9711077752358456`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"39a2c058-a49e-2247-b778-d0f53a37ab0c"],
+
+Cell[BoxData["\<\"Potential: V = 0 for -a < x < a, V = \[Infinity] \
+elsewhere\"\>"], "Print",
+ CellChangeTimes->{3.9711077752378445`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"2686a892-8f98-6a4a-8866-3a555b054d1b"],
+
+Cell[BoxData["\<\"Boundary conditions: \[Psi](\[PlusMinus]a) = 0\"\>"], \
+"Print",
+ CellChangeTimes->{3.9711077752398453`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"2ff6fea8-7edb-a44f-9c73-950a74c23e2a"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107775241844*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"6b7cc130-370b-e346-b329-436f83fa241d"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077752428455`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"4d5d549a-11dc-5448-bd89-ac40e5a8f1c8"],
+
+Cell[BoxData["\<\"PART (a): TRAPEZOIDAL TRIAL FUNCTION\"\>"], "Print",
+ CellChangeTimes->{3.971107775243845*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"d66c82fe-b5fe-e04d-ae3e-ce98974c0146"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107775245844*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"366da74a-bbdb-9542-aa79-2be071610ca3"],
+
+Cell[BoxData["\<\"Trial function:\"\>"], "Print",
+ CellChangeTimes->{3.9711077752468433`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"bcda9534-6ee2-2a47-a080-c878196d2f5a"],
+
+Cell[BoxData["\<\"         \[Psi](x) = a - |x|    for b \[LessEqual] |x| \
+\[LessEqual] a  (sloped regions)\"\>"], "Print",
+ CellChangeTimes->{3.9711077752478447`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"9a5d72db-d2fc-c24d-93b6-e91b3bd5a2be"],
+
+Cell[BoxData["\<\"         \[Psi](x) = a - b      for |x| \[LessEqual] b      \
+(flat region)\"\>"], "Print",
+ CellChangeTimes->{3.9711077752498455`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"e7bcefeb-cd3d-9447-9b2c-c7b9a4bb3df2"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077752518444`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"be9bd014-f777-4647-8c84-bea2fde1a15f"],
+
+Cell[BoxData["\<\"Case (i): b = 0 (Triangular function)\"\>"], "Print",
+ CellChangeTimes->{3.9711077752538433`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"ebcf93c4-fbbc-2b4f-8a4f-63229f07b13d"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077752548428`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"a0af6455-c32c-8c40-83f7-1829b1a36b38"],
+
+Cell[BoxData["\<\"Normalization integral:\"\>"], "Print",
+ CellChangeTimes->{3.971107775255844*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"9c4f99c7-8d87-0042-899c-5b63262b3b16"],
+
+Cell[BoxData["\<\"  N = \[Integral]_{-a}^{a} (a - |x|)^2 dx\"\>"], "Print",
+ CellChangeTimes->{3.971107775257845*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"d616d5db-ed2f-d34a-a2d7-8b5095b1ecb5"],
+
+Cell[BoxData["\<\"  By symmetry: N = 2\[Integral]_{0}^{a} (a - x)^2 dx\"\>"], \
+"Print",
+ CellChangeTimes->{3.971107775258854*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"ed4e4421-e5d5-1a43-8e6e-8afd4f02c969"],
+
+Cell[BoxData["\<\"  Expanding: \[Integral]_{0}^{a} (a^2 - 2ax + x^2) \
+dx\"\>"], "Print",
+ CellChangeTimes->{3.971107775260845*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"42e64d41-703a-244c-91e6-87938109e20f"],
+
+Cell[BoxData["\<\"  = [a^2 x - ax^2 + x^3/3]_{0}^{a}\"\>"], "Print",
+ CellChangeTimes->{3.9711077752618427`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"562c32ff-fcad-a24e-bf4c-e5e5fb75dfe4"],
+
+Cell[BoxData["\<\"  = a^3 - a^3 + a^3/3\"\>"], "Print",
+ CellChangeTimes->{3.971107775262844*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"cb461fb1-5967-1047-8f0c-d303c8257015"],
+
+Cell[BoxData["\<\"  = a^3/3\"\>"], "Print",
+ CellChangeTimes->{3.9711077752638435`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"6d90a71e-ae6a-c147-a114-ebf38f4fe810"]
+}, Open  ]],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"2", " ", 
+   SuperscriptBox["a", "3"]}], "3"]], "Output",
+ CellChangeTimes->{3.971107775669567*^9},
+ CellLabel->
+  "Out[2308]=",ExpressionUUID->"037ef938-0f42-0e44-b37b-4976ce8d86a2"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  N = \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    RowBox[{"2", " ", 
+     SuperscriptBox["a", "3"]}], "3"]}],
+  SequenceForm["  N = ", Rational[2, 3] $CellContext`a^3],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077756755714`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"4b3c5e74-b3be-1644-82c2-c95233f41047"],
+
+Cell[BoxData[
+ FractionBox[
+  SqrtBox[
+   FractionBox["3", "2"]], 
+  SuperscriptBox["a", 
+   RowBox[{"3", "/", "2"}]]]], "Output",
+ CellChangeTimes->{3.971107775676565*^9},
+ CellLabel->
+  "Out[2310]=",ExpressionUUID->"cc4533fa-3d17-c343-8be7-b03fd5ac4099"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  A = 1/\[Sqrt]N = \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    SqrtBox[
+     FractionBox["3", "2"]], 
+    SuperscriptBox["a", 
+     RowBox[{"3", "/", "2"}]]]}],
+  SequenceForm[
+  "  A = 1/\[Sqrt]N = ", 
+   Rational[3, 2]^Rational[1, 2] $CellContext`a^Rational[-3, 2]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107775678566*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"887d8fb1-69dc-d94f-a110-e08c4455c597"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107775680565*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"6d9e8ad9-549b-c94c-be7d-d80739d620be"],
+
+Cell[BoxData["\<\"Kinetic energy calculation:\"\>"], "Print",
+ CellChangeTimes->{3.9711077756865673`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"c3195e46-dbd7-0c4b-a598-cc504a1c2ede"],
+
+Cell[BoxData["\<\"  d\[Psi]/dx = -A  for 0 < x < a\"\>"], "Print",
+ CellChangeTimes->{3.9711077756875668`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"bff5c457-e655-8141-b27e-0e4d3d7c84e3"],
+
+Cell[BoxData["\<\"  d\[Psi]/dx = +A  for -a < x < 0\"\>"], "Print",
+ CellChangeTimes->{3.971107775688566*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"e578a9a2-cb02-ca44-8c18-a6d4e3c10326"],
+
+Cell[BoxData["\<\"  <T> = (\[HBar]^2/2m)\[Integral]_{-a}^{a}|d\[Psi]/dx|^2 dx\
+\"\>"], "Print",
+ CellChangeTimes->{3.971107775690567*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"82fafaf9-6333-7441-903a-b3277c280076"],
+
+Cell[BoxData["\<\"  = (\[HBar]^2/2m) \[Times] 2\[Integral]_{0}^{a} A^2 \
+dx\"\>"], "Print",
+ CellChangeTimes->{3.971107775692566*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"0f652e16-6d7b-8546-83b7-4a34e184826c"],
+
+Cell[BoxData["\<\"  = (\[HBar]^2/2m) \[Times] 2A^2 a\"\>"], "Print",
+ CellChangeTimes->{3.9711077756935673`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"e499509e-a343-6443-8bc4-8ebe0413d9bf"]
+}, Open  ]],
+
+Cell[BoxData[
+ FractionBox["3", 
+  SuperscriptBox["a", "2"]]], "Output",
+ CellChangeTimes->{3.9711077756955643`*^9},
+ CellLabel->
+  "Out[2319]=",ExpressionUUID->"2bc07d5c-e7d7-a242-b8f5-84443ebea6a4"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  = (\[HBar]^2/2m) \[Times] \"\>", "\[InvisibleSpace]", 
+   FractionBox["3", 
+    SuperscriptBox["a", "2"]]}],
+  SequenceForm["  = (\[HBar]^2/2m) \[Times] ", 3 $CellContext`a^(-2)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077757005672`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"9ad85415-51e5-5648-bef7-a3259ff6d70d"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  <E> = (\[HBar]^2/2m) \[Times] \"\>", "\[InvisibleSpace]", 
+   FractionBox["3", 
+    SuperscriptBox["a", "4"]], "\[InvisibleSpace]", "\<\"/a^2\"\>"}],
+  SequenceForm[
+  "  <E> = (\[HBar]^2/2m) \[Times] ", 3 $CellContext`a^(-4), "/a^2"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077757025642`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"fcc0d7c0-e85d-ae48-b29b-8a23bc76a9b6"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077757075653`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"b3ad6785-b47b-2947-b204-bc526cece36b"],
+
+Cell[BoxData[
+ FrameBox[
+  StyleBox["\<\"ANSWER (Case i): <E> = \
+\\!\\(\\*FormBox[FractionBox[\\\"3\\\", SuperscriptBox[\\\"a\\\", \
+\\\"4\\\"]], TraditionalForm]\\) \[HBar]^2/(2ma^2)\"\>",
+   StripOnInput->False,
+   FontSize->14,
+   FontWeight->Bold],
+  Background->RGBColor[1, 1, 0.85],
+  FrameStyle->Thickness[Large],
+  StripOnInput->False]], "Print",
+ CellChangeTimes->{3.971107775709566*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"327c27f7-d449-9b41-bff7-cde958ec1814"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077757105656`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"3d7910bf-531d-ec48-b613-84e8f819b569"],
+
+Cell[BoxData["\<\"Case (ii): Optimize parameter b\"\>"], "Print",
+ CellChangeTimes->{3.971107775711565*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"7e749606-0d1e-954b-9dbd-01f708a3c436"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107775713566*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"40135615-3282-6343-acc6-72d96a65dda8"],
+
+Cell[BoxData["\<\"Normalization integral:\"\>"], "Print",
+ CellChangeTimes->{3.971107775714567*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"18c06acd-7941-9643-8575-af959c54cdd3"],
+
+Cell[BoxData["\<\"  N = \[Integral]_{-a}^{a} \[Psi]^2 dx\"\>"], "Print",
+ CellChangeTimes->{3.9711077757165756`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"050f6d3a-b41c-e549-a2b5-b7a4df05874c"],
+
+Cell[BoxData["\<\"  = \[Integral]_{-a}^{-b} (a - |x|)^2 dx + \
+\[Integral]_{-b}^{b} (a - b)^2 dx + \[Integral]_{b}^{a} (a - |x|)^2 dx\"\>"], \
+"Print",
+ CellChangeTimes->{3.9711077757175655`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"8ea17131-b3e1-094f-82b1-6a96a679b9e7"],
+
+Cell[BoxData["\<\"  By symmetry of outer regions:\"\>"], "Print",
+ CellChangeTimes->{3.9711077757195663`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"5644dacf-77e3-dc4e-8338-ff0ae84ec130"],
+
+Cell[BoxData["\<\"  = 2\[Integral]_{b}^{a} (a - x)^2 dx + (a - b)^2 \
+(2b)\"\>"], "Print",
+ CellChangeTimes->{3.971107775720566*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"df892288-3b72-6d4d-972d-c7f30f186d04"],
+
+Cell[BoxData["\<\"  = 2[(a - x)^3/(-3)]_{b}^{a} + 2b(a - b)^2\"\>"], "Print",
+ CellChangeTimes->{3.9711077757225666`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"c281e04c-c379-5a4d-8f3e-f8842bfe6272"],
+
+Cell[BoxData["\<\"  = 2(a - b)^3/3 + 2b(a - b)^2\"\>"], "Print",
+ CellChangeTimes->{3.971107775723564*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"aaec78b8-16ad-254f-b72e-2f38c43ecde0"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox[
+   SuperscriptBox["a", "3"], "3"], "-", 
+  RowBox[{
+   SuperscriptBox["a", "2"], " ", "b"}], "+", 
+  RowBox[{"a", " ", 
+   SuperscriptBox["b", "2"]}], "-", 
+  FractionBox[
+   SuperscriptBox["b", "3"], "3"]}]], "Output",
+ CellChangeTimes->{3.9711077761636086`*^9},
+ CellLabel->
+  "Out[2334]=",ExpressionUUID->"50be9c61-81ad-af46-b2c1-471defe18c32"],
+
+Cell[BoxData[
+ RowBox[{"2", " ", 
+  SuperscriptBox[
+   RowBox[{"(", 
+    RowBox[{"a", "-", "b"}], ")"}], "2"], " ", "b"}]], "Output",
+ CellChangeTimes->{3.971107776169607*^9},
+ CellLabel->
+  "Out[2335]=",ExpressionUUID->"1ff7037c-3ede-6f48-a0b5-6d9d6f983d53"],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox["2", "3"], " ", 
+  SuperscriptBox[
+   RowBox[{"(", 
+    RowBox[{"a", "-", "b"}], ")"}], "2"], " ", 
+  RowBox[{"(", 
+   RowBox[{"a", "+", 
+    RowBox[{"2", " ", "b"}]}], ")"}]}]], "Output",
+ CellChangeTimes->{3.971107776171608*^9},
+ CellLabel->
+  "Out[2336]=",ExpressionUUID->"6cf87376-9058-ce42-8f41-9510c69c6480"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  N(b) = \"\>", "\[InvisibleSpace]", 
+   RowBox[{
+    FractionBox["2", "3"], " ", 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{"a", "-", "b"}], ")"}], "2"], " ", 
+    RowBox[{"(", 
+     RowBox[{"a", "+", 
+      RowBox[{"2", " ", "b"}]}], ")"}]}]}],
+  SequenceForm[
+  "  N(b) = ", 
+   Rational[2, 3] ($CellContext`a - $CellContext`b)^2 ($CellContext`a + 
+    2 $CellContext`b)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107776173609*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"a98df02f-5e13-b04d-9812-441f3d11ec50"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077761756077`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"a51ce5c0-51ea-0f46-b766-5bfed6d34ce3"]
+}, Open  ]],
+
+Cell[BoxData[
+ FractionBox[
+  SqrtBox[
+   FractionBox["3", "2"]], 
+  SqrtBox[
+   RowBox[{
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{"a", "-", "b"}], ")"}], "2"], " ", 
+    RowBox[{"(", 
+     RowBox[{"a", "+", 
+      RowBox[{"2", " ", "b"}]}], ")"}]}]]]], "Output",
+ CellChangeTimes->{3.971107776180607*^9},
+ CellLabel->
+  "Out[2339]=",ExpressionUUID->"b43d1ebc-d60b-6f47-add2-a8002100f145"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Kinetic energy calculation:\"\>"], "Print",
+ CellChangeTimes->{3.9711077761866055`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"e20cd3f8-15a5-5842-8c34-629d78ce3014"],
+
+Cell[BoxData["\<\"  d\[Psi]/dx = 0  for |x| < b  (flat region contributes \
+nothing)\"\>"], "Print",
+ CellChangeTimes->{3.9711077761886063`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"f75e7bad-ef97-cd4b-ad75-3dbf5e63a072"],
+
+Cell[BoxData["\<\"  d\[Psi]/dx = -1  for b < x < a\"\>"], "Print",
+ CellChangeTimes->{3.9711077761936073`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"52c9e128-df1c-fa4b-9804-83980eb71594"],
+
+Cell[BoxData["\<\"  d\[Psi]/dx = +1  for -a < x < -b\"\>"], "Print",
+ CellChangeTimes->{3.9711077761946144`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"391b198f-3fc7-764a-86a1-3794103b47d1"],
+
+Cell[BoxData["\<\"  <T> = (\[HBar]^2/2m) \[Times] 2\[Integral]_{b}^{a} (1/N) \
+dx\"\>"], "Print",
+ CellChangeTimes->{3.9711077761966076`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"30eb4af8-d504-0548-92cb-1eb20f284b43"],
+
+Cell[BoxData["\<\"  = (\[HBar]^2/2m) \[Times] 2(a - b)/N\"\>"], "Print",
+ CellChangeTimes->{3.971107776197607*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"2e11e0c1-f9bf-8c4b-91cc-1ae898bfc313"]
+}, Open  ]],
+
+Cell[BoxData[
+ FractionBox["3", 
+  RowBox[{
+   SuperscriptBox["a", "2"], "+", 
+   RowBox[{"a", " ", "b"}], "-", 
+   RowBox[{"2", " ", 
+    SuperscriptBox["b", "2"]}]}]]], "Output",
+ CellChangeTimes->{3.971107776199608*^9},
+ CellLabel->
+  "Out[2346]=",ExpressionUUID->"56623e7d-a074-9c41-b6f1-35c7b2794244"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  = (\[HBar]^2/2m) \[Times] \"\>", "\[InvisibleSpace]", 
+   FractionBox["3", 
+    RowBox[{
+     SuperscriptBox["a", "2"], "+", 
+     RowBox[{"a", " ", "b"}], "-", 
+     RowBox[{"2", " ", 
+      SuperscriptBox["b", "2"]}]}]]}],
+  SequenceForm[
+  "  = (\[HBar]^2/2m) \[Times] ", 
+   3/($CellContext`a^2 + $CellContext`a $CellContext`b - 2 $CellContext`b^2)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107776204607*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"b5306772-b206-c441-aafc-cf17abac38b3"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107776206606*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"110bf999-1c03-924b-935f-78829d42e96f"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{"3", " ", 
+    RowBox[{"(", 
+     RowBox[{"a", "-", 
+      RowBox[{"4", " ", "b"}]}], ")"}]}], 
+   SuperscriptBox[
+    RowBox[{"(", 
+     RowBox[{
+      SuperscriptBox["a", "2"], "+", 
+      RowBox[{"a", " ", "b"}], "-", 
+      RowBox[{"2", " ", 
+       SuperscriptBox["b", "2"]}]}], ")"}], "2"]]}]], "Output",
+ CellChangeTimes->{3.9711077762126083`*^9},
+ CellLabel->
+  "Out[2349]=",ExpressionUUID->"5429aa0c-987d-1449-9c75-1f15ad1da827"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Optimization:\"\>"], "Print",
+ CellChangeTimes->{3.971107776218609*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"8277f4df-f17f-f84d-b595-42015d5ff440"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  d<E>/db = (\[HBar]^2/2m) \[Times] \"\>", "\[InvisibleSpace]", 
+   RowBox[{"-", 
+    FractionBox[
+     RowBox[{"3", " ", 
+      RowBox[{"(", 
+       RowBox[{"a", "-", 
+        RowBox[{"4", " ", "b"}]}], ")"}]}], 
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{
+        SuperscriptBox["a", "2"], "+", 
+        RowBox[{"a", " ", "b"}], "-", 
+        RowBox[{"2", " ", 
+         SuperscriptBox["b", "2"]}]}], ")"}], "2"]]}]}],
+  SequenceForm[
+  "  d<E>/db = (\[HBar]^2/2m) \[Times] ", (-3) ($CellContext`a - 
+    4 $CellContext`b) ($CellContext`a^2 + $CellContext`a $CellContext`b - 
+     2 $CellContext`b^2)^(-2)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107776220606*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"abdb464a-b9d4-f54d-af72-f5150f1293bb"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107776225609*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"b646048d-23a5-8443-8e53-71bc829a8c2f"],
+
+Cell[BoxData["\<\"  Since d<E>/db < 0 for 0 < b < a, the energy decreases \
+monotonically.\"\>"], "Print",
+ CellChangeTimes->{3.9711077762276077`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"e85c0430-4b93-e349-b89b-439b9a99aac6"],
+
+Cell[BoxData["\<\"  Therefore, the minimum occurs at b = 0 (triangular \
+function).\"\>"], "Print",
+ CellChangeTimes->{3.971107776228607*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"d5b0c29f-be98-fa49-9fd1-3e7ab4718208"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077762296066`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"bc67bd21-30ee-a541-af9f-e1de0b0f908d"],
+
+Cell[BoxData[
+ FrameBox[
+  StyleBox["\<\"ANSWER (Case ii): Optimal value b = 0 (triangular function \
+gives minimum)\"\>",
+   StripOnInput->False,
+   FontSize->14,
+   FontWeight->Bold],
+  Background->RGBColor[1, 1, 0.85],
+  FrameStyle->Thickness[Large],
+  StripOnInput->False]], "Print",
+ CellChangeTimes->{3.971107776230606*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"58f20204-606e-c945-9ab5-7cc831e0c64c"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077762326183`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"0d965f60-4557-d048-9dfe-0e55cb1ec993"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077762336082`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"5291349b-0f74-264c-b1e4-d8f138e7aa7b"],
+
+Cell[BoxData["\<\"PART (b): PARABOLIC TRIAL FUNCTION\"\>"], "Print",
+ CellChangeTimes->{3.971107776234606*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"48c0b16c-3b4f-fe4f-8df5-638b896a304d"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077762366085`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"3d78fabc-9832-2a46-8379-8621c243d6e3"],
+
+Cell[BoxData["\<\"Trial function: \[Psi](x) = A(x - a)(x + a) = A(x^2 - \
+a^2)\"\>"], "Print",
+ CellChangeTimes->{3.971107776237608*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"d1559cee-6913-4e4d-a90a-fbdec668b5fc"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077762386055`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"9d90b53d-e8e1-bb4e-89b6-4cf1dc9a2501"],
+
+Cell[BoxData["\<\"Normalization integral:\"\>"], "Print",
+ CellChangeTimes->{3.971107776239607*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"868ca15f-e662-ee4c-adf6-e28574e40ac6"],
+
+Cell[BoxData["\<\"  N = \[Integral]_{-a}^{a} (x^2 - a^2)^2 dx\"\>"], "Print",
+ CellChangeTimes->{3.9711077762416077`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"974e1b5c-dff1-534d-8fb8-b9bdced89529"],
+
+Cell[BoxData["\<\"  = \[Integral]_{-a}^{a} (x^4 - 2a^2 x^2 + a^4) dx\"\>"], \
+"Print",
+ CellChangeTimes->{3.971107776242607*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"0d5b6cc7-348d-8946-8f26-d39d09b9c518"],
+
+Cell[BoxData["\<\"  By symmetry (all terms are even):\"\>"], "Print",
+ CellChangeTimes->{3.9711077762436066`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"755f749e-3e50-1149-b5b9-b6679d04e8c6"],
+
+Cell[BoxData["\<\"  = 2\[Integral]_{0}^{a} (x^4 - 2a^2 x^2 + a^4) dx\"\>"], \
+"Print",
+ CellChangeTimes->{3.9711077762456055`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"7dc5610c-2626-624b-b1cd-5f7e0e96cb71"],
+
+Cell[BoxData["\<\"  = 2[x^5/5 - 2a^2 x^3/3 + a^4 x]_{0}^{a}\"\>"], "Print",
+ CellChangeTimes->{3.971107776246607*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"dc57a009-7bc4-ca4d-af0a-354d375c287d"],
+
+Cell[BoxData["\<\"  = 2(a^5/5 - 2a^5/3 + a^5)\"\>"], "Print",
+ CellChangeTimes->{3.971107776247608*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"f389f842-b4d0-f54f-af63-e2037acefb75"],
+
+Cell[BoxData["\<\"  = 2a^5(1/5 - 2/3 + 1)\"\>"], "Print",
+ CellChangeTimes->{3.971107776249609*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"6a788cea-4f6a-9343-be6e-2bc529ee6f1e"],
+
+Cell[BoxData["\<\"  = 2a^5(3/15 - 10/15 + 15/15)\"\>"], "Print",
+ CellChangeTimes->{3.9711077762506084`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"d0bb6cc0-191e-1646-b046-ab7e22ffbceb"],
+
+Cell[BoxData["\<\"  = 2a^5(8/15)\"\>"], "Print",
+ CellChangeTimes->{3.971107776251608*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"7e2e47aa-5a67-2547-a913-024235a0233e"]
+}, Open  ]],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"16", " ", 
+   SuperscriptBox["a", "5"]}], "15"]], "Output",
+ CellChangeTimes->{3.9711077767642536`*^9},
+ CellLabel->
+  "Out[2373]=",ExpressionUUID->"009347fe-afc5-7c45-a517-e76667671097"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  N = \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    RowBox[{"16", " ", 
+     SuperscriptBox["a", "5"]}], "15"]}],
+  SequenceForm["  N = ", Rational[16, 15] $CellContext`a^5],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077767702503`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"5bd8cdea-4ad4-5347-ba3b-bcc3fcf80941"],
+
+Cell[BoxData[
+ FractionBox[
+  SqrtBox["15"], 
+  RowBox[{"4", " ", 
+   SuperscriptBox["a", 
+    RowBox[{"5", "/", "2"}]]}]]], "Output",
+ CellChangeTimes->{3.9711077767712517`*^9},
+ CellLabel->
+  "Out[2375]=",ExpressionUUID->"ddc99f03-49ae-1940-b602-9ddda6e3b9de"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  A = \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    SqrtBox["15"], 
+    RowBox[{"4", " ", 
+     SuperscriptBox["a", 
+      RowBox[{"5", "/", "2"}]]}]]}],
+  SequenceForm[
+  "  A = ", Rational[1, 4] 15^Rational[1, 2] $CellContext`a^Rational[-5, 2]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107776774252*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"e66523c7-03af-264c-b829-388f9475f09b"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077767752514`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"c6771079-60f2-6d45-8024-ce4ee2c477cc"],
+
+Cell[BoxData["\<\"Derivative: d\[Psi]/dx = 2Ax\"\>"], "Print",
+ CellChangeTimes->{3.9711077767802525`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"eaf81962-41a1-d346-89e5-47db48af17d2"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077767822533`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"8abdf153-f985-9f47-8236-f20ad90e83cf"],
+
+Cell[BoxData["\<\"Kinetic energy calculation:\"\>"], "Print",
+ CellChangeTimes->{3.971107776783251*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"583b9418-109f-d949-b832-289d0da41c04"],
+
+Cell[BoxData["\<\"  <T> = (\[HBar]^2/2m)\[Integral]_{-a}^{a}|d\[Psi]/dx|^2 dx\
+\"\>"], "Print",
+ CellChangeTimes->{3.9711077767852516`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"313b1248-4564-6547-a80d-53a8a4911c07"],
+
+Cell[BoxData["\<\"  = (\[HBar]^2/2m)\[Integral]_{-a}^{a} (2Ax)^2 dx\"\>"], \
+"Print",
+ CellChangeTimes->{3.971107776786251*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"c4e00780-67f9-944d-b409-986b60f1829e"],
+
+Cell[BoxData["\<\"  = (\[HBar]^2/2m) \[Times] 4A^2\[Integral]_{-a}^{a} x^2 dx\
+\"\>"], "Print",
+ CellChangeTimes->{3.9711077767872505`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"9493f644-fdb4-0644-bbb8-8c90952e292c"],
+
+Cell[BoxData["\<\"  By symmetry:\"\>"], "Print",
+ CellChangeTimes->{3.9711077767892494`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"5c4c4ff9-c3d6-9744-8489-cf3403b83e5f"],
+
+Cell[BoxData["\<\"  = (\[HBar]^2/2m) \[Times] 4A^2 \[Times] \
+2\[Integral]_{0}^{a} x^2 dx\"\>"], "Print",
+ CellChangeTimes->{3.971107776790251*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"84cc3593-cbf5-2b40-9bab-70e2ffeed0e9"],
+
+Cell[BoxData["\<\"  = (\[HBar]^2/2m) \[Times] 8A^2 [x^3/3]_{0}^{a}\"\>"], \
+"Print",
+ CellChangeTimes->{3.9711077767922516`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"23182c25-a709-fa43-9109-50aac41df680"],
+
+Cell[BoxData["\<\"  = (\[HBar]^2/2m) \[Times] 8A^2 a^3/3\"\>"], "Print",
+ CellChangeTimes->{3.971107776793251*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"e569aef2-0172-a846-be41-54a6e997471d"]
+}, Open  ]],
+
+Cell[BoxData[
+ FractionBox["5", 
+  RowBox[{"2", " ", 
+   SuperscriptBox["a", "2"]}]]], "Output",
+ CellChangeTimes->{3.9711077767952538`*^9},
+ CellLabel->
+  "Out[2388]=",ExpressionUUID->"7af86700-e616-c742-ae1c-35f11a78c4c0"],
+
+Cell[BoxData[
+ FractionBox["5", 
+  RowBox[{"2", " ", 
+   SuperscriptBox["a", "2"]}]]], "Output",
+ CellChangeTimes->{3.971107776800251*^9},
+ CellLabel->
+  "Out[2389]=",ExpressionUUID->"e771fdfc-613e-a041-a5ad-8c5c091a95fa"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  = (\[HBar]^2/2m) \[Times] \"\>", "\[InvisibleSpace]", 
+   FractionBox["5", 
+    RowBox[{"2", " ", 
+     SuperscriptBox["a", "2"]}]]}],
+  SequenceForm[
+  "  = (\[HBar]^2/2m) \[Times] ", Rational[5, 2] $CellContext`a^(-2)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077768022633`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"ccf47825-bd24-d74f-899a-f9814a7f83ee"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  <E> = (\[HBar]^2/2m) \[Times] \"\>", "\[InvisibleSpace]", 
+   FractionBox["5", 
+    RowBox[{"2", " ", 
+     SuperscriptBox["a", "4"]}]], "\[InvisibleSpace]", "\<\"/a^2\"\>"}],
+  SequenceForm[
+  "  <E> = (\[HBar]^2/2m) \[Times] ", Rational[5, 2] $CellContext`a^(-4), 
+   "/a^2"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077768042507`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"d416845b-350b-1f44-bf28-b251cfd8c19c"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077768082504`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"0617a0e2-1180-f245-ad50-f6f5e8eccab0"],
+
+Cell[BoxData[
+ FrameBox[
+  StyleBox["\<\"ANSWER (Part b): <E> = \
+\\!\\(\\*FormBox[FractionBox[\\\"5\\\", RowBox[{\\\"2\\\", \\\" \\\", \
+SuperscriptBox[\\\"a\\\", \\\"4\\\"]}]], TraditionalForm]\\) \
+\[HBar]^2/(2ma^2)\"\>",
+   StripOnInput->False,
+   FontSize->14,
+   FontWeight->Bold],
+  Background->RGBColor[1, 1, 0.85],
+  FrameStyle->Thickness[Large],
+  StripOnInput->False]], "Print",
+ CellChangeTimes->{3.9711077768102493`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"3925b6b4-fe89-a047-a1c3-ae9009c5d0cb"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077768122673`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"7d94f126-62b5-8d40-bc2b-831479512ce3"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077768132515`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"6b36c448-e340-8d48-a98b-b7a787fc6fe0"],
+
+Cell[BoxData["\<\"PART (c): QUARTIC TRIAL FUNCTION\"\>"], "Print",
+ CellChangeTimes->{3.9711077768147297`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"e487d251-777d-f345-b87c-e56e1ab076a9"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077768157387`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"d3612668-b60e-9741-acd2-9c92cec3dfed"],
+
+Cell[BoxData["\<\"Trial function: \[Psi](x) = (a^2 - x^2)(\[Alpha]x^2 + \
+\[Beta])\"\>"], "Print",
+ CellChangeTimes->{3.9711077768181343`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"90ea489d-e649-0741-ba89-c57db348dcef"],
+
+Cell[BoxData["\<\"Variational parameter: r = \[Alpha]/\[Beta]\"\>"], "Print",
+ CellChangeTimes->{3.97110777681962*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"4c7f27f9-643c-044b-8fbf-0867b71f42ed"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077768206234`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"4f55a77f-6950-7e41-8487-3257c38f9ee1"],
+
+Cell[BoxData["\<\"Expanding: \[Psi](x) = (a^2 - x^2)(\[Alpha]x^2 + \[Beta]) = \
+\[Alpha]a^2 x^2 + \[Beta]a^2 - \[Alpha]x^4 - \[Beta]x^2\"\>"], "Print",
+ CellChangeTimes->{3.9711077768226223`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"203a9070-25d8-914d-9356-f1a659581ca5"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077768236237`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"29e4aadd-4bb6-3043-8c92-2ae1698d4533"],
+
+Cell[BoxData["\<\"Normalization integral:\"\>"], "Print",
+ CellChangeTimes->{3.9711077768256226`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"824a68f2-11b6-1f45-ac4e-728b2deaa77c"],
+
+Cell[BoxData["\<\"  N = \[Integral]_{-a}^{a} [(a^2 - x^2)(\[Alpha]x^2 + \
+\[Beta])]^2 dx\"\>"], "Print",
+ CellChangeTimes->{3.971107776826622*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"d29e6b8c-5021-a14f-ae2c-e44abbcb7af1"],
+
+Cell[BoxData["\<\"  = \[Integral]_{-a}^{a} [(\[Alpha]a^2 x^2 + \[Beta]a^2)^2 \
+- 2(\[Alpha]a^2 x^2 + \[Beta]a^2)(\[Alpha]x^4 + \[Beta]x^2) + (\[Alpha]x^4 + \
+\[Beta]x^2)^2] dx\"\>"], "Print",
+ CellChangeTimes->{3.9711077768276253`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"1f915360-e3fd-a448-8185-4559dc7afe84"],
+
+Cell[BoxData["\<\"  (All terms are even functions, so we integrate over \
+symmetric limits)\"\>"], "Print",
+ CellChangeTimes->{3.9711077768296223`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"7aa80ea8-9463-5642-b8e6-a7a8822c166e"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox[
+   RowBox[{"16", " ", 
+    SuperscriptBox["a", "9"], " ", 
+    SuperscriptBox["\[Alpha]", "2"]}], "315"], "+", 
+  RowBox[{
+   FractionBox["32", "105"], " ", 
+   SuperscriptBox["a", "7"], " ", "\[Alpha]", " ", "\[Beta]"}], "+", 
+  FractionBox[
+   RowBox[{"16", " ", 
+    SuperscriptBox["a", "5"], " ", 
+    SuperscriptBox["\[Beta]", "2"]}], "15"]}]], "Output",
+ CellChangeTimes->{3.971107777598318*^9},
+ CellLabel->
+  "Out[2408]=",ExpressionUUID->"b4ca4955-0091-f84a-9492-8201bc69942f"],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox["16", "315"], " ", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{
+     SuperscriptBox["a", "9"], " ", 
+     SuperscriptBox["\[Alpha]", "2"]}], "+", 
+    RowBox[{"6", " ", 
+     SuperscriptBox["a", "7"], " ", "\[Alpha]", " ", "\[Beta]"}], "+", 
+    RowBox[{"21", " ", 
+     SuperscriptBox["a", "5"], " ", 
+     SuperscriptBox["\[Beta]", "2"]}]}], ")"}]}]], "Output",
+ CellChangeTimes->{3.9711077776038857`*^9},
+ CellLabel->
+  "Out[2409]=",ExpressionUUID->"bd4f398f-a808-8343-9093-4ffddcb56fe7"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  N = \"\>", "\[InvisibleSpace]", 
+   RowBox[{
+    FractionBox["16", "315"], " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       SuperscriptBox["a", "9"], " ", 
+       SuperscriptBox["\[Alpha]", "2"]}], "+", 
+      RowBox[{"6", " ", 
+       SuperscriptBox["a", "7"], " ", "\[Alpha]", " ", "\[Beta]"}], "+", 
+      RowBox[{"21", " ", 
+       SuperscriptBox["a", "5"], " ", 
+       SuperscriptBox["\[Beta]", "2"]}]}], ")"}]}]}],
+  SequenceForm[
+  "  N = ", 
+   Rational[16, 315] ($CellContext`a^9 $CellContext`\[Alpha]^2 + 
+    6 $CellContext`a^7 $CellContext`\[Alpha] $CellContext`\[Beta] + 
+    21 $CellContext`a^5 $CellContext`\[Beta]^2)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077776068935`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"e12929d3-849f-7d45-bfaa-38ab958404fb"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107777607893*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"69ffdf14-56a4-2842-ba67-edf571b0e098"]
+}, Open  ]],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"3", " ", 
+   SqrtBox["35"]}], 
+  RowBox[{"4", " ", 
+   SqrtBox[
+    RowBox[{
+     RowBox[{
+      SuperscriptBox["a", "9"], " ", 
+      SuperscriptBox["\[Alpha]", "2"]}], "+", 
+     RowBox[{"6", " ", 
+      SuperscriptBox["a", "7"], " ", "\[Alpha]", " ", "\[Beta]"}], "+", 
+     RowBox[{"21", " ", 
+      SuperscriptBox["a", "5"], " ", 
+      SuperscriptBox["\[Beta]", "2"]}]}]]}]]], "Output",
+ CellChangeTimes->{3.971107777612892*^9},
+ CellLabel->
+  "Out[2412]=",ExpressionUUID->"9e9ebd2b-9602-0c4c-ae29-fa30b1d78b8d"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Derivative calculation:\"\>"], "Print",
+ CellChangeTimes->{3.971107777617893*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"8c23c403-12da-8947-bb81-90b961173379"],
+
+Cell[BoxData["\<\"  d\[Psi]/dx = d/dx[(a^2 - x^2)(\[Alpha]x^2 + \
+\[Beta])]\"\>"], "Print",
+ CellChangeTimes->{3.971107777619894*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"a872fdee-1407-a542-bd2c-5306bb0af8c3"],
+
+Cell[BoxData["\<\"  Using product rule: = (a^2 - x^2)(2\[Alpha]x) + \
+(\[Alpha]x^2 + \[Beta])(-2x)\"\>"], "Print",
+ CellChangeTimes->{3.971107777624893*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"4493911f-b633-3143-b643-2283666689e7"],
+
+Cell[BoxData["\<\"  = 2\[Alpha]x(a^2 - x^2) - 2x(\[Alpha]x^2 + \
+\[Beta])\"\>"], "Print",
+ CellChangeTimes->{3.9711077776258945`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"0854eab5-b305-834b-9b20-a17219b76522"],
+
+Cell[BoxData["\<\"  = 2\[Alpha]a^2 x - 2\[Alpha]x^3 - 2\[Alpha]x^3 - \
+2\[Beta]x\"\>"], "Print",
+ CellChangeTimes->{3.971107777626892*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"62e7cfca-e0b4-5d46-942c-427d8ac7ac98"],
+
+Cell[BoxData["\<\"  = 2\[Alpha]a^2 x - 4\[Alpha]x^3 - 2\[Beta]x\"\>"], "Print",
+ CellChangeTimes->{3.971107777628893*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"064c7e42-c455-a34b-ba0b-3e421887be7c"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"2", " ", "x", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     SuperscriptBox["a", "2"], "-", 
+     SuperscriptBox["x", "2"]}], ")"}], " ", "\[Alpha]"}], "-", 
+  RowBox[{"2", " ", "x", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      SuperscriptBox["x", "2"], " ", "\[Alpha]"}], "+", "\[Beta]"}], 
+    ")"}]}]}]], "Output",
+ CellChangeTimes->{3.9711077776308937`*^9},
+ CellLabel->
+  "Out[2419]=",ExpressionUUID->"16516cb6-3b0d-6e46-ad9e-1e25de8a4e82"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  d\[Psi]/dx = \"\>", "\[InvisibleSpace]", 
+   RowBox[{
+    RowBox[{"2", " ", "x", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       SuperscriptBox["a", "2"], "-", 
+       SuperscriptBox["x", "2"]}], ")"}], " ", "\[Alpha]"}], "-", 
+    RowBox[{"2", " ", "x", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{
+        SuperscriptBox["x", "2"], " ", "\[Alpha]"}], "+", "\[Beta]"}], 
+      ")"}]}]}]}],
+  SequenceForm[
+  "  d\[Psi]/dx = ", 
+   2 $CellContext`x ($CellContext`a^2 - $CellContext`x^2) $CellContext`\
+\[Alpha] - 
+   2 $CellContext`x ($CellContext`x^2 $CellContext`\[Alpha] + $CellContext`\
+\[Beta])],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107777635895*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"6558605c-2b21-3942-adf6-3d7df2b6d324"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077776378937`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"add9aa10-faf1-e64d-ac75-f07dd08f6e3f"],
+
+Cell[BoxData["\<\"Kinetic energy integral:\"\>"], "Print",
+ CellChangeTimes->{3.971107777642893*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"fcc157af-decf-3a4e-aad2-7b68d6abd293"],
+
+Cell[BoxData["\<\"  <T> = (\[HBar]^2/2m)\[Integral]_{-a}^{a}|d\[Psi]/dx|^2 dx \
+/ N\"\>"], "Print",
+ CellChangeTimes->{3.9711077776448936`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"95c7a3a0-3c5d-8446-89a2-40dfcf8d7bb3"],
+
+Cell[BoxData["\<\"  = (\[HBar]^2/2m)\[Integral]_{-a}^{a} (2\[Alpha]a^2 x - 4\
+\[Alpha]x^3 - 2\[Beta]x)^2 dx / N\"\>"], "Print",
+ CellChangeTimes->{3.971107777645895*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"4a5a4d2f-93f7-4943-9ff2-95cc39d10d44"],
+
+Cell[BoxData["\<\"  (Even function integrated over symmetric limits)\"\>"], \
+"Print",
+ CellChangeTimes->{3.971107777647894*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"5e537680-3fb4-5b40-a0a4-bf07c726e730"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox[
+   RowBox[{"88", " ", 
+    SuperscriptBox["a", "7"], " ", 
+    SuperscriptBox["\[Alpha]", "2"]}], "105"], "+", 
+  RowBox[{
+   FractionBox["16", "15"], " ", 
+   SuperscriptBox["a", "5"], " ", "\[Alpha]", " ", "\[Beta]"}], "+", 
+  FractionBox[
+   RowBox[{"8", " ", 
+    SuperscriptBox["a", "3"], " ", 
+    SuperscriptBox["\[Beta]", "2"]}], "3"]}]], "Output",
+ CellChangeTimes->{3.9711077780270023`*^9},
+ CellLabel->
+  "Out[2426]=",ExpressionUUID->"1fe2e4f3-41d6-984a-8074-085073de6ad0"],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox["8", "105"], " ", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"11", " ", 
+     SuperscriptBox["a", "7"], " ", 
+     SuperscriptBox["\[Alpha]", "2"]}], "+", 
+    RowBox[{"14", " ", 
+     SuperscriptBox["a", "5"], " ", "\[Alpha]", " ", "\[Beta]"}], "+", 
+    RowBox[{"35", " ", 
+     SuperscriptBox["a", "3"], " ", 
+     SuperscriptBox["\[Beta]", "2"]}]}], ")"}]}]], "Output",
+ CellChangeTimes->{3.971107778033003*^9},
+ CellLabel->
+  "Out[2427]=",ExpressionUUID->"4f10b22d-fe2c-8945-bcf4-122423faff6d"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  Numerator = \"\>", "\[InvisibleSpace]", 
+   RowBox[{
+    FractionBox["8", "105"], " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"11", " ", 
+       SuperscriptBox["a", "7"], " ", 
+       SuperscriptBox["\[Alpha]", "2"]}], "+", 
+      RowBox[{"14", " ", 
+       SuperscriptBox["a", "5"], " ", "\[Alpha]", " ", "\[Beta]"}], "+", 
+      RowBox[{"35", " ", 
+       SuperscriptBox["a", "3"], " ", 
+       SuperscriptBox["\[Beta]", "2"]}]}], ")"}]}]}],
+  SequenceForm[
+  "  Numerator = ", 
+   Rational[8, 105] (11 $CellContext`a^7 $CellContext`\[Alpha]^2 + 
+    14 $CellContext`a^5 $CellContext`\[Alpha] $CellContext`\[Beta] + 
+    35 $CellContext`a^3 $CellContext`\[Beta]^2)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107778036003*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"19400650-0275-5743-9d62-2bfc961c123e"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077780370026`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"525fd759-ef33-db41-ae11-60aa56fa1fb3"]
+}, Open  ]],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{
+   RowBox[{"33", " ", 
+    SuperscriptBox["a", "4"], " ", 
+    SuperscriptBox["\[Alpha]", "2"]}], "+", 
+   RowBox[{"42", " ", 
+    SuperscriptBox["a", "2"], " ", "\[Alpha]", " ", "\[Beta]"}], "+", 
+   RowBox[{"105", " ", 
+    SuperscriptBox["\[Beta]", "2"]}]}], 
+  RowBox[{
+   RowBox[{"2", " ", 
+    SuperscriptBox["a", "6"], " ", 
+    SuperscriptBox["\[Alpha]", "2"]}], "+", 
+   RowBox[{"12", " ", 
+    SuperscriptBox["a", "4"], " ", "\[Alpha]", " ", "\[Beta]"}], "+", 
+   RowBox[{"42", " ", 
+    SuperscriptBox["a", "2"], " ", 
+    SuperscriptBox["\[Beta]", "2"]}]}]]], "Output",
+ CellChangeTimes->{3.9711077780420036`*^9},
+ CellLabel->
+  "Out[2430]=",ExpressionUUID->"72bc041b-6db4-f345-8a03-737cbeb3b133"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  <T> = (\[HBar]^2/2m) \[Times] \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    RowBox[{
+     RowBox[{"33", " ", 
+      SuperscriptBox["a", "4"], " ", 
+      SuperscriptBox["\[Alpha]", "2"]}], "+", 
+     RowBox[{"42", " ", 
+      SuperscriptBox["a", "2"], " ", "\[Alpha]", " ", "\[Beta]"}], "+", 
+     RowBox[{"105", " ", 
+      SuperscriptBox["\[Beta]", "2"]}]}], 
+    RowBox[{
+     RowBox[{"2", " ", 
+      SuperscriptBox["a", "6"], " ", 
+      SuperscriptBox["\[Alpha]", "2"]}], "+", 
+     RowBox[{"12", " ", 
+      SuperscriptBox["a", "4"], " ", "\[Alpha]", " ", "\[Beta]"}], "+", 
+     RowBox[{"42", " ", 
+      SuperscriptBox["a", "2"], " ", 
+      SuperscriptBox["\[Beta]", "2"]}]}]]}],
+  SequenceForm[
+  "  <T> = (\[HBar]^2/2m) \[Times] ", (
+    33 $CellContext`a^4 $CellContext`\[Alpha]^2 + 
+    42 $CellContext`a^2 $CellContext`\[Alpha] $CellContext`\[Beta] + 
+    105 $CellContext`\[Beta]^2)/(2 $CellContext`a^6 $CellContext`\[Alpha]^2 + 
+   12 $CellContext`a^4 $CellContext`\[Alpha] $CellContext`\[Beta] + 
+   42 $CellContext`a^2 $CellContext`\[Beta]^2)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107778047003*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"95bd102d-b9e6-b24e-a289-1310da6cf7e1"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077780490036`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"5c739523-509b-f341-adc9-45a81b09ef3b"]
+}, Open  ]],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"105", "+", 
+   RowBox[{"42", " ", 
+    SuperscriptBox["a", "2"], " ", "r"}], "+", 
+   RowBox[{"33", " ", 
+    SuperscriptBox["a", "4"], " ", 
+    SuperscriptBox["r", "2"]}]}], 
+  RowBox[{
+   RowBox[{"42", " ", 
+    SuperscriptBox["a", "2"]}], "+", 
+   RowBox[{"12", " ", 
+    SuperscriptBox["a", "4"], " ", "r"}], "+", 
+   RowBox[{"2", " ", 
+    SuperscriptBox["a", "6"], " ", 
+    SuperscriptBox["r", "2"]}]}]]], "Output",
+ CellChangeTimes->{3.971107778054003*^9},
+ CellLabel->
+  "Out[2433]=",ExpressionUUID->"232dc894-c3a7-464b-92f5-820558f85885"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Energy as function of r = \[Alpha]/\[Beta]:\"\>"], "Print",
+ CellChangeTimes->{3.9711077780600033`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"e34812c3-b273-714b-85e9-84e7c339ace4"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  <E>(r) = (\[HBar]^2/2m) \[Times] \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    RowBox[{"105", "+", 
+     RowBox[{"42", " ", 
+      SuperscriptBox["a", "2"], " ", "r"}], "+", 
+     RowBox[{"33", " ", 
+      SuperscriptBox["a", "4"], " ", 
+      SuperscriptBox["r", "2"]}]}], 
+    RowBox[{
+     RowBox[{"42", " ", 
+      SuperscriptBox["a", "2"]}], "+", 
+     RowBox[{"12", " ", 
+      SuperscriptBox["a", "4"], " ", "r"}], "+", 
+     RowBox[{"2", " ", 
+      SuperscriptBox["a", "6"], " ", 
+      SuperscriptBox["r", "2"]}]}]]}],
+  SequenceForm[
+  "  <E>(r) = (\[HBar]^2/2m) \[Times] ", (105 + 
+    42 $CellContext`a^2 $CellContext`r + 
+    33 $CellContext`a^4 $CellContext`r^2)/(42 $CellContext`a^2 + 
+   12 $CellContext`a^4 $CellContext`r + 2 $CellContext`a^6 $CellContext`r^2)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107778062004*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"de3784d3-13d0-1849-95ae-e5ebef3410ee"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077780670013`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"76cc5ca0-3f41-7343-a609-64e7afc44bb1"]
+}, Open  ]],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"6", " ", 
+   RowBox[{"(", 
+    RowBox[{"21", "+", 
+     RowBox[{"98", " ", 
+      SuperscriptBox["a", "2"], " ", "r"}], "+", 
+     RowBox[{"13", " ", 
+      SuperscriptBox["a", "4"], " ", 
+      SuperscriptBox["r", "2"]}]}], ")"}]}], 
+  SuperscriptBox[
+   RowBox[{"(", 
+    RowBox[{"21", "+", 
+     RowBox[{"6", " ", 
+      SuperscriptBox["a", "2"], " ", "r"}], "+", 
+     RowBox[{
+      SuperscriptBox["a", "4"], " ", 
+      SuperscriptBox["r", "2"]}]}], ")"}], "2"]]], "Output",
+ CellChangeTimes->{3.971107778069004*^9},
+ CellLabel->
+  "Out[2437]=",ExpressionUUID->"1a93a341-7fbc-c74d-8afd-9b2ecef4042f"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Variational condition d<E>/dr = 0:\"\>"], "Print",
+ CellChangeTimes->{3.9711077780740013`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"62093a15-a1fe-e34b-a019-b3381e2fd6b0"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  d<E>/dr = (\[HBar]^2/2m) \[Times] \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    RowBox[{"6", " ", 
+     RowBox[{"(", 
+      RowBox[{"21", "+", 
+       RowBox[{"98", " ", 
+        SuperscriptBox["a", "2"], " ", "r"}], "+", 
+       RowBox[{"13", " ", 
+        SuperscriptBox["a", "4"], " ", 
+        SuperscriptBox["r", "2"]}]}], ")"}]}], 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{"21", "+", 
+       RowBox[{"6", " ", 
+        SuperscriptBox["a", "2"], " ", "r"}], "+", 
+       RowBox[{
+        SuperscriptBox["a", "4"], " ", 
+        SuperscriptBox["r", "2"]}]}], ")"}], "2"]]}],
+  SequenceForm[
+  "  d<E>/dr = (\[HBar]^2/2m) \[Times] ", 
+   6 (21 + 6 $CellContext`a^2 $CellContext`r + $CellContext`a^4 \
+$CellContext`r^2)^(-2) (21 + 98 $CellContext`a^2 $CellContext`r + 
+    13 $CellContext`a^4 $CellContext`r^2)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107778076004*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"d24c89aa-2efe-5743-be4a-1bf0ed5243d4"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107778081003*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"593a2945-3426-2144-aa7d-5b26afa3611c"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"r", "\[Rule]", 
+     FractionBox[
+      RowBox[{
+       RowBox[{"-", "49"}], "-", 
+       RowBox[{"4", " ", 
+        SqrtBox["133"]}]}], 
+      RowBox[{"13", " ", 
+       SuperscriptBox["a", "2"]}]]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"r", "\[Rule]", 
+     FractionBox[
+      RowBox[{
+       RowBox[{"-", "49"}], "+", 
+       RowBox[{"4", " ", 
+        SqrtBox["133"]}]}], 
+      RowBox[{"13", " ", 
+       SuperscriptBox["a", "2"]}]]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.971107778083002*^9},
+ CellLabel->
+  "Out[2441]=",ExpressionUUID->"c3ec01eb-e40e-7a46-9d6a-5f12b31e3590"],
+
+Cell[BoxData["\<\"Solutions for optimal r:\"\>"], "Print",
+ CellChangeTimes->{3.9711077780870037`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"359cf090-92a8-ae4d-8e86-d677bbf10c8b"],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{"49", "+", 
+    RowBox[{"4", " ", 
+     SqrtBox["133"]}]}], 
+   RowBox[{"13", " ", 
+    SuperscriptBox["a", "2"]}]]}]], "Output",
+ CellChangeTimes->{3.9711077780890026`*^9},
+ CellLabel->
+  "Out[2443]=",ExpressionUUID->"c45120d4-b0e7-4a40-a9e2-3f782ceb603c"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{
+   RowBox[{"-", "49"}], "+", 
+   RowBox[{"4", " ", 
+    SqrtBox["133"]}]}], 
+  RowBox[{"13", " ", 
+   SuperscriptBox["a", "2"]}]]], "Output",
+ CellChangeTimes->{3.971107778092001*^9},
+ CellLabel->
+  "Out[2444]=",ExpressionUUID->"ea7ca62d-13ce-9046-9ca4-c02c104040a7"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  r\\\\[Subscript 1] = \"\>", "\[InvisibleSpace]", 
+   RowBox[{"-", 
+    FractionBox[
+     RowBox[{"49", "+", 
+      RowBox[{"4", " ", 
+       SqrtBox["133"]}]}], 
+     RowBox[{"13", " ", 
+      SuperscriptBox["a", "2"]}]]}]}],
+  SequenceForm[
+  "  r\\[Subscript 1] = ", 
+   Rational[-1, 13] (49 + 4 133^Rational[1, 2]) $CellContext`a^(-2)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077780940037`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"81524326-ac3c-324d-b630-ae38c479c07c"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  r\\\\[Subscript 2] = \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    RowBox[{
+     RowBox[{"-", "49"}], "+", 
+     RowBox[{"4", " ", 
+      SqrtBox["133"]}]}], 
+    RowBox[{"13", " ", 
+     SuperscriptBox["a", "2"]}]]}],
+  SequenceForm[
+  "  r\\[Subscript 2] = ", 
+   Rational[1, 13] (-49 + 4 133^Rational[1, 2]) $CellContext`a^(-2)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077780960026`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"6401a7a8-bf56-a947-be8f-5e29304e6a9a"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077781010017`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"796da879-2651-fe4f-990f-b3622deb36bb"]
+}, Open  ]],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"21", " ", 
+   RowBox[{"(", 
+    RowBox[{"209", "+", 
+     RowBox[{"16", " ", 
+      SqrtBox["133"]}]}], ")"}]}], 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"266", "+", 
+     RowBox[{"5", " ", 
+      SqrtBox["133"]}]}], ")"}], " ", 
+   SuperscriptBox["a", "2"]}]]], "Output",
+ CellChangeTimes->{3.971107778104*^9},
+ CellLabel->
+  "Out[2448]=",ExpressionUUID->"a98bf49f-729f-844d-b6d8-7d739b2847d6"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"21", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "209"}], "+", 
+     RowBox[{"16", " ", 
+      SqrtBox["133"]}]}], ")"}]}], 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "266"}], "+", 
+     RowBox[{"5", " ", 
+      SqrtBox["133"]}]}], ")"}], " ", 
+   SuperscriptBox["a", "2"]}]]], "Output",
+ CellChangeTimes->{3.9711077781080017`*^9},
+ CellLabel->
+  "Out[2449]=",ExpressionUUID->"795dbd67-e775-2142-bf96-9049268a73a8"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Energy values:\"\>"], "Print",
+ CellChangeTimes->{3.9711077781099987`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"b7f3db61-b24a-944d-9416-408672413f1c"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  At r\\\\[Subscript 1]: <E> = (\[HBar]^2/2m) \[Times] \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    RowBox[{"21", " ", 
+     RowBox[{"(", 
+      RowBox[{"209", "+", 
+       RowBox[{"16", " ", 
+        SqrtBox["133"]}]}], ")"}]}], 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"266", "+", 
+       RowBox[{"5", " ", 
+        SqrtBox["133"]}]}], ")"}], " ", 
+     SuperscriptBox["a", "4"]}]], "\[InvisibleSpace]", "\<\"/a^2\"\>"}],
+  SequenceForm[
+  "  At r\\[Subscript 1]: <E> = (\[HBar]^2/2m) \[Times] ", 
+   21 (266 + 5 133^Rational[1, 2])^(-1) (209 + 
+    16 133^Rational[1, 2]) $CellContext`a^(-4), "/a^2"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077781119995`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"bd4ce9d6-3a17-cc4a-8e33-9b31c3318dc8"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  At r\\\\[Subscript 2]: <E> = (\[HBar]^2/2m) \[Times] \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    RowBox[{"21", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"-", "209"}], "+", 
+       RowBox[{"16", " ", 
+        SqrtBox["133"]}]}], ")"}]}], 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"-", "266"}], "+", 
+       RowBox[{"5", " ", 
+        SqrtBox["133"]}]}], ")"}], " ", 
+     SuperscriptBox["a", "4"]}]], "\[InvisibleSpace]", "\<\"/a^2\"\>"}],
+  SequenceForm[
+  "  At r\\[Subscript 2]: <E> = (\[HBar]^2/2m) \[Times] ", 
+   21 (-266 + 5 133^Rational[1, 2])^(-1) (-209 + 
+    16 133^Rational[1, 2]) $CellContext`a^(-4), "/a^2"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107778116003*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"b312a68f-7e49-d549-860a-897c0e8c9445"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077781190014`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"192e7fac-6665-564d-af55-c420c11eaa77"]
+}, Open  ]],
+
+Cell[BoxData["25.532562594670797`"], "Output",
+ CellChangeTimes->{3.971107778120001*^9},
+ CellLabel->
+  "Out[2454]=",ExpressionUUID->"dd51cb11-b963-024f-93d0-180bb55174b7"],
+
+Cell[BoxData["2.467437405329203`"], "Output",
+ CellChangeTimes->{3.9711077781239986`*^9},
+ CellLabel->
+  "Out[2455]=",ExpressionUUID->"8a7270a4-5e83-f44a-adbe-a6a4c9a13744"],
+
+Cell[BoxData["\<\"Selecting r\\\\[Subscript 2] (minimum energy)\"\>"], "Print",
+ CellChangeTimes->{3.9711077781260014`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"954656e5-84bc-1046-bfa9-2c5356765a98"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"21", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "209"}], "+", 
+     RowBox[{"16", " ", 
+      SqrtBox["133"]}]}], ")"}]}], 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "266"}], "+", 
+     RowBox[{"5", " ", 
+      SqrtBox["133"]}]}], ")"}], " ", 
+   SuperscriptBox["a", "2"]}]]], "Output",
+ CellChangeTimes->{3.9711077781280003`*^9},
+ CellLabel->
+  "Out[2456]=",ExpressionUUID->"3b8c5e04-7ca0-784b-8254-1f9a4dbd14f5"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077781289997`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"22de936f-1610-b947-83b3-47e73b768fb3"],
+
+Cell[BoxData["\<\"Optimal parameters:\"\>"], "Print",
+ CellChangeTimes->{3.9711077781310005`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"dac8d0d5-3d36-e844-bacd-4f87135d757c"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  r\\\\[Subscript opt] = \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    RowBox[{
+     RowBox[{"-", "49"}], "+", 
+     RowBox[{"4", " ", 
+      SqrtBox["133"]}]}], 
+    RowBox[{"13", " ", 
+     SuperscriptBox["a", "2"]}]]}],
+  SequenceForm[
+  "  r\\[Subscript opt] = ", 
+   Rational[1, 13] (-49 + 4 133^Rational[1, 2]) $CellContext`a^(-2)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107778135002*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"8938e484-c626-2a48-a662-a39f66886132"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  <E> = (\[HBar]^2/2m) \[Times] \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    RowBox[{"21", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"-", "209"}], "+", 
+       RowBox[{"16", " ", 
+        SqrtBox["133"]}]}], ")"}]}], 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"-", "266"}], "+", 
+       RowBox[{"5", " ", 
+        SqrtBox["133"]}]}], ")"}], " ", 
+     SuperscriptBox["a", "4"]}]], "\[InvisibleSpace]", "\<\"/a^2\"\>"}],
+  SequenceForm[
+  "  <E> = (\[HBar]^2/2m) \[Times] ", 
+   21 (-266 + 5 133^Rational[1, 2])^(-1) (-209 + 
+    16 133^Rational[1, 2]) $CellContext`a^(-4), "/a^2"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107778136999*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"cd868972-f2b4-1649-959b-deae2209300d"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077781380005`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"d117f7f9-7130-ae4a-ad2c-920206f1d22d"],
+
+Cell[BoxData[
+ FrameBox[
+  TagBox[GridBox[{
+     {
+      StyleBox["\<\"ANSWER (Part c):\"\>",
+       StripOnInput->False,
+       FontSize->14,
+       FontWeight->Bold]},
+     {
+      StyleBox["\<\"Optimal r = \\!\\(\\*FormBox[FractionBox[RowBox[{RowBox[{\
+\\\"4\\\", \\\" \\\", SqrtBox[\\\"133\\\"]}], \\\"-\\\", \
+RowBox[{\\\"49\\\"}]}], RowBox[{\\\"13\\\", \\\" \\\", SuperscriptBox[\\\"a\\\
+\", \\\"2\\\"]}]], TraditionalForm]\\)\"\>",
+       StripOnInput->False,
+       FontSize->12,
+       FontWeight->Bold]},
+     {
+      StyleBox["\<\"<E> = \\!\\(\\*FormBox[FractionBox[RowBox[{\\\"21\\\", \\\
+\" \\\", RowBox[{\\\"(\\\", RowBox[{RowBox[{\\\"16\\\", \\\" \\\", SqrtBox[\\\
+\"133\\\"]}], \\\"-\\\", RowBox[{\\\"209\\\"}]}], \\\")\\\"}]}], \
+RowBox[{RowBox[{\\\"(\\\", RowBox[{RowBox[{\\\"5\\\", \\\" \\\", \
+SqrtBox[\\\"133\\\"]}], \\\"-\\\", RowBox[{\\\"266\\\"}]}], \\\")\\\"}], \\\" \
+\\\", SuperscriptBox[\\\"a\\\", \\\"4\\\"]}]], TraditionalForm]\\) \
+\[HBar]^2/(2ma^2)\"\>",
+       StripOnInput->False,
+       FontSize->12,
+       FontWeight->Bold]}
+    },
+    DefaultBaseStyle->"Column",
+    GridBoxAlignment->{"Columns" -> {{Left}}},
+    GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+   "Column"],
+  Background->RGBColor[1, 1, 0.85],
+  FrameStyle->Thickness[Large],
+  StripOnInput->False]], "Print",
+ CellChangeTimes->{3.9711077781399975`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"2ceeb5fb-b44b-b546-b95b-9ca48c62ca23"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107778142*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"b84d01ad-5090-e148-bbb1-4b2b959f7498"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077781430035`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"c82ca2ac-fca5-dd42-8648-2e175dd9ad28"],
+
+Cell[BoxData["\<\"PART (d): COMPARISON WITH EXACT RESULT\"\>"], "Print",
+ CellChangeTimes->{3.9711077781450024`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"458fcb7b-d918-d845-a573-9b2dc56a8bdb"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077781460037`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"dd2a6ad1-17c0-0841-bd1e-00c84eda8d99"]
+}, Open  ]],
+
+Cell[BoxData[
+ FractionBox[
+  SuperscriptBox["\[Pi]", "2"], 
+  RowBox[{"8", " ", 
+   SuperscriptBox["a", "2"]}]]], "Output",
+ CellChangeTimes->{3.9711077781470184`*^9},
+ CellLabel->
+  "Out[2467]=",ExpressionUUID->"e7f1f420-a1a7-e845-8f78-a87bf011be18"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Exact ground state:\"\>"], "Print",
+ CellChangeTimes->{3.97110777815201*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"d14a6484-d080-f749-b477-2c1eb46da0a6"],
+
+Cell[BoxData["\<\"  \[Psi]\\\\[Subscript 0](x) = (1/\[Sqrt]a)cos(\[Pi]x/(2a))\
+\"\>"], "Print",
+ CellChangeTimes->{3.971107778154003*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"da518c40-45b1-a34d-b445-6ba9ec217df0"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  E\\\\[Subscript 0] = \[Pi]^2\[HBar]^2/(8ma^2) = \
+(\[HBar]^2/2m) \[Times] \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    SuperscriptBox["\[Pi]", "2"], 
+    RowBox[{"8", " ", 
+     SuperscriptBox["a", "2"]}]]}],
+  SequenceForm[
+  "  E\\[Subscript 0] = \[Pi]^2\[HBar]^2/(8ma^2) = (\[HBar]^2/2m) \[Times] ", 
+   Rational[1, 8] $CellContext`a^(-2) Pi^2],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077781590023`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"0c4c7682-a244-0d40-8abd-47fc38e0f534"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077781600037`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"d94fc418-068e-5745-a474-53f38bac6d6a"],
+
+Cell[BoxData["\<\"Summary of Variational Estimates\"\>"], "Print",
+ CellChangeTimes->{3.9711077781620007`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"bf69a50b-b810-3b46-a7d6-197281d498fb"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107778163004*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"b398f294-42c8-be48-ae29-1c4f955114bc"],
+
+Cell[BoxData[
+ StyleBox["\<\"Method                     <E> in units of \
+(\[HBar]^2/2m)/a^2\"\>",
+  StripOnInput->False,
+  FontWeight->Bold]], "Print",
+ CellChangeTimes->{3.9711077781640034`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"cbd09cb9-fdd0-fd46-bf87-a42afc3520a3"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Exact                      \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    SuperscriptBox["\[Pi]", "2"], 
+    RowBox[{"8", " ", 
+     SuperscriptBox["a", "2"]}]]}],
+  SequenceForm[
+  "Exact                      ", Rational[1, 8] $CellContext`a^(-2) Pi^2],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077781660023`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"25409abc-924a-d443-a63d-0d9f34967b59"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Triangular                 \"\>", "\[InvisibleSpace]", 
+   FractionBox["3", 
+    SuperscriptBox["a", "4"]]}],
+  SequenceForm["Triangular                 ", 3 $CellContext`a^(-4)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077781670036`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"d61ecfa7-cd5a-6f4c-83ca-83a4a500c7fc"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Parabolic                  \"\>", "\[InvisibleSpace]", 
+   FractionBox["5", 
+    RowBox[{"2", " ", 
+     SuperscriptBox["a", "4"]}]]}],
+  SequenceForm[
+  "Parabolic                  ", Rational[5, 2] $CellContext`a^(-4)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077781690025`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"714d73c1-9fb5-4940-8eae-6c3914a3bc8c"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Quartic (optimized)        \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    RowBox[{"21", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"-", "209"}], "+", 
+       RowBox[{"16", " ", 
+        SqrtBox["133"]}]}], ")"}]}], 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"-", "266"}], "+", 
+       RowBox[{"5", " ", 
+        SqrtBox["133"]}]}], ")"}], " ", 
+     SuperscriptBox["a", "4"]}]]}],
+  SequenceForm[
+  "Quartic (optimized)        ", 
+   21 (-266 + 5 133^Rational[1, 2])^(-1) (-209 + 
+    16 133^Rational[1, 2]) $CellContext`a^(-4)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077781710014`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"99776cbc-a81b-0442-b32c-70a75d3cfb91"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107778172001*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"8958d450-c160-f34d-9198-d5a06403b2b6"],
+
+Cell[BoxData["\<\"Verification: All variational estimates satisfy <E> \
+\[GreaterEqual] E\\\\[Subscript 0]\"\>"], "Print",
+ CellChangeTimes->{3.9711077781730003`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"ef65155f-2823-1d4a-8b8b-a1d81b44ea01"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Triangular:  \"\>", "\[InvisibleSpace]", "3.`", 
+   "\[InvisibleSpace]", "\<\" \[GreaterEqual] \"\>", "\[InvisibleSpace]", 
+   "1.2337005501361697`", "\[InvisibleSpace]", "\<\" \[Checkmark]\"\>"}],
+  SequenceForm[
+  "Triangular:  ", 3., " \[GreaterEqual] ", 1.2337005501361697`, 
+   " \[Checkmark]"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107778174999*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"68bb8251-d300-5446-bfd4-35fc54da877f"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Parabolic:   \"\>", "\[InvisibleSpace]", "2.5`", 
+   "\[InvisibleSpace]", "\<\" \[GreaterEqual] \"\>", "\[InvisibleSpace]", 
+   "1.2337005501361697`", "\[InvisibleSpace]", "\<\" \[Checkmark]\"\>"}],
+  SequenceForm[
+  "Parabolic:   ", 2.5, " \[GreaterEqual] ", 1.2337005501361697`, 
+   " \[Checkmark]"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107778176998*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"3158d8f8-c28c-234a-b13d-15cd5afc817b"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Quartic:     \"\>", "\[InvisibleSpace]", "2.467437405329203`", 
+   "\[InvisibleSpace]", "\<\" \[GreaterEqual] \"\>", "\[InvisibleSpace]", 
+   "1.2337005501361697`", "\[InvisibleSpace]", "\<\" \[Checkmark]\"\>"}],
+  SequenceForm[
+  "Quartic:     ", 2.467437405329203, " \[GreaterEqual] ", 
+   1.2337005501361697`, " \[Checkmark]"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077781780167`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"626ad6d9-783d-1c4f-80cc-90c192d7fdf0"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077781800003`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"cf73fbd9-ef23-8143-9167-7c5190d4d7ab"],
+
+Cell[BoxData[
+ FrameBox[
+  TagBox[GridBox[{
+     {
+      StyleBox["\<\"ANSWER (Part d):\"\>",
+       StripOnInput->False,
+       FontSize->14,
+       FontWeight->Bold]},
+     {
+      StyleBox["\<\"All variational estimates satisfy <E> \[GreaterEqual] E\\\
+\\[Subscript 0]\"\>",
+       StripOnInput->False,
+       FontSize->12,
+       FontWeight->Bold]},
+     {
+      StyleBox["\<\"The quartic trial function gives the best \
+approximation.\"\>",
+       StripOnInput->False,
+       FontSize->12,
+       FontWeight->Bold]}
+    },
+    DefaultBaseStyle->"Column",
+    GridBoxAlignment->{"Columns" -> {{Left}}},
+    GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+   "Column"],
+  Background->RGBColor[1, 1, 0.85],
+  FrameStyle->Thickness[Large],
+  StripOnInput->False]], "Print",
+ CellChangeTimes->{3.971107778181999*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"00bd4d3c-2483-4d43-aac4-0252aa3aa6da"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077781829987`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"138b204c-bc89-6843-8ff5-4159b0c282a1"],
+
+Cell[BoxData["\<\"Mean-Square Deviations\"\>"], "Print",
+ CellChangeTimes->{3.971107778186001*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"d23ff0d0-0b45-a14a-993b-f23329b7536a"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107778187004*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"6c13247f-2826-414b-9ff9-38289f7ba459"],
+
+Cell[BoxData["\<\"Formula: \[CapitalDelta]^2 = \
+\[Integral]|\[Psi]\\\\[Subscript 0] - \[Psi]\\\\[Subscript t]|^2 dx = 2(1 - \
+\[Integral]\[Psi]\\\\[Subscript 0]\[Psi]\\\\[Subscript t] dx) for normalized \
+functions\"\>"], "Print",
+ CellChangeTimes->{3.971107778189003*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"41fe2a68-315d-b749-80fc-bf4d76c28d82"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107778191*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"163888b1-d7e4-cf4b-b9ea-15a24763b2af"],
+
+Cell[BoxData["\<\"Parabolic function:\"\>"], "Print",
+ CellChangeTimes->{3.9711077781919994`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"56362ae1-257f-9d42-b3f5-16767b2403ad"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{"8", " ", 
+    SqrtBox["15"]}], 
+   SuperscriptBox["\[Pi]", "3"]]}]], "Output",
+ CellChangeTimes->{3.9711077791015987`*^9},
+ CellLabel->
+  "Out[2494]=",ExpressionUUID->"063b4a06-4aa7-f643-9be1-88b075717e1c"],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{"8", " ", 
+    SqrtBox["15"]}], 
+   SuperscriptBox["\[Pi]", "3"]]}]], "Output",
+ CellChangeTimes->{3.9711077791065617`*^9},
+ CellLabel->
+  "Out[2495]=",ExpressionUUID->"e11ea1f2-8150-4149-bab4-e73541021d3d"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  Overlap: \[Integral]_{-a}^{a} \[Psi]\\\\[Subscript \
+0]\[Psi]\\\\[Subscript t] dx = \"\>", "\[InvisibleSpace]", 
+   RowBox[{"-", 
+    FractionBox[
+     RowBox[{"8", " ", 
+      SqrtBox["15"]}], 
+     SuperscriptBox["\[Pi]", "3"]]}]}],
+  SequenceForm[
+  "  Overlap: \[Integral]_{-a}^{a} \[Psi]\\[Subscript 0]\[Psi]\\[Subscript t] \
+dx = ", (-8) 15^Rational[1, 2] Pi^(-3)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077791085625`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"3e851e85-aa14-064e-bd66-c1fbd624aead"],
+
+Cell[BoxData[
+ RowBox[{"2", "+", 
+  FractionBox[
+   RowBox[{"16", " ", 
+    SqrtBox["15"]}], 
+   SuperscriptBox["\[Pi]", "3"]]}]], "Output",
+ CellChangeTimes->{3.9711077791105614`*^9},
+ CellLabel->
+  "Out[2497]=",ExpressionUUID->"71ddeef6-7547-f64e-a751-8529be4a82ed"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"  Mean-square deviation: \[CapitalDelta]^2 = \"\>", "\[InvisibleSpace]", 
+   RowBox[{"2", "+", 
+    FractionBox[
+     RowBox[{"16", " ", 
+      SqrtBox["15"]}], 
+     SuperscriptBox["\[Pi]", "3"]]}]}],
+  SequenceForm[
+  "  Mean-square deviation: \[CapitalDelta]^2 = ", 2 + 
+   16 15^Rational[1, 2] Pi^(-3)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107779112562*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"ff455619-307b-fb45-bb56-ec3534f1101e"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077791135616`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"e8328971-dfa0-a645-a861-876298f8e0bd"],
+
+Cell[BoxData["\<\"Interpretation: Smaller \[CapitalDelta]^2 indicates better \
+approximation to exact ground state.\"\>"], "Print",
+ CellChangeTimes->{3.971107779118561*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"04d337af-0338-9045-b8b7-432ce4746417"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107779119562*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"2af17343-95cf-624d-9cfa-8b83ca958435"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077791205616`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"02c16e97-4d1e-1740-ba0b-56c3e966700c"],
+
+Cell[BoxData["\<\"PART (e): NODES OF OPTIMAL QUARTIC AND \
+INTERPRETATION\"\>"], "Print",
+ CellChangeTimes->{3.9711077791225624`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"1adee660-dc70-6b45-a6ae-eaf169e0455c"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107779123562*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"c1629de1-a2ec-5f4b-95b5-002d1357aa63"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Optimized quartic: \[Psi](x) = A(a^2 - x^2)(\[Alpha]x^2 + \
+\[Beta]) with r = \[Alpha]/\[Beta] = \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    RowBox[{
+     RowBox[{"-", "49"}], "+", 
+     RowBox[{"4", " ", 
+      SqrtBox["133"]}]}], 
+    RowBox[{"13", " ", 
+     SuperscriptBox["a", "2"]}]]}],
+  SequenceForm[
+  "Optimized quartic: \[Psi](x) = A(a^2 - x^2)(\[Alpha]x^2 + \[Beta]) with r \
+= \[Alpha]/\[Beta] = ", 
+   Rational[1, 13] (-49 + 4 133^Rational[1, 2]) $CellContext`a^(-2)],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9711077791245613`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"dfa8d000-68af-0f4f-bc85-e39a9b6a326b"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107779126562*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"dff11c12-fc81-384c-91a9-0739371e069c"],
+
+Cell[BoxData["\<\"Nodes occur at:\"\>"], "Print",
+ CellChangeTimes->{3.971107779128559*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"b942fe03-229d-4c4e-9fba-499b95ad7438"],
+
+Cell[BoxData["\<\"  (1) Boundary: x = \[PlusMinus]a (required by boundary \
+conditions)\"\>"], "Print",
+ CellChangeTimes->{3.9711077791295586`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"08e0d6a3-442b-1c4a-812b-4c6241e795d8"],
+
+Cell[BoxData["\<\"  (2) Interior: where \[Alpha]x^2 + \[Beta] = 0, i.e., x^2 \
+= -\[Beta]/\[Alpha] = -1/r\"\>"], "Print",
+ CellChangeTimes->{3.9711077791306057`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"a39efe4c-3f2d-ca40-a179-544a9f33929c"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077791326065`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"9612e03e-51bc-2c47-93d6-301f3b3c1599"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Interior node condition: x^2 = -1/r = \"\>", "\[InvisibleSpace]", 
+   FractionBox[
+    RowBox[{"13", " ", 
+     SuperscriptBox["a", "2"]}], 
+    RowBox[{"49", "-", 
+     RowBox[{"4", " ", 
+      SqrtBox["133"]}]}]]}],
+  SequenceForm[
+  "Interior node condition: x^2 = -1/r = ", 
+   13 (49 - 4 133^Rational[1, 2])^(-1) $CellContext`a^2],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.971107779133604*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"02fb1e11-d4b2-4a4b-82a4-9a6a5156032d"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox["0.22074997087052414`", 
+   SuperscriptBox["a", "2"]]}]], "Output",
+ CellChangeTimes->{3.9711077791346054`*^9},
+ CellLabel->
+  "Out[2512]=",ExpressionUUID->"28ab3cfa-2549-5448-9af0-9aae776a00d1"],
+
+Cell[BoxData[
+ RowBox[{"4.530011922794442`", " ", 
+  SuperscriptBox["a", "2"]}]], "Output",
+ CellChangeTimes->{3.971107779138607*^9},
+ CellLabel->
+  "Out[2513]=",ExpressionUUID->"31591c8e-117c-bc41-9ffa-b6a6f54a619d"],
+
+Cell[BoxData[
+ RowBox[{"If", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"4.530011922794442`", " ", 
+     SuperscriptBox["a", "2"]}], ">", "0"}], ",", 
+   RowBox[{
+    RowBox[{"Print", "[", 
+     RowBox[{"\<\"Real interior nodes exist at x^2 = \"\>", ",", 
+      RowBox[{"Simplify", "[", 
+       RowBox[{"-", 
+        FractionBox["1", "rOpt"]}], "]"}]}], "]"}], ";", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Simplify", "[", 
+        RowBox[{"-", 
+         FractionBox["1", "rOpt"]}], "]"}], "<", 
+       SuperscriptBox["a", "2"]}], ",", 
+      RowBox[{
+      "Print", "[", "\<\"Location: INSIDE the well (|x| < a)\"\>", "]"}], ",", 
+      RowBox[{
+      "Print", "[", "\<\"Location: OUTSIDE the well (|x| > a)\"\>", "]"}]}], 
+     "]"}]}], ",", 
+   RowBox[{"Print", "[", "\<\"No real interior nodes (x^2 < 0)\"\>", "]"}]}], 
+  "]"}]], "Output",
+ CellChangeTimes->{3.971107779140606*^9},
+ CellLabel->
+  "Out[2514]=",ExpressionUUID->"699fe936-bac5-0c48-bc50-f0ecf04e21aa"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107779142605*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"3dfbc5e8-0c70-9f41-97c3-39c5a6dfc4df"],
+
+Cell[BoxData["\<\"Interpretation of Stationary Energy Value\"\>"], "Print",
+ CellChangeTimes->{3.9711077791436043`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"873aa53d-d42f-d74d-ae58-e0c1bf630959"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077791476*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"69760365-f3d1-5c4f-ad46-caa79fa3dd4a"],
+
+Cell[BoxData["\<\"The variational method minimizes <E> within the family of \
+quartic trial functions.\"\>"], "Print",
+ CellChangeTimes->{3.971107779149599*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"ac02b395-56e0-5c42-8bb6-9e0a17c55820"],
+
+Cell[BoxData["\<\"At the stationary point (d<E>/dr = 0):\"\>"], "Print",
+ CellChangeTimes->{3.971107779152561*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"23611733-1a77-854e-b893-3f8de7afdbf3"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077791535625`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"0dfc6c1c-c3fe-9347-930b-5556569e5961"],
+
+Cell[BoxData["\<\"  \[Bullet] The energy is minimized with respect to the \
+parameter r\"\>"], "Print",
+ CellChangeTimes->{3.971107779154562*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"b64f66a0-b0da-8e43-bb78-bc4324ebf1c8"],
+
+Cell[BoxData["\<\"  \[Bullet] This provides an upper bound: <E> \
+\[GreaterEqual] E\\\\[Subscript 0] (variational theorem)\"\>"], "Print",
+ CellChangeTimes->{3.9711077791555614`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"05089204-a560-be4a-a24f-363d98925aa2"],
+
+Cell[BoxData["\<\"  \[Bullet] The optimal function best approximates the true \
+ground state within this family\"\>"], "Print",
+ CellChangeTimes->{3.9711077791579533`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"2f16d2e3-124e-1e46-bb2c-f5dc4f93af14"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077791589603`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"0d2ae766-b1ed-2444-af1d-df5dfa8e6aea"],
+
+Cell[BoxData["\<\"Physical significance:\"\>"], "Print",
+ CellChangeTimes->{3.97110777915996*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"442d8717-fba3-ea49-a200-a5cf5e34b5a9"],
+
+Cell[BoxData["\<\"  \[Bullet] The optimization balances kinetic energy \
+(prefers smoothness) with\"\>"], "Print",
+ CellChangeTimes->{3.9711077791609592`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"ca207adb-9dd8-d34b-9a62-a6a27df87eb9"],
+
+Cell[BoxData["\<\"    boundary conditions (requires \[Psi](\[PlusMinus]a) = \
+0)\"\>"], "Print",
+ CellChangeTimes->{3.97110777916296*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"efcaebdf-50cf-194b-9551-21236642e1da"],
+
+Cell[BoxData["\<\"  \[Bullet] The true ground state cos(\[Pi]x/2a) has NO \
+interior nodes\"\>"], "Print",
+ CellChangeTimes->{3.9711077791639595`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"9a8aba74-75d5-604a-84f5-428d128c712d"],
+
+Cell[BoxData["\<\"  \[Bullet] Our quartic approximation may have nodes \
+depending on the parameter space\"\>"], "Print",
+ CellChangeTimes->{3.971107779164961*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"0d07ea09-89c4-4d46-b689-489f489927c5"],
+
+Cell[BoxData["\<\"  \[Bullet] The stationary condition d<E>/dr = 0 is the \
+variational analog of the\"\>"], "Print",
+ CellChangeTimes->{3.97110777916696*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"25cb0b33-4201-9f4e-bad0-aa361d4e0f87"],
+
+Cell[BoxData["\<\"    Schr\[ODoubleDot]dinger equation, ensuring the \
+functional derivative vanishes\"\>"], "Print",
+ CellChangeTimes->{3.971107779167959*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"f03af524-10f7-3e4f-84ba-6efa9cdc2f8c"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.9711077791689606`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"de1e274b-1db4-644b-ba9d-0cc3b815fdb5"],
+
+Cell[BoxData[
+ FrameBox[
+  TagBox[GridBox[{
+     {
+      StyleBox["\<\"ANSWER (Part e):\"\>",
+       StripOnInput->False,
+       FontSize->14,
+       FontWeight->Bold]},
+     {
+      StyleBox["\<\"The stationary energy represents the best approximation \
+to E\\\\[Subscript 0]\"\>",
+       StripOnInput->False,
+       FontSize->12,
+       FontWeight->Bold]},
+     {
+      StyleBox["\<\"within the chosen family, guaranteed to be \
+\[GreaterEqual] E\\\\[Subscript 0].\"\>",
+       StripOnInput->False,
+       FontSize->12,
+       FontWeight->Bold]}
+    },
+    DefaultBaseStyle->"Column",
+    GridBoxAlignment->{"Columns" -> {{Left}}},
+    GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+   "Column"],
+  Background->RGBColor[1, 1, 0.85],
+  FrameStyle->Thickness[Large],
+  StripOnInput->False]], "Print",
+ CellChangeTimes->{3.9711077791709595`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"30dfecc2-65b1-8242-8416-9c1afb0a7291"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellChangeTimes->{3.971107779171961*^9},
+ CellLabel->
+  "During evaluation of \
+In[2285]:=",ExpressionUUID->"b46fba54-481b-b94e-925c-6fa914013979"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{571.8, 524.4},
+WindowMargins->{{271.2, Automatic}, {9.600000000000023, Automatic}},
+FrontEndVersion->"14.3 for Microsoft Windows (64-bit) (July 8, 2025)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"71fdaee8-bafa-5e40-b91e-55d08f7cf7e0"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[576, 22, 36892, 850, 8342, "Input",ExpressionUUID->"a06db487-bbcc-ab40-b5ac-91c18f68f49b"],
+Cell[CellGroupData[{
+Cell[37493, 876, 183, 4, 22, "Print",ExpressionUUID->"6e6bda0a-6ff5-7a43-913e-ecc2773815f3"],
+Cell[37679, 882, 229, 4, 22, "Print",ExpressionUUID->"39a2c058-a49e-2247-b778-d0f53a37ab0c"],
+Cell[37911, 888, 245, 5, 22, "Print",ExpressionUUID->"2686a892-8f98-6a4a-8866-3a555b054d1b"],
+Cell[38159, 895, 233, 5, 22, "Print",ExpressionUUID->"2ff6fea8-7edb-a44f-9c73-950a74c23e2a"],
+Cell[38395, 902, 183, 4, 22, "Print",ExpressionUUID->"6b7cc130-370b-e346-b329-436f83fa241d"],
+Cell[38581, 908, 185, 4, 22, "Print",ExpressionUUID->"4d5d549a-11dc-5448-bd89-ac40e5a8f1c8"],
+Cell[38769, 914, 219, 4, 22, "Print",ExpressionUUID->"d66c82fe-b5fe-e04d-ae3e-ce98974c0146"],
+Cell[38991, 920, 183, 4, 22, "Print",ExpressionUUID->"366da74a-bbdb-9542-aa79-2be071610ca3"],
+Cell[39177, 926, 200, 4, 22, "Print",ExpressionUUID->"bcda9534-6ee2-2a47-a080-c878196d2f5a"],
+Cell[39380, 932, 274, 5, 22, "Print",ExpressionUUID->"9a5d72db-d2fc-c24d-93b6-e91b3bd5a2be"],
+Cell[39657, 939, 260, 5, 22, "Print",ExpressionUUID->"e7bcefeb-cd3d-9447-9b2c-c7b9a4bb3df2"],
+Cell[39920, 946, 185, 4, 22, "Print",ExpressionUUID->"be9bd014-f777-4647-8c84-bea2fde1a15f"],
+Cell[40108, 952, 222, 4, 22, "Print",ExpressionUUID->"ebcf93c4-fbbc-2b4f-8a4f-63229f07b13d"],
+Cell[40333, 958, 185, 4, 22, "Print",ExpressionUUID->"a0af6455-c32c-8c40-83f7-1829b1a36b38"],
+Cell[40521, 964, 206, 4, 22, "Print",ExpressionUUID->"9c4f99c7-8d87-0042-899c-5b63262b3b16"],
+Cell[40730, 970, 224, 4, 23, "Print",ExpressionUUID->"d616d5db-ed2f-d34a-a2d7-8b5095b1ecb5"],
+Cell[40957, 976, 237, 5, 23, "Print",ExpressionUUID->"ed4e4421-e5d5-1a43-8e6e-8afd4f02c969"],
+Cell[41197, 983, 238, 5, 23, "Print",ExpressionUUID->"42e64d41-703a-244c-91e6-87938109e20f"],
+Cell[41438, 990, 219, 4, 22, "Print",ExpressionUUID->"562c32ff-fcad-a24e-bf4c-e5e5fb75dfe4"],
+Cell[41660, 996, 204, 4, 22, "Print",ExpressionUUID->"cb461fb1-5967-1047-8f0c-d303c8257015"],
+Cell[41867, 1002, 194, 4, 22, "Print",ExpressionUUID->"6d90a71e-ae6a-c147-a114-ebf38f4fe810"]
+}, Open  ]],
+Cell[42076, 1009, 222, 6, 62, "Output",ExpressionUUID->"037ef938-0f42-0e44-b37b-4976ce8d86a2"],
+Cell[42301, 1017, 403, 11, 38, "Print",ExpressionUUID->"4b3c5e74-b3be-1644-82c2-c95233f41047"],
+Cell[42707, 1030, 256, 8, 75, "Output",ExpressionUUID->"cc4533fa-3d17-c343-8be7-b03fd5ac4099"],
+Cell[CellGroupData[{
+Cell[42988, 1042, 501, 15, 51, "Print",ExpressionUUID->"887d8fb1-69dc-d94f-a110-e08c4455c597"],
+Cell[43492, 1059, 183, 4, 22, "Print",ExpressionUUID->"6d9e8ad9-549b-c94c-be7d-d80739d620be"],
+Cell[43678, 1065, 212, 4, 22, "Print",ExpressionUUID->"c3195e46-dbd7-0c4b-a598-cc504a1c2ede"],
+Cell[43893, 1071, 217, 4, 22, "Print",ExpressionUUID->"bff5c457-e655-8141-b27e-0e4d3d7c84e3"],
+Cell[44113, 1077, 216, 4, 22, "Print",ExpressionUUID->"e578a9a2-cb02-ca44-8c18-a6d4e3c10326"],
+Cell[44332, 1083, 244, 5, 23, "Print",ExpressionUUID->"82fafaf9-6333-7441-903a-b3277c280076"],
+Cell[44579, 1090, 240, 5, 23, "Print",ExpressionUUID->"0f652e16-6d7b-8546-83b7-4a34e184826c"],
+Cell[44822, 1097, 219, 4, 22, "Print",ExpressionUUID->"e499509e-a343-6443-8bc4-8ebe0413d9bf"]
+}, Open  ]],
+Cell[45056, 1104, 200, 5, 60, "Output",ExpressionUUID->"2bc07d5c-e7d7-a242-b8f5-84443ebea6a4"],
+Cell[CellGroupData[{
+Cell[45281, 1113, 411, 10, 36, "Print",ExpressionUUID->"9ad85415-51e5-5648-bef7-a3259ff6d70d"],
+Cell[45695, 1125, 467, 11, 36, "Print",ExpressionUUID->"fcc0d7c0-e85d-ae48-b29b-8a23bc76a9b6"],
+Cell[46165, 1138, 185, 4, 22, "Print",ExpressionUUID->"b3ad6785-b47b-2947-b204-bc526cece36b"],
+Cell[46353, 1144, 504, 14, 53, "Print",ExpressionUUID->"327c27f7-d449-9b41-bff7-cde958ec1814"],
+Cell[46860, 1160, 185, 4, 22, "Print",ExpressionUUID->"3d7910bf-531d-ec48-b613-84e8f819b569"],
+Cell[47048, 1166, 214, 4, 22, "Print",ExpressionUUID->"7e749606-0d1e-954b-9dbd-01f708a3c436"],
+Cell[47265, 1172, 183, 4, 22, "Print",ExpressionUUID->"40135615-3282-6343-acc6-72d96a65dda8"],
+Cell[47451, 1178, 206, 4, 22, "Print",ExpressionUUID->"18c06acd-7941-9643-8575-af959c54cdd3"],
+Cell[47660, 1184, 223, 4, 23, "Print",ExpressionUUID->"050f6d3a-b41c-e549-a2b5-b7a4df05874c"],
+Cell[47886, 1190, 302, 6, 42, "Print",ExpressionUUID->"8ea17131-b3e1-094f-82b1-6a96a679b9e7"],
+Cell[48191, 1198, 216, 4, 22, "Print",ExpressionUUID->"5644dacf-77e3-dc4e-8338-ff0ae84ec130"],
+Cell[48410, 1204, 239, 5, 23, "Print",ExpressionUUID->"df892288-3b72-6d4d-972d-c7f30f186d04"],
+Cell[48652, 1211, 228, 4, 22, "Print",ExpressionUUID->"c281e04c-c379-5a4d-8f3e-f8842bfe6272"],
+Cell[48883, 1217, 213, 4, 22, "Print",ExpressionUUID->"aaec78b8-16ad-254f-b72e-2f38c43ecde0"]
+}, Open  ]],
+Cell[49111, 1224, 386, 12, 62, "Output",ExpressionUUID->"50be9c61-81ad-af46-b2c1-471defe18c32"],
+Cell[49500, 1238, 259, 7, 46, "Output",ExpressionUUID->"1ff7037c-3ede-6f48-a0b5-6d9d6f983d53"],
+Cell[49762, 1247, 352, 11, 60, "Output",ExpressionUUID->"6cf87376-9058-ce42-8f41-9510c69c6480"],
+Cell[CellGroupData[{
+Cell[50139, 1262, 614, 19, 36, "Print",ExpressionUUID->"a98df02f-5e13-b04d-9812-441f3d11ec50"],
+Cell[50756, 1283, 185, 4, 22, "Print",ExpressionUUID->"a51ce5c0-51ea-0f46-b766-5bfed6d34ce3"]
+}, Open  ]],
+Cell[50956, 1290, 401, 14, 81, "Output",ExpressionUUID->"b43d1ebc-d60b-6f47-add2-a8002100f145"],
+Cell[CellGroupData[{
+Cell[51382, 1308, 212, 4, 22, "Print",ExpressionUUID->"e20cd3f8-15a5-5842-8c34-629d78ce3014"],
+Cell[51597, 1314, 251, 5, 22, "Print",ExpressionUUID->"f75e7bad-ef97-cd4b-ad75-3dbf5e63a072"],
+Cell[51851, 1321, 217, 4, 22, "Print",ExpressionUUID->"52c9e128-df1c-fa4b-9804-83980eb71594"],
+Cell[52071, 1327, 219, 4, 22, "Print",ExpressionUUID->"391b198f-3fc7-764a-86a1-3794103b47d1"],
+Cell[52293, 1333, 248, 5, 23, "Print",ExpressionUUID->"30eb4af8-d504-0548-92cb-1eb20f284b43"],
+Cell[52544, 1340, 221, 4, 22, "Print",ExpressionUUID->"2e11e0c1-f9bf-8c4b-91cc-1ae898bfc313"]
+}, Open  ]],
+Cell[52780, 1347, 306, 9, 60, "Output",ExpressionUUID->"56623e7d-a074-9c41-b6f1-35c7b2794244"],
+Cell[CellGroupData[{
+Cell[53111, 1360, 584, 16, 36, "Print",ExpressionUUID->"b5306772-b206-c441-aafc-cf17abac38b3"],
+Cell[53698, 1378, 183, 4, 22, "Print",ExpressionUUID->"110bf999-1c03-924b-935f-78829d42e96f"]
+}, Open  ]],
+Cell[53896, 1385, 493, 16, 67, "Output",ExpressionUUID->"5429aa0c-987d-1449-9c75-1f15ad1da827"],
+Cell[CellGroupData[{
+Cell[54414, 1405, 196, 4, 22, "Print",ExpressionUUID->"8277f4df-f17f-f84d-b595-42015d5ff440"],
+Cell[54613, 1411, 850, 24, 42, "Print",ExpressionUUID->"abdb464a-b9d4-f54d-af72-f5150f1293bb"],
+Cell[55466, 1437, 183, 4, 22, "Print",ExpressionUUID->"b646048d-23a5-8443-8e53-71bc829a8c2f"],
+Cell[55652, 1443, 257, 5, 39, "Print",ExpressionUUID->"e85c0430-4b93-e349-b89b-439b9a99aac6"],
+Cell[55912, 1450, 248, 5, 22, "Print",ExpressionUUID->"d5b0c29f-be98-fa49-9fd1-3e7ab4718208"],
+Cell[56163, 1457, 185, 4, 22, "Print",ExpressionUUID->"bc67bd21-30ee-a541-af9f-e1de0b0f908d"],
+Cell[56351, 1463, 436, 13, 56, "Print",ExpressionUUID->"58f20204-606e-c945-9ab5-7cc831e0c64c"],
+Cell[56790, 1478, 185, 4, 22, "Print",ExpressionUUID->"0d965f60-4557-d048-9dfe-0e55cb1ec993"],
+Cell[56978, 1484, 185, 4, 22, "Print",ExpressionUUID->"5291349b-0f74-264c-b1e4-d8f138e7aa7b"],
+Cell[57166, 1490, 217, 4, 22, "Print",ExpressionUUID->"48c0b16c-3b4f-fe4f-8df5-638b896a304d"],
+Cell[57386, 1496, 185, 4, 22, "Print",ExpressionUUID->"3d78fabc-9832-2a46-8379-8621c243d6e3"],
+Cell[57574, 1502, 243, 5, 22, "Print",ExpressionUUID->"d1559cee-6913-4e4d-a90a-fbdec668b5fc"],
+Cell[57820, 1509, 185, 4, 22, "Print",ExpressionUUID->"9d90b53d-e8e1-bb4e-89b6-4cf1dc9a2501"],
+Cell[58008, 1515, 206, 4, 22, "Print",ExpressionUUID->"868ca15f-e662-ee4c-adf6-e28574e40ac6"],
+Cell[58217, 1521, 228, 4, 23, "Print",ExpressionUUID->"974e1b5c-dff1-534d-8fb8-b9bdced89529"],
+Cell[58448, 1527, 235, 5, 23, "Print",ExpressionUUID->"0d5b6cc7-348d-8946-8f26-d39d09b9c518"],
+Cell[58686, 1534, 220, 4, 22, "Print",ExpressionUUID->"755f749e-3e50-1149-b5b9-b6679d04e8c6"],
+Cell[58909, 1540, 237, 5, 23, "Print",ExpressionUUID->"7dc5610c-2626-624b-b1cd-5f7e0e96cb71"],
+Cell[59149, 1547, 224, 4, 22, "Print",ExpressionUUID->"dc57a009-7bc4-ca4d-af0a-354d375c287d"],
+Cell[59376, 1553, 210, 4, 22, "Print",ExpressionUUID->"f389f842-b4d0-f54f-af63-e2037acefb75"],
+Cell[59589, 1559, 206, 4, 22, "Print",ExpressionUUID->"6a788cea-4f6a-9343-be6e-2bc529ee6f1e"],
+Cell[59798, 1565, 215, 4, 22, "Print",ExpressionUUID->"d0bb6cc0-191e-1646-b046-ab7e22ffbceb"],
+Cell[60016, 1571, 197, 4, 22, "Print",ExpressionUUID->"7e2e47aa-5a67-2547-a913-024235a0233e"]
+}, Open  ]],
+Cell[60228, 1578, 226, 6, 62, "Output",ExpressionUUID->"009347fe-afc5-7c45-a517-e76667671097"],
+Cell[60457, 1586, 407, 11, 38, "Print",ExpressionUUID->"5bd8cdea-4ad4-5347-ba3b-bcc3fcf80941"],
+Cell[60867, 1599, 262, 8, 64, "Output",ExpressionUUID->"ddc99f03-49ae-1940-b602-9ddda6e3b9de"],
+Cell[CellGroupData[{
+Cell[61154, 1611, 478, 14, 40, "Print",ExpressionUUID->"e66523c7-03af-264c-b829-388f9475f09b"],
+Cell[61635, 1627, 185, 4, 22, "Print",ExpressionUUID->"c6771079-60f2-6d45-8024-ce4ee2c477cc"],
+Cell[61823, 1633, 213, 4, 22, "Print",ExpressionUUID->"eaf81962-41a1-d346-89e5-47db48af17d2"],
+Cell[62039, 1639, 185, 4, 22, "Print",ExpressionUUID->"8abdf153-f985-9f47-8236-f20ad90e83cf"],
+Cell[62227, 1645, 210, 4, 22, "Print",ExpressionUUID->"583b9418-109f-d949-b832-289d0da41c04"],
+Cell[62440, 1651, 246, 5, 23, "Print",ExpressionUUID->"313b1248-4564-6547-a80d-53a8a4911c07"],
+Cell[62689, 1658, 234, 5, 23, "Print",ExpressionUUID->"c4e00780-67f9-944d-b409-986b60f1829e"],
+Cell[62926, 1665, 246, 5, 23, "Print",ExpressionUUID->"9493f644-fdb4-0644-bbb8-8c90952e292c"],
+Cell[63175, 1672, 199, 4, 22, "Print",ExpressionUUID->"5c4c4ff9-c3d6-9744-8489-cf3403b83e5f"],
+Cell[63377, 1678, 254, 5, 23, "Print",ExpressionUUID->"84cc3593-cbf5-2b40-9bab-70e2ffeed0e9"],
+Cell[63634, 1685, 235, 5, 22, "Print",ExpressionUUID->"23182c25-a709-fa43-9109-50aac41df680"],
+Cell[63872, 1692, 221, 4, 22, "Print",ExpressionUUID->"e569aef2-0172-a846-be41-54a6e997471d"]
+}, Open  ]],
+Cell[64108, 1699, 224, 6, 60, "Output",ExpressionUUID->"7af86700-e616-c742-ae1c-35f11a78c4c0"],
+Cell[64335, 1707, 222, 6, 60, "Output",ExpressionUUID->"e771fdfc-613e-a041-a5ad-8c5c091a95fa"],
+Cell[CellGroupData[{
+Cell[64582, 1717, 453, 12, 36, "Print",ExpressionUUID->"ccf47825-bd24-d74f-899a-f9814a7f83ee"],
+Cell[65038, 1731, 510, 13, 36, "Print",ExpressionUUID->"d416845b-350b-1f44-bf28-b251cfd8c19c"],
+Cell[65551, 1746, 185, 4, 22, "Print",ExpressionUUID->"0617a0e2-1180-f245-ad50-f6f5e8eccab0"],
+Cell[65739, 1752, 540, 15, 53, "Print",ExpressionUUID->"3925b6b4-fe89-a047-a1c3-ae9009c5d0cb"],
+Cell[66282, 1769, 185, 4, 22, "Print",ExpressionUUID->"7d94f126-62b5-8d40-bc2b-831479512ce3"],
+Cell[66470, 1775, 185, 4, 22, "Print",ExpressionUUID->"6b36c448-e340-8d48-a98b-b7a787fc6fe0"],
+Cell[66658, 1781, 217, 4, 22, "Print",ExpressionUUID->"e487d251-777d-f345-b87c-e56e1ab076a9"],
+Cell[66878, 1787, 185, 4, 22, "Print",ExpressionUUID->"d3612668-b60e-9741-acd2-9c92cec3dfed"],
+Cell[67066, 1793, 249, 5, 22, "Print",ExpressionUUID->"90ea489d-e649-0741-ba89-c57db348dcef"],
+Cell[67318, 1800, 225, 4, 22, "Print",ExpressionUUID->"4c7f27f9-643c-044b-8fbf-0867b71f42ed"],
+Cell[67546, 1806, 185, 4, 22, "Print",ExpressionUUID->"4f55a77f-6950-7e41-8487-3257c38f9ee1"],
+Cell[67734, 1812, 302, 5, 39, "Print",ExpressionUUID->"203a9070-25d8-914d-9356-f1a659581ca5"],
+Cell[68039, 1819, 185, 4, 22, "Print",ExpressionUUID->"29e4aadd-4bb6-3043-8c92-2ae1698d4533"],
+Cell[68227, 1825, 208, 4, 22, "Print",ExpressionUUID->"824a68f2-11b6-1f45-ac4e-728b2deaa77c"],
+Cell[68438, 1831, 253, 5, 23, "Print",ExpressionUUID->"d29e6b8c-5021-a14f-ae2c-e44abbcb7af1"],
+Cell[68694, 1838, 342, 6, 40, "Print",ExpressionUUID->"1f915360-e3fd-a448-8185-4559dc7afe84"],
+Cell[69039, 1846, 258, 5, 39, "Print",ExpressionUUID->"7aa80ea8-9463-5642-b8e6-a7a8822c166e"]
+}, Open  ]],
+Cell[69312, 1854, 524, 15, 62, "Output",ExpressionUUID->"b4ca4955-0091-f84a-9492-8201bc69942f"],
+Cell[69839, 1871, 526, 15, 60, "Output",ExpressionUUID->"bd4f398f-a808-8343-9093-4ffddcb56fe7"],
+Cell[CellGroupData[{
+Cell[70390, 1890, 878, 24, 35, "Print",ExpressionUUID->"e12929d3-849f-7d45-bfaa-38ab958404fb"],
+Cell[71271, 1916, 183, 4, 22, "Print",ExpressionUUID->"69ffdf14-56a4-2842-ba67-edf571b0e098"]
+}, Open  ]],
+Cell[71469, 1923, 557, 17, 69, "Output",ExpressionUUID->"9e9ebd2b-9602-0c4c-ae29-fa30b1d78b8d"],
+Cell[CellGroupData[{
+Cell[72051, 1944, 206, 4, 22, "Print",ExpressionUUID->"8c23c403-12da-8947-bb81-90b961173379"],
+Cell[72260, 1950, 240, 5, 22, "Print",ExpressionUUID->"a872fdee-1407-a542-bd2c-5306bb0af8c3"],
+Cell[72503, 1957, 263, 5, 22, "Print",ExpressionUUID->"4493911f-b633-3143-b643-2283666689e7"],
+Cell[72769, 1964, 240, 5, 22, "Print",ExpressionUUID->"0854eab5-b305-834b-9b20-a17219b76522"],
+Cell[73012, 1971, 245, 5, 22, "Print",ExpressionUUID->"62e7cfca-e0b4-5d46-942c-427d8ac7ac98"],
+Cell[73260, 1978, 228, 4, 22, "Print",ExpressionUUID->"064c7e42-c455-a34b-ba0b-3e421887be7c"]
+}, Open  ]],
+Cell[73503, 1985, 485, 15, 48, "Output",ExpressionUUID->"16516cb6-3b0d-6e46-ad9e-1e25de8a4e82"],
+Cell[CellGroupData[{
+Cell[74013, 2004, 841, 25, 24, "Print",ExpressionUUID->"6558605c-2b21-3942-adf6-3d7df2b6d324"],
+Cell[74857, 2031, 185, 4, 22, "Print",ExpressionUUID->"add9aa10-faf1-e64d-ac75-f07dd08f6e3f"],
+Cell[75045, 2037, 207, 4, 22, "Print",ExpressionUUID->"fcc157af-decf-3a4e-aad2-7b68d6abd293"],
+Cell[75255, 2043, 250, 5, 23, "Print",ExpressionUUID->"95c7a3a0-3c5d-8446-89a2-40dfcf8d7bb3"],
+Cell[75508, 2050, 276, 5, 23, "Print",ExpressionUUID->"4a5a4d2f-93f7-4943-9ff2-95cc39d10d44"],
+Cell[75787, 2057, 235, 5, 22, "Print",ExpressionUUID->"5e537680-3fb4-5b40-a0a4-bf07c726e730"]
+}, Open  ]],
+Cell[76037, 2065, 523, 15, 62, "Output",ExpressionUUID->"1fe2e4f3-41d6-984a-8074-085073de6ad0"],
+Cell[76563, 2082, 535, 15, 60, "Output",ExpressionUUID->"4f10b22d-fe2c-8945-bcf4-122423faff6d"],
+Cell[CellGroupData[{
+Cell[77123, 2101, 906, 24, 36, "Print",ExpressionUUID->"19400650-0275-5743-9d62-2bfc961c123e"],
+Cell[78032, 2127, 185, 4, 22, "Print",ExpressionUUID->"525fd759-ef33-db41-ae11-60aa56fa1fb3"]
+}, Open  ]],
+Cell[78232, 2134, 748, 21, 65, "Output",ExpressionUUID->"72bc041b-6db4-f345-8a03-737cbeb3b133"],
+Cell[CellGroupData[{
+Cell[79005, 2159, 1296, 32, 41, "Print",ExpressionUUID->"95bd102d-b9e6-b24e-a289-1310da6cf7e1"],
+Cell[80304, 2193, 185, 4, 22, "Print",ExpressionUUID->"5c739523-509b-f341-adc9-45a81b09ef3b"]
+}, Open  ]],
+Cell[80504, 2200, 588, 18, 63, "Output",ExpressionUUID->"232dc894-c3a7-464b-92f5-820558f85885"],
+Cell[CellGroupData[{
+Cell[81117, 2222, 228, 4, 22, "Print",ExpressionUUID->"e34812c3-b273-714b-85e9-84e7c339ace4"],
+Cell[81348, 2228, 1013, 27, 39, "Print",ExpressionUUID->"de3784d3-13d0-1849-95ae-e5ebef3410ee"],
+Cell[82364, 2257, 185, 4, 22, "Print",ExpressionUUID->"76cc5ca0-3f41-7343-a609-64e7afc44bb1"]
+}, Open  ]],
+Cell[82564, 2264, 645, 20, 71, "Output",ExpressionUUID->"1a93a341-7fbc-c74d-8afd-9b2ecef4042f"],
+Cell[CellGroupData[{
+Cell[83234, 2288, 219, 4, 22, "Print",ExpressionUUID->"62093a15-a1fe-e34b-a019-b3381e2fd6b0"],
+Cell[83456, 2294, 1059, 29, 45, "Print",ExpressionUUID->"d24c89aa-2efe-5743-be4a-1bf0ed5243d4"],
+Cell[84518, 2325, 183, 4, 22, "Print",ExpressionUUID->"593a2945-3426-2144-aa7d-5b26afa3611c"]
+}, Open  ]],
+Cell[84716, 2332, 669, 23, 64, "Output",ExpressionUUID->"c3ec01eb-e40e-7a46-9d6a-5f12b31e3590"],
+Cell[85388, 2357, 209, 4, 22, "Print",ExpressionUUID->"359cf090-92a8-ae4d-8e86-d677bbf10c8b"],
+Cell[85600, 2363, 312, 10, 64, "Output",ExpressionUUID->"c45120d4-b0e7-4a40-a9e2-3f782ceb603c"],
+Cell[85915, 2375, 306, 10, 64, "Output",ExpressionUUID->"ea7ca62d-13ce-9046-9ca4-c02c104040a7"],
+Cell[CellGroupData[{
+Cell[86246, 2389, 571, 17, 40, "Print",ExpressionUUID->"81524326-ac3c-324d-b630-ae38c479c07c"],
+Cell[86820, 2408, 567, 17, 40, "Print",ExpressionUUID->"6401a7a8-bf56-a947-be8f-5e29304e6a9a"],
+Cell[87390, 2427, 185, 4, 22, "Print",ExpressionUUID->"796da879-2651-fe4f-990f-b3622deb36bb"]
+}, Open  ]],
+Cell[87590, 2434, 434, 15, 73, "Output",ExpressionUUID->"a98bf49f-729f-844d-b6d8-7d739b2847d6"],
+Cell[88027, 2451, 481, 17, 73, "Output",ExpressionUUID->"795dbd67-e775-2142-bf96-9049268a73a8"],
+Cell[CellGroupData[{
+Cell[88533, 2472, 199, 4, 22, "Print",ExpressionUUID->"b7f3db61-b24a-944d-9416-408672413f1c"],
+Cell[88735, 2478, 844, 23, 47, "Print",ExpressionUUID->"bd4ce9d6-3a17-cc4a-8e33-9b31c3318dc8"],
+Cell[89582, 2503, 890, 25, 47, "Print",ExpressionUUID->"b312a68f-7e49-d549-860a-897c0e8c9445"],
+Cell[90475, 2530, 185, 4, 22, "Print",ExpressionUUID->"192e7fac-6665-564d-af55-c420c11eaa77"]
+}, Open  ]],
+Cell[90675, 2537, 172, 3, 46, "Output",ExpressionUUID->"dd51cb11-b963-024f-93d0-180bb55174b7"],
+Cell[90850, 2542, 173, 3, 46, "Output",ExpressionUUID->"8a7270a4-5e83-f44a-adbe-a6a4c9a13744"],
+Cell[91026, 2547, 230, 4, 22, "Print",ExpressionUUID->"954656e5-84bc-1046-bfa9-2c5356765a98"],
+Cell[91259, 2553, 481, 17, 73, "Output",ExpressionUUID->"3b8c5e04-7ca0-784b-8254-1f9a4dbd14f5"],
+Cell[CellGroupData[{
+Cell[91765, 2574, 185, 4, 22, "Print",ExpressionUUID->"22de936f-1610-b947-83b3-47e73b768fb3"],
+Cell[91953, 2580, 204, 4, 22, "Print",ExpressionUUID->"dac8d0d5-3d36-e844-bacd-4f87135d757c"],
+Cell[92160, 2586, 569, 17, 40, "Print",ExpressionUUID->"8938e484-c626-2a48-a662-a39f66886132"],
+Cell[92732, 2605, 846, 25, 47, "Print",ExpressionUUID->"cd868972-f2b4-1649-959b-deae2209300d"],
+Cell[93581, 2632, 185, 4, 22, "Print",ExpressionUUID->"d117f7f9-7130-ae4a-ad2c-920206f1d22d"],
+Cell[93769, 2638, 1491, 38, 92, "Print",ExpressionUUID->"2ceeb5fb-b44b-b546-b95b-9ca48c62ca23"],
+Cell[95263, 2678, 180, 4, 22, "Print",ExpressionUUID->"b84d01ad-5090-e148-bbb1-4b2b959f7498"],
+Cell[95446, 2684, 185, 4, 22, "Print",ExpressionUUID->"c82ca2ac-fca5-dd42-8648-2e175dd9ad28"],
+Cell[95634, 2690, 223, 4, 22, "Print",ExpressionUUID->"458fcb7b-d918-d845-a573-9b2dc56a8bdb"],
+Cell[95860, 2696, 185, 4, 22, "Print",ExpressionUUID->"dd2a6ad1-17c0-0841-bd1e-00c84eda8d99"]
+}, Open  ]],
+Cell[96060, 2703, 252, 7, 63, "Output",ExpressionUUID->"e7f1f420-a1a7-e845-8f78-a87bf011be18"],
+Cell[CellGroupData[{
+Cell[96337, 2714, 201, 4, 22, "Print",ExpressionUUID->"d14a6484-d080-f749-b477-2c1eb46da0a6"],
+Cell[96541, 2720, 244, 5, 27, "Print",ExpressionUUID->"da518c40-45b1-a34d-b445-6ba9ec217df0"],
+Cell[96788, 2727, 584, 15, 39, "Print",ExpressionUUID->"0c4c7682-a244-0d40-8abd-47fc38e0f534"],
+Cell[97375, 2744, 185, 4, 22, "Print",ExpressionUUID->"d94fc418-068e-5745-a474-53f38bac6d6a"],
+Cell[97563, 2750, 217, 4, 22, "Print",ExpressionUUID->"bf69a50b-b810-3b46-a7d6-197281d498fb"],
+Cell[97783, 2756, 183, 4, 22, "Print",ExpressionUUID->"b398f294-42c8-be48-ae29-1c4f955114bc"],
+Cell[97969, 2762, 303, 8, 22, "Print",ExpressionUUID->"cbd09cb9-fdd0-fd46-bf87-a42afc3520a3"],
+Cell[98275, 2772, 486, 13, 39, "Print",ExpressionUUID->"25409abc-924a-d443-a63d-0d9f34967b59"],
+Cell[98764, 2787, 409, 10, 36, "Print",ExpressionUUID->"d61ecfa7-cd5a-6f4c-83ca-83a4a500c7fc"],
+Cell[99176, 2799, 451, 12, 36, "Print",ExpressionUUID->"714d73c1-9fb5-4940-8eae-6c3914a3bc8c"],
+Cell[99630, 2813, 793, 25, 47, "Print",ExpressionUUID->"99776cbc-a81b-0442-b32c-70a75d3cfb91"],
+Cell[100426, 2840, 183, 4, 22, "Print",ExpressionUUID->"8958d450-c160-f34d-9198-d5a06403b2b6"],
+Cell[100612, 2846, 273, 5, 22, "Print",ExpressionUUID->"ef65155f-2823-1d4a-8b8b-a1d81b44ea01"],
+Cell[100888, 2853, 528, 12, 22, "Print",ExpressionUUID->"68bb8251-d300-5446-bfd4-35fc54da877f"],
+Cell[101419, 2867, 530, 12, 22, "Print",ExpressionUUID->"3158d8f8-c28c-234a-b13d-15cd5afc817b"],
+Cell[101952, 2881, 560, 12, 22, "Print",ExpressionUUID->"626ad6d9-783d-1c4f-80cc-90c192d7fdf0"],
+Cell[102515, 2895, 185, 4, 22, "Print",ExpressionUUID->"cf73fbd9-ef23-8143-9167-7c5190d4d7ab"],
+Cell[102703, 2901, 948, 31, 63, "Print",ExpressionUUID->"00bd4d3c-2483-4d43-aac4-0252aa3aa6da"],
+Cell[103654, 2934, 185, 4, 22, "Print",ExpressionUUID->"138b204c-bc89-6843-8ff5-4159b0c282a1"],
+Cell[103842, 2940, 205, 4, 22, "Print",ExpressionUUID->"d23ff0d0-0b45-a14a-993b-f23329b7536a"],
+Cell[104050, 2946, 183, 4, 22, "Print",ExpressionUUID->"6c13247f-2826-414b-9ff9-38289f7ba459"],
+Cell[104236, 2952, 380, 7, 42, "Print",ExpressionUUID->"41fe2a68-315d-b749-80fc-bf4d76c28d82"],
+Cell[104619, 2961, 180, 4, 22, "Print",ExpressionUUID->"163888b1-d7e4-cf4b-b9ea-15a24763b2af"],
+Cell[104802, 2967, 204, 4, 22, "Print",ExpressionUUID->"56362ae1-257f-9d42-b3f5-16767b2403ad"]
+}, Open  ]],
+Cell[105021, 2974, 262, 8, 65, "Output",ExpressionUUID->"063b4a06-4aa7-f643-9be1-88b075717e1c"],
+Cell[105286, 2984, 262, 8, 65, "Output",ExpressionUUID->"e11ea1f2-8150-4149-bab4-e73541021d3d"],
+Cell[105551, 2994, 603, 16, 40, "Print",ExpressionUUID->"3e851e85-aa14-064e-bd66-c1fbd624aead"],
+Cell[106157, 3012, 268, 8, 65, "Output",ExpressionUUID->"71ddeef6-7547-f64e-a751-8529be4a82ed"],
+Cell[CellGroupData[{
+Cell[106450, 3024, 535, 15, 40, "Print",ExpressionUUID->"ff455619-307b-fb45-bb56-ec3534f1101e"],
+Cell[106988, 3041, 185, 4, 22, "Print",ExpressionUUID->"e8328971-dfa0-a645-a861-876298f8e0bd"],
+Cell[107176, 3047, 280, 5, 39, "Print",ExpressionUUID->"04d337af-0338-9045-b8b7-432ce4746417"],
+Cell[107459, 3054, 183, 4, 22, "Print",ExpressionUUID->"2af17343-95cf-624d-9cfa-8b83ca958435"],
+Cell[107645, 3060, 185, 4, 22, "Print",ExpressionUUID->"02c16e97-4d1e-1740-ba0b-56c3e966700c"],
+Cell[107833, 3066, 240, 5, 22, "Print",ExpressionUUID->"1adee660-dc70-6b45-a6ae-eaf169e0455c"],
+Cell[108076, 3073, 183, 4, 22, "Print",ExpressionUUID->"c1629de1-a2ec-5f4b-95b5-002d1357aa63"],
+Cell[108262, 3079, 717, 19, 60, "Print",ExpressionUUID->"dfa8d000-68af-0f4f-bc85-e39a9b6a326b"],
+Cell[108982, 3100, 183, 4, 22, "Print",ExpressionUUID->"dff11c12-fc81-384c-91a9-0739371e069c"],
+Cell[109168, 3106, 198, 4, 22, "Print",ExpressionUUID->"b942fe03-229d-4c4e-9fba-499b95ad7438"],
+Cell[109369, 3112, 254, 5, 22, "Print",ExpressionUUID->"08e0d6a3-442b-1c4a-812b-4c6241e795d8"],
+Cell[109626, 3119, 272, 5, 22, "Print",ExpressionUUID->"a39efe4c-3f2d-ca40-a179-544a9f33929c"],
+Cell[109901, 3126, 185, 4, 22, "Print",ExpressionUUID->"9612e03e-51bc-2c47-93d6-301f3b3c1599"],
+Cell[110089, 3132, 564, 16, 42, "Print",ExpressionUUID->"02fb1e11-d4b2-4a4b-82a4-9a6a5156032d"]
+}, Open  ]],
+Cell[110668, 3151, 238, 6, 60, "Output",ExpressionUUID->"28ab3cfa-2549-5448-9af0-9aae776a00d1"],
+Cell[110909, 3159, 217, 5, 46, "Output",ExpressionUUID->"31591c8e-117c-bc41-9ffa-b6a6f54a619d"],
+Cell[111129, 3166, 996, 28, 186, "Output",ExpressionUUID->"699fe936-bac5-0c48-bc50-f0ecf04e21aa"],
+Cell[CellGroupData[{
+Cell[112150, 3198, 183, 4, 22, "Print",ExpressionUUID->"3dfbc5e8-0c70-9f41-97c3-39c5a6dfc4df"],
+Cell[112336, 3204, 226, 4, 22, "Print",ExpressionUUID->"873aa53d-d42f-d74d-ae58-e0c1bf630959"],
+Cell[112565, 3210, 181, 4, 22, "Print",ExpressionUUID->"69760365-f3d1-5c4f-ad46-caa79fa3dd4a"],
+Cell[112749, 3216, 267, 5, 39, "Print",ExpressionUUID->"ac02b395-56e0-5c42-8bb6-9e0a17c55820"],
+Cell[113019, 3223, 221, 4, 22, "Print",ExpressionUUID->"23611733-1a77-854e-b893-3f8de7afdbf3"],
+Cell[113243, 3229, 185, 4, 22, "Print",ExpressionUUID->"0dfc6c1c-c3fe-9347-930b-5556569e5961"],
+Cell[113431, 3235, 252, 5, 22, "Print",ExpressionUUID->"b64f66a0-b0da-8e43-bb78-bc4324ebf1c8"],
+Cell[113686, 3242, 289, 5, 39, "Print",ExpressionUUID->"05089204-a560-be4a-a24f-363d98925aa2"],
+Cell[113978, 3249, 278, 5, 39, "Print",ExpressionUUID->"2f16d2e3-124e-1e46-bb2c-f5dc4f93af14"],
+Cell[114259, 3256, 185, 4, 22, "Print",ExpressionUUID->"0d2ae766-b1ed-2444-af1d-df5dfa8e6aea"],
+Cell[114447, 3262, 204, 4, 22, "Print",ExpressionUUID->"442d8717-fba3-ea49-a200-a5cf5e34b5a9"],
+Cell[114654, 3268, 265, 5, 22, "Print",ExpressionUUID->"ca207adb-9dd8-d34b-9a62-a6a27df87eb9"],
+Cell[114922, 3275, 244, 5, 22, "Print",ExpressionUUID->"efcaebdf-50cf-194b-9551-21236642e1da"],
+Cell[115169, 3282, 257, 5, 22, "Print",ExpressionUUID->"9a8aba74-75d5-604a-84f5-428d128c712d"],
+Cell[115429, 3289, 270, 5, 39, "Print",ExpressionUUID->"0d07ea09-89c4-4d46-b689-489f489927c5"],
+Cell[115702, 3296, 265, 5, 39, "Print",ExpressionUUID->"25cb0b33-4201-9f4e-bad0-aa361d4e0f87"],
+Cell[115970, 3303, 266, 5, 22, "Print",ExpressionUUID->"f03af524-10f7-3e4f-84ba-6efa9cdc2f8c"],
+Cell[116239, 3310, 185, 4, 22, "Print",ExpressionUUID->"de1e274b-1db4-644b-ba9d-0cc3b815fdb5"],
+Cell[116427, 3316, 977, 31, 83, "Print",ExpressionUUID->"30dfecc2-65b1-8242-8416-9c1afb0a7291"],
+Cell[117407, 3349, 183, 4, 22, "Print",ExpressionUUID->"b46fba54-481b-b94e-925c-6fa914013979"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+

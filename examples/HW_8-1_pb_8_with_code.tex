@@ -1,0 +1,122 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Configure listings for Mathematica code
+\lstset{
+  language=Mathematica,
+  basicstyle=\small\ttfamily,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{red},
+  numbers=none,
+  frame=single,
+  breaklines=true,
+  backgroundcolor=\color{gray!10},
+  captionpos=b
+}
+
+\begin{document}
+
+\title{HW 8-1 pb 8}
+\maketitle
+
+\begin{lstlisting}
+(* Barrier in a Well - Variational Method *) (* Natural units : [HBar] = m = a = 1 *) (* Parameters : [Sigma] = 1 / 10 , V\:2080 = 4 *) \
+a = 1 ; [Sigma] = 1 / 10 ; V0 = 4 ; \
+(* Basis functions and potential *) \
+[Psi] [ n_Integer , x_ ? NumericQ ] := Sqrt [ 2 ] Sin [ n [Pi] x ] V [ x_ ? NumericQ ] := V0 Exp [ - ( x - 1 / 2 ) ^ 2 / ( 2 [Sigma] ^ 2 ) ] \
+(* Matrix elements *) \
+T [ i_ , j_ ] := If [ i == j , ( [Pi] ^ 2 i ^ 2 ) / 2 , 0 ] \
+Vmatrix [ i_ , j_ ] := NIntegrate [ [Psi] [ i , x ] V [ x ] [Psi] [ j , x ] , { x , 0 , 1 } , Method -> { "\<GlobalAdaptive\>" , "\<MaxErrorIncreases\>" -> 10000 } , MinRecursion -> 3 , MaxRecursion -> 20 , WorkingPrecision -> 16 ] \
+(* Build Hamiltonian and find lowest 4 energies *) \
+FindEnergies [ n_ ] := Module [ { H , result } , H = Table [ T [ i , j ] + Vmatrix [ i , j ] , { i , n } , { j , n } ] ; \
+result = Sort [ Eigenvalues [ N [ H ] ] ] ; \
+Return [ result [ [ 1 ;; 4 ] ] ] ] \
+\
+(* RESULTS *) \
+Print [ Style [ "\<Lowest Four Energy Levels\>" , , 16 ] ] ; Print [ Style [ "\<(in natural units where [HBar] = m = a = 1)\>" , , 12 ] ] ; Print [ ] ; \
+(* Part ( a ) : n = 4 *) \
+energies4 = FindEnergies [ 4 ] ; Print [ Style [ "\<(a) n = 4 basis functions\>" , , 14 ] ] ; Print [ Grid [ Prepend [ Table [ { "\<E\>" <> ToString [ i ] , NumberForm [ energies4 [ [ i ] ] , { 6 , 4 } ] } , { i , 1 , 4 } ] , { "\<Level\>" , "\<Energy\>" } ] , Frame -> All , Background -> { None , { LightBlue , { White , LightGray } } } , Alignment -> { { Left , Right } } , Spacings -> { 2 , 1 } ] ] ; \
+(* Part ( b ) : n = 6 *) \
+energies6 = FindEnergies [ 6 ] ; Print [ "\<\
+\>" , Style [ "\<(b) n = 6 basis functions\>" , , 14 ] ] ; Print [ Grid [ Prepend [ Table [ { "\<E\>" <> ToString [ i ] , NumberForm [ energies6 [ [ i ] ] , { 6 , 4 } ] } , { i , 1 , 4 } ] , { "\<Level\>" , "\<Energy\>" } ] , Frame -> All , Background -> { None , { LightBlue , { White , LightGray } } } , Alignment -> { { Left , Right } } , Spacings -> { 2 , 1 } ] ] ; \
+(* Part ( c ) : n = 8 *) \
+energies8 = FindEnergies [ 8 ] ; Print [ "\<\
+\>" , Style [ "\<(c) n = 8 basis functions\>" , , 14 ] ] ; Print [ Grid [ Prepend [ Table [ { "\<E\>" <> ToString [ i ] , NumberForm [ energies8 [ [ i ] ] , { 6 , 4 } ] } , { i , 1 , 4 } ] , { "\<Level\>" , "\<Energy\>" } ] , Frame -> All , Background -> { None , { LightBlue , { White , LightGray } } } , Alignment -> { { Left , Right } } , Spacings -> { 2 , 1 } ] ] ; \
+(* Comparison table *) \
+Print [ "\<\
+\>" , Style [ "\<Comparison of Results\>" , , 14 ] ] ; Print [ Grid [ Prepend [ Table [ { "\<E\>" <> ToString [ i ] , NumberForm [ energies4 [ [ i ] ] , { 6 , 4 } ] , NumberForm [ energies6 [ [ i ] ] , { 6 , 4 } ] , NumberForm [ energies8 [ [ i ] ] , { 6 , 4 } ] } , { i , 1 , 4 } ] , { "\<Level\>" , "\<n = 4\>" , "\<n = 6\>" , "\<n = 8\>" } ] , Frame -> All , Background -> { None , { LightBlue , { White , LightGray } } } , Alignment -> { { Left , Right , Right , Right } } , Spacings -> { 2 , 1 } ] ] ;
+\end{lstlisting}
+
+\subsection*{Lowest Four Energy Levels}
+
+$(in natural units where \hbar = m = a = 1)$ $Units: \hbar^{2}/(2ma^{2}) or equivalently \pi^{2}\hbar^{2}/(2ma^{2}) \times (n/\pi)^{2}$
+
+\subsection*{(a) n = 4 basis functions}
+
+\begin{center}
+\begin{tabular}{ll}
+\hline
+Level & Energy \\
+\hline
+E1 & 6.7185 \\
+E2 & 20.2795 \\
+E3 & 45.6276 \\
+E4 & 79.9240 \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection*{(b) n = 6 basis functions}
+
+\begin{center}
+\begin{tabular}{ll}
+\hline
+Level & Energy \\
+\hline
+E1 & 6.7154 \\
+E2 & 20.2784 \\
+E3 & 45.6176 \\
+E4 & 79.9172 \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection*{(c) n = 8 basis functions}
+
+\begin{center}
+\begin{tabular}{ll}
+\hline
+Level & Energy \\
+\hline
+E1 & 6.7153 \\
+E2 & 20.2783 \\
+E3 & 45.6166 \\
+E4 & 79.9164 \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection*{Comparison of Results}
+
+\begin{center}
+\begin{tabular}{llll}
+\hline
+Level & n = 4 & n = 6 & n = 8 \\
+\hline
+E1 & 6.7185 & 6.7154 & 6.7153 \\
+E2 & 20.2795 & 20.2784 & 20.2783 \\
+E3 & 45.6276 & 45.6176 & 45.6166 \\
+E4 & 79.9240 & 79.9172 & 79.9164 \\
+\hline
+\end{tabular}
+\end{center}
+
+\end{document}
