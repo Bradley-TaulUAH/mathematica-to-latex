@@ -156,9 +156,9 @@ For automatic graphics extraction, install Wolfram Engine:
    ```
 
 2. **In the GUI window:**
-   - Click "Browse..." to select your `.nb` file
+   - Click "Add Files..." to select one or more `.nb` files (hold Ctrl/Cmd for multiple)
    - Choose where to save the output
-   - Select display mode (or keep default "Both")
+   - Select display mode (or keep default "Input & Output Cells")
    - Click "Convert to LaTeX"
 
 3. **Compile the output:**
@@ -192,44 +192,56 @@ The auto-launcher will:
 ### GUI Window Layout
 
 ```
-┌─────────────────────────────────────────────────────┐
-│   Mathematica to LaTeX Converter                    │
-├─────────────────────────────────────────────────────┤
-│                                                      │
-│  Input Mathematica Notebook (.nb):                  │
-│  [________________________] [Browse...]              │
-│                                                      │
-│  Output Directory:                                   │
-│  [________________________] [Browse...]              │
-│                                                      │
-│  Display Mode:                                       │
-│  ◉ Input & Output Cells (Code + Results)            │
-│  ○ Input Cells Only (Code)                          │
-│  ○ Output Cells Only (Results)                      │
-│                                                      │
-│  ☑ Auto-extract graphics (requires Wolfram Engine)  │
-│                                                      │
-│         [Convert to LaTeX]  [Clear]                 │
-│                                                      │
-│  ====== Progress Bar ======                         │
-│                                                      │
-│  Status & Output:                                    │
-│  ┌──────────────────────────────────────────────┐  │
-│  │ Starting conversion...                        │  │
-│  │ ✓ Conversion completed successfully!         │  │
-│  │ LaTeX output written to: output.tex          │  │
-│  └──────────────────────────────────────────────┘  │
-│                                                      │
-└─────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│   Mathematica to LaTeX Converter                           │
+├────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Input Mathematica Notebooks - Select multiple to combine: │
+│  ┌────────────────────────────────────────┐  [Add Files...] │
+│  │ file1.nb                               │  [Remove]       │
+│  │ file2.nb                               │  [Clear All]    │
+│  │ file3.nb                               │                 │
+│  └────────────────────────────────────────┘                 │
+│                                                             │
+│  Output Directory:                                          │
+│  [__________________________________] [Browse...]           │
+│                                                             │
+│  Display Mode:                                              │
+│  ◉ Input & Output Cells (Code + Results)                   │
+│  ○ Input Cells Only (Code)                                 │
+│  ○ Output Cells Only (Results)                             │
+│                                                             │
+│  ☑ Auto-extract graphics (requires Wolfram Engine)         │
+│                                                             │
+│         [Convert to LaTeX]  [Clear]                        │
+│                                                             │
+│  ====== Progress Bar ======                                │
+│                                                             │
+│  Status & Output:                                           │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │ Converting file 1/3: file1.nb...                     │  │
+│  │ ✓ Converted (12345 characters)                       │  │
+│  │ Combining multiple notebooks...                      │  │
+│  │ ✓ Conversion completed successfully!                 │  │
+│  │ Files converted: 3                                   │  │
+│  │ LaTeX output: combined_notebooks.tex                 │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                             │
+└────────────────────────────────────────────────────────────┘
 ```
 
 ### Step-by-Step GUI Instructions
 
-#### Step 1: Select Input File
-1. Click the **"Browse..."** button next to "Input Mathematica Notebook"
-2. Navigate to your `.nb` file
-3. Select the file and click "Open"
-4. The file path will appear in the text box
+#### Step 1: Add Input File(s)
+1. Click the **"Add Files..."** button
+2. Navigate to your `.nb` file(s)
+3. Select one file, OR hold Ctrl (Windows/Linux) or Cmd (Mac) to select multiple files
+4. Click "Open"
+5. Selected files will appear in the list box
+6. To remove a file: Select it in the list and click "Remove"
+7. To start over: Click "Clear All"
+
+**Pro Tip:** Add multiple files to combine them into a single LaTeX document. They will be separated by page breaks (`\newpage`).
 
 #### Step 2: Choose Output Directory
 1. Click the **"Browse..."** button next to "Output Directory"

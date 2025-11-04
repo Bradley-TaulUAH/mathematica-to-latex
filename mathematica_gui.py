@@ -21,7 +21,7 @@ class MathematicaConverterGUI:
         self.root.resizable(True, True)
         
         # Variables
-        self.input_file = tk.StringVar()
+        self.input_files = []  # List to store multiple files
         self.output_dir = tk.StringVar()
         self.display_mode = tk.StringVar(value="both")
         self.auto_extract_graphics = tk.BooleanVar(value=False)
@@ -61,18 +61,34 @@ class MathematicaConverterGUI:
         self.root.rowconfigure(1, weight=1)
         
         # Input file selection
-        input_label = ttk.Label(main_frame, text="Input Mathematica Notebook (.nb):")
+        input_label = ttk.Label(main_frame, text="Input Mathematica Notebooks (.nb) - Select multiple to combine:")
         input_label.grid(row=0, column=0, sticky=tk.W, pady=5)
         
         input_frame = ttk.Frame(main_frame)
         input_frame.grid(row=1, column=0, sticky=(tk.W, tk.E), pady=5)
         input_frame.columnconfigure(0, weight=1)
         
-        self.input_entry = ttk.Entry(input_frame, textvariable=self.input_file, width=70)
-        self.input_entry.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, 5))
+        # Listbox to show selected files
+        self.files_listbox = tk.Listbox(input_frame, height=4, width=70)
+        self.files_listbox.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, 5))
         
-        input_button = ttk.Button(input_frame, text="Browse...", command=self.browse_input)
-        input_button.grid(row=0, column=1)
+        # Scrollbar for listbox
+        scrollbar = ttk.Scrollbar(input_frame, orient=tk.VERTICAL, command=self.files_listbox.yview)
+        scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+        self.files_listbox.configure(yscrollcommand=scrollbar.set)
+        
+        # Buttons frame
+        button_frame = ttk.Frame(input_frame)
+        button_frame.grid(row=0, column=2, padx=(5, 0))
+        
+        add_button = ttk.Button(button_frame, text="Add Files...", command=self.browse_input)
+        add_button.grid(row=0, column=0, pady=2, sticky=tk.W)
+        
+        remove_button = ttk.Button(button_frame, text="Remove", command=self.remove_selected)
+        remove_button.grid(row=1, column=0, pady=2, sticky=tk.W)
+        
+        clear_list_button = ttk.Button(button_frame, text="Clear All", command=self.clear_file_list)
+        clear_list_button.grid(row=2, column=0, pady=2, sticky=tk.W)
         
         # Output directory selection
         output_label = ttk.Label(main_frame, text="Output Directory:")
@@ -175,25 +191,43 @@ class MathematicaConverterGUI:
         footer_frame = ttk.Frame(self.root, padding="10")
         footer_frame.grid(row=2, column=0, sticky=(tk.W, tk.E))
         
-        help_text = ("Select a Mathematica notebook file (.nb), choose display mode and options, then click Convert. " +
-                    "The output will be a professional LaTeX document.")
+        help_text = ("Add one or more Mathematica notebook files (.nb), choose display mode and options, then click Convert. " +
+                    "Multiple files will be combined into a single LaTeX document with page breaks.")
         help_label = ttk.Label(footer_frame, text=help_text, foreground="gray", wraplength=850)
         help_label.grid(row=0, column=0)
         
     def browse_input(self):
-        """Open file dialog to select input notebook"""
-        filename = filedialog.askopenfilename(
-            title="Select Mathematica Notebook",
+        """Open file dialog to select input notebooks (multiple selection)"""
+        filenames = filedialog.askopenfilenames(
+            title="Select Mathematica Notebook(s) - Hold Ctrl/Cmd to select multiple",
             filetypes=[
                 ("Mathematica Notebooks", "*.nb"),
                 ("All Files", "*.*")
             ]
         )
-        if filename:
-            self.input_file.set(filename)
-            # Auto-set output directory to same as input
-            if not self.output_dir.get():
-                self.output_dir.set(os.path.dirname(filename))
+        if filenames:
+            for filename in filenames:
+                if filename not in self.input_files:
+                    self.input_files.append(filename)
+                    self.files_listbox.insert(tk.END, os.path.basename(filename))
+            
+            # Auto-set output directory to same as first input
+            if not self.output_dir.get() and self.input_files:
+                self.output_dir.set(os.path.dirname(self.input_files[0]))
+    
+    def remove_selected(self):
+        """Remove selected file(s) from the list"""
+        selection = self.files_listbox.curselection()
+        if selection:
+            # Remove in reverse order to maintain indices
+            for index in reversed(selection):
+                self.files_listbox.delete(index)
+                del self.input_files[index]
+    
+    def clear_file_list(self):
+        """Clear all files from the list"""
+        self.files_listbox.delete(0, tk.END)
+        self.input_files = []
     
     def browse_output(self):
         """Open directory dialog to select output directory"""
@@ -215,7 +249,7 @@ class MathematicaConverterGUI:
     
     def clear_fields(self):
         """Clear all input fields and status"""
-        self.input_file.set("")
+        self.clear_file_list()
         self.output_dir.set("")
         self.display_mode.set("both")
         self.auto_extract_graphics.set(False)
@@ -223,13 +257,15 @@ class MathematicaConverterGUI:
     
     def validate_inputs(self):
         """Validate user inputs before conversion"""
-        if not self.input_file.get():
-            messagebox.showerror("Error", "Please select an input file.")
+        if not self.input_files:
+            messagebox.showerror("Error", "Please add at least one input file.")
             return False
         
-        if not os.path.exists(self.input_file.get()):
-            messagebox.showerror("Error", "Input file does not exist.")
-            return False
+        # Check all files exist
+        for input_file in self.input_files:
+            if not os.path.exists(input_file):
+                messagebox.showerror("Error", f"Input file does not exist: {os.path.basename(input_file)}")
+                return False
         
         if not self.output_dir.get():
             messagebox.showerror("Error", "Please select an output directory.")
@@ -264,49 +300,79 @@ class MathematicaConverterGUI:
     def perform_conversion(self):
         """Perform the actual conversion (runs in separate thread)"""
         try:
-            input_file = self.input_file.get()
+            input_files = self.input_files.copy()
             output_dir = self.output_dir.get()
             display_mode = self.display_mode.get()
             auto_extract = self.auto_extract_graphics.get()
             
             self.log_message("=" * 70)
             self.log_message("Starting conversion...")
-            self.log_message(f"Input: {input_file}")
+            self.log_message(f"Number of files: {len(input_files)}")
+            for i, f in enumerate(input_files, 1):
+                self.log_message(f"  {i}. {os.path.basename(f)}")
             self.log_message(f"Output Directory: {output_dir}")
             self.log_message(f"Display Mode: {display_mode}")
             self.log_message(f"Auto-extract graphics: {'Yes' if auto_extract else 'No'}")
             self.log_message("=" * 70)
             self.log_message("")
             
-            # Perform the conversion using the advanced converter
-            latex_content = mathematica_to_latex.convert_notebook_to_latex(
-                input_file,
-                display_mode=display_mode,
-                auto_extract_graphics=auto_extract
-            )
+            # Convert all files
+            all_latex = []
+            for i, input_file in enumerate(input_files, 1):
+                self.log_message(f"Converting file {i}/{len(input_files)}: {os.path.basename(input_file)}...")
+                
+                latex_content = mathematica_to_latex.convert_notebook_to_latex(
+                    input_file,
+                    display_mode=display_mode,
+                    auto_extract_graphics=auto_extract
+                )
+                all_latex.append(latex_content)
+                self.log_message(f"  ✓ Converted ({len(latex_content)} characters)")
+            
+            # Combine outputs if multiple files
+            if len(all_latex) > 1:
+                self.log_message("")
+                self.log_message("Combining multiple notebooks...")
+                import re
+                combined = all_latex[0]
+                for latex in all_latex[1:]:
+                    content_match = re.search(r'\\begin\{document\}(.*?)\\end\{document\}', 
+                                             latex, re.DOTALL)
+                    if content_match:
+                        combined = combined.replace(r'\end{document}', 
+                                                  '\n\n' + r'\newpage' + '\n\n' + 
+                                                  content_match.group(1) + r'\end{document}')
+                final_latex = combined
+                self.log_message(f"  ✓ Combined {len(input_files)} notebooks")
+            else:
+                final_latex = all_latex[0]
             
             # Write output file
-            base_name = Path(input_file).stem
+            if len(input_files) == 1:
+                base_name = Path(input_files[0]).stem
+            else:
+                base_name = "combined_notebooks"
             output_file = os.path.join(output_dir, f"{base_name}.tex")
             
             with open(output_file, 'w', encoding='utf-8') as f:
-                f.write(latex_content)
+                f.write(final_latex)
             
             self.log_message("")
             self.log_message("✓ Conversion completed successfully!")
             self.log_message("")
             self.log_message(f"LaTeX output written to: {output_file}")
-            self.log_message(f"File size: {len(latex_content)} characters")
+            self.log_message(f"File size: {len(final_latex)} characters")
             self.log_message("")
             self.log_message("To compile the LaTeX document:")
             self.log_message(f"  pdflatex {os.path.basename(output_file)}")
             self.log_message("")
             self.log_message("=" * 70)
             
-            self.root.after(0, lambda: messagebox.showinfo(
-                "Success", 
-                f"Conversion completed successfully!\n\nOutput: {output_file}"
-            ))
+            result_msg = f"Conversion completed successfully!\n\n"
+            result_msg += f"Files converted: {len(input_files)}\n"
+            result_msg += f"Output: {output_file}"
+            
+            self.root.after(0, lambda: messagebox.showinfo("Success", result_msg))
                 
         except Exception as e:
             error_msg = f"An error occurred during conversion:\n{str(e)}"

@@ -63,13 +63,16 @@ python mathematica_gui.py
 ```
 
 In the GUI window:
-- Click "Browse..." to select your Mathematica notebook (.nb) file
-- Choose the output directory (defaults to the same location as input file)
-- Select the desired output format:
-  - **LaTeX only**: Generates .tex file
-  - **Markdown only**: Generates .md file  
-  - **Both formats**: Generates both .tex and .md files
-- Click "Convert" to start the conversion
+- Click "Add Files..." to select one or more Mathematica notebook (.nb) files
+  - Hold Ctrl (Windows/Linux) or Cmd (Mac) to select multiple files
+  - Multiple files will be combined into a single LaTeX document
+- Choose the output directory (defaults to the same location as first input file)
+- Select display mode:
+  - **Input Cells Only**: Shows only code
+  - **Output Cells Only**: Shows only results
+  - **Input & Output Cells**: Shows both (recommended)
+- Optionally enable "Auto-extract graphics" if you have Wolfram Engine installed
+- Click "Convert to LaTeX" to start the conversion
 - View the results in the status area at the bottom
 
 **Note:** tkinter comes pre-installed with Python on Windows and macOS. On Linux, you may need to install it:
