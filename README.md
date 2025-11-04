@@ -2,8 +2,23 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub issues](https://img.shields.io/github/issues/Bradley-TaulUAH/mathematica-to-latex)](https://github.com/Bradley-TaulUAH/mathematica-to-latex/issues)
+[![GitHub stars](https://img.shields.io/github/stars/Bradley-TaulUAH/mathematica-to-latex)](https://github.com/Bradley-TaulUAH/mathematica-to-latex/stargazers)
 
 A powerful Python tool that converts Wolfram Mathematica notebook files (`.nb`) into well-formatted LaTeX documents. Perfect for academic papers, reports, and documentation that need to include Mathematica computations.
+
+## 📑 Table of Contents
+
+- [Features](#-features)
+- [Quick Start](#-quick-start)
+- [Symbol Conversions](#-symbol-conversions)
+- [Limitations](#️-limitations--known-issues)
+- [Compiling the Output](#-compiling-the-output)
+- [Working with Graphics](#️-working-with-graphics)
+- [Examples](#-examples)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Support](#-support)
 
 ## ✨ Features
 
