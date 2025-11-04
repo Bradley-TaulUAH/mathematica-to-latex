@@ -607,20 +607,33 @@ The interface is designed to be simple and self-explanatory - if you can use Mic
 
 ## 🎯 Example Files Included
 
-The tool comes with example files you can use to test it:
+The tool comes with generic example files in the `examples/` directory that you can use to test it:
 
-| File | What It Contains | File Size |
-|------|-----------------|-----------|
-| `HW 8-1 pb 4.nb` | Infinite square well variational calculation | ~43 KB |
-| `HW 8-1 pb 5-all.nb` | Additional physics problems with tables | ~101 KB |
-| `HW 8-1 pb 8.nb` | Energy level convergence study | ~4 KB |
+| File | What It Contains | Description |
+|------|-----------------|-------------|
+| `simple_calculus.nb` | Basic calculus operations | Differentiation, integration, solving equations |
+| `physics_example.nb` | Quantum harmonic oscillator | Energy levels, wave functions, physics formulas |
+| `symbolic_math.nb` | Symbolic mathematics | Trig identities, matrix operations, simplification |
+
+**⚠️ Important: Use Your Own Files for Actual Work**
+
+These examples are **generic demonstrations only**. For homework, research, or any real work:
+- Use your own Mathematica `.nb` files from your computer
+- The converter works on **any** `.nb` file, regardless of location
+- Keep personal/private notebooks in a separate location (not in this repository)
+- See `examples/README.md` for privacy guidelines
 
 **Try it out:**
 1. Run the GUI: `python mathematica_gui.py` (or `python3` on Mac/Linux)
 2. Click "Add Files..."
-3. Select one of the example files listed above
+3. Navigate to the `examples/` folder and select one of the example files
 4. Click "Convert to LaTeX"
 5. Look at the generated `.tex` file to see what the converter produces!
+
+**To convert your own files:**
+- Your `.nb` files can be anywhere on your computer (Desktop, Documents, etc.)
+- Just navigate to them using the "Add Files..." button
+- The tool doesn't need files to be in any specific location
 
 ---
 

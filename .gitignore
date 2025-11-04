@@ -50,3 +50,16 @@ Thumbs.db
 
 # Output files (for testing)
 test_output/
+
+# Backup files
+*.bak
+*.backup
+*~.nib
+
+# Personal/Private notebooks (keep your homework/research private!)
+# Uncomment the line below if you want to exclude all .nb files from commits
+# *.nb
+
+# Specific files to exclude (add your personal files here)
+# my_homework.nb
+# my_research.nb
