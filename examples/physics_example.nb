@@ -1,0 +1,66 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.0' *)
+
+Notebook[{
+Cell[BoxData[
+ RowBox[{"(*", " ", 
+  RowBox[{"Physics", " ", "Example", ":", " ", 
+   RowBox[{"Quantum", " ", "Harmonic", " ", "Oscillator"}]}], " ", "*)"}]], "Input"],
+
+Cell[CellGroupData[{
+Cell["Energy Levels", "Section"],
+
+Cell[BoxData[
+ RowBox[{
+  SubscriptBox["E", "n"], "=", 
+  RowBox[{"\[HBar]", " ", "\[Omega]", " ", 
+   RowBox[{"(", 
+    RowBox[{"n", "+", 
+     FractionBox["1", "2"]}], ")"}]}]}]], "Input"],
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{"Table", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"n", "+", "0.5"}], ")"}], "*", "1.0545718"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"n", ",", "0", ",", "3"}], "}"}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"0.5272859", ",", "1.5818577", ",", "2.6364295", ",", "3.6910013"}], "}"}]], "Output"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell["Wave Function", "Section"],
+
+Cell[BoxData[
+ RowBox[{
+  SubscriptBox["\[Psi]", "0"], "=", 
+  RowBox[{
+   SuperscriptBox[
+    RowBox[{"(", 
+     FractionBox[
+      RowBox[{"m", " ", "\[Omega]"}], 
+      RowBox[{"\[Pi]", " ", "\[HBar]"}]], ")"}], 
+    RowBox[{"1", "/", "4"}]], 
+   SuperscriptBox["\[ExponentialE]", 
+    RowBox[{"-", 
+     FractionBox[
+      RowBox[{"m", " ", "\[Omega]", " ", 
+       SuperscriptBox["x", "2"]}], 
+      RowBox[{"2", "\[HBar]"}]]}]]}]}]], "Input"]
+}, Open  ]]
+},
+WindowSize->{808, 755},
+WindowMargins->{{4, Automatic}, {Automatic, 4}},
+FrontEndVersion->"12.0 for Mac OS X x86 (64-bit) (April 8, 2019)",
+StyleDefinitions->"Default.nb"
+]
