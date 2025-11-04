@@ -146,10 +146,24 @@ def extract_graphics_with_wolfram(notebook_path, output_dir):
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    # Create a Wolfram script to extract graphics
+    # Create a Wolfram script to extract only top-level graphics from output cells
+    # This avoids extracting intermediate graphics primitives
     wolfram_script = f'''
     nb = Import["{notebook_path}", "NB"];
-    graphics = Cases[nb, _Graphics | _Graphics3D, Infinity];
+    (* Extract only Output cells containing Graphics *)
+    outputCells = Cases[nb, 
+        Cell[BoxData[g:(_GraphicsBox | _Graphics3DBox | _Graphics | _Graphics3D)], "Output", ___] :> g, 
+        Infinity
+    ];
+    (* Also check for Graphics in other output formats *)
+    graphics = Select[outputCells, Head[#] === Graphics || Head[#] === Graphics3D &];
+    (* If no Graphics found in outputs, try BoxData conversion *)
+    If[Length[graphics] == 0,
+        graphics = Cases[outputCells, _GraphicsBox | _Graphics3DBox, 1];
+        graphics = ToExpression /@ graphics;
+    ];
+    (* Filter to ensure we have valid Graphics objects *)
+    graphics = Select[graphics, MatchQ[#, _Graphics | _Graphics3D] &];
     extracted = Table[
         Export[
             "{output_dir}/figure_" <> ToString[i] <> ".png",
