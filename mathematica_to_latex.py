@@ -525,11 +525,11 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
     
     latex_output = []
     
-    # Document preamble matching user's style
+    # Document preamble with enhanced packages for better visual presentation
     latex_output.extend([
         r'\documentclass[letterpaper,12pt]{article}',
         r'\usepackage{tabularx} % extra features for tabular environment',
-        r'\usepackage{amsmath}  % improve math presentation',
+        r'\usepackage{amsmath,amssymb,amsthm}  % improve math presentation',
         r'\usepackage{graphicx} % takes care of graphic including machinery',
         r'\usepackage[margin=1in,letterpaper]{geometry} % decreases margins',
         r'\usepackage{cite} % takes care of citations',
@@ -545,23 +545,62 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
         r'\usepackage{float}',
         r'\usepackage{listings}',
         r'\usepackage{xcolor}',
+        r'\usepackage{booktabs} % professional quality tables',
+        r'\usepackage{array} % improved array and tabular environments',
+        r'\usepackage{fancyvrb} % fancy verbatim for better output display',
+        r'\usepackage[most]{tcolorbox} % colored boxes for better output presentation',
         r'',
         r'%++++++++++++++++++++++++++++++++++++++++',
+        r'% Custom styling for better visual appearance',
+        r'%++++++++++++++++++++++++++++++++++++++++',
         r'',
-        r'% Configure listings for Mathematica code',
+        r'% Configure listings for Mathematica code with enhanced styling',
         r'\lstset{',
         r'  language=Mathematica,',
         r'  basicstyle=\small\ttfamily,',
-        r'  keywordstyle=\color{blue},',
-        r'  commentstyle=\color{green!60!black},',
+        r'  keywordstyle=\color{blue}\bfseries,',
+        r'  commentstyle=\color{green!60!black}\itshape,',
         r'  stringstyle=\color{red},',
         r'  numbers=none,',
-        r'  frame=single,',
+        r'  frame=lines,',
+        r'  framesep=3mm,',
         r'  breaklines=true,',
-        r'  backgroundcolor=\color{gray!10},',
+        r'  backgroundcolor=\color{blue!3},',
         r'  captionpos=b,',
-        r'  aboveskip=10pt,',
-        r'  belowskip=10pt',
+        r'  aboveskip=12pt,',
+        r'  belowskip=8pt,',
+        r'  xleftmargin=8pt,',
+        r'  xrightmargin=8pt',
+        r'}',
+        r'',
+        r'% Define a custom environment for Mathematica output',
+        r'\newtcolorbox{outputbox}{',
+        r'  colback=yellow!5!white,',
+        r'  colframe=orange!75!black,',
+        r'  fonttitle=\bfseries,',
+        r'  title=Output:,',
+        r'  boxrule=0.5pt,',
+        r'  arc=2mm,',
+        r'  boxsep=3pt,',
+        r'  left=6pt,',
+        r'  right=6pt,',
+        r'  top=6pt,',
+        r'  bottom=6pt',
+        r'}',
+        r'',
+        r'% Define environment for mathematical results',
+        r'\newtcolorbox{resultbox}{',
+        r'  colback=green!5!white,',
+        r'  colframe=green!50!black,',
+        r'  fonttitle=\bfseries,',
+        r'  title=Result:,',
+        r'  boxrule=0.5pt,',
+        r'  arc=2mm,',
+        r'  boxsep=3pt,',
+        r'  left=6pt,',
+        r'  right=6pt,',
+        r'  top=6pt,',
+        r'  bottom=6pt',
         r'}',
         r'',
         r'\begin{document}',
@@ -606,12 +645,12 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
             
             code = cell[1]
             latex_output.extend([
-                r'\noindent\textbf{Input:}',
+                r'\vspace{6pt}',
+                r'\noindent\textbf{\textcolor{blue!70!black}{Input:}}',
                 r'\begin{lstlisting}',
                 code,
                 r'\end{lstlisting}',
-                r'',
-                r'\medskip',
+                r'\vspace{4pt}',
                 r''
             ])
             continue
@@ -668,13 +707,13 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
             table_data = cell[1]
             if table_data:
                 max_cols = max(len(row) for row in table_data)
-                col_format = '|' + 'c|' * max_cols
+                col_format = 'c' * max_cols  # No vertical lines for booktabs style
                 
                 latex_output.extend([
                     r'\begin{table}[H]',
                     r'\centering',
                     r'\begin{tabular}{' + col_format + '}',
-                    r'\hline'
+                    r'\toprule'  # Top rule from booktabs
                 ])
                 
                 for i, row in enumerate(table_data):
@@ -692,9 +731,12 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
                         converted_row.append('')
                     
                     latex_output.append(' & '.join(converted_row) + r' \\')
-                    latex_output.append(r'\hline')
+                    # Add midrule after first row (header) only
+                    if i == 0:
+                        latex_output.append(r'\midrule')
                 
                 latex_output.extend([
+                    r'\bottomrule',  # Bottom rule from booktabs
                     r'\end{tabular}',
                     r'\end{table}',
                     r'',
@@ -734,19 +776,51 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
                     r''
                 ])
         else:
-            # Regular content - add to paragraph
+            # Regular content - wrap output in nice boxes
             if is_math_content(cell):
+                # Mathematical output - use resultbox
                 if not (cell.startswith('$') or cell.startswith(r'\[') or '$' in cell):
                     cell = f'${cell}$'
-            
-            current_paragraph.append(cell)
-            
-            # Break paragraphs that get too long
-            if len(current_paragraph) > 5:
-                latex_output.append(r'\paragraph{}')
-                latex_output.append(' '.join(current_paragraph))
-                latex_output.append(r'')
-                current_paragraph = []
+                
+                # Flush any pending paragraph before adding result box
+                if current_paragraph:
+                    latex_output.append(r'\paragraph{}')
+                    latex_output.append(' '.join(current_paragraph))
+                    latex_output.append(r'')
+                    current_paragraph = []
+                
+                latex_output.extend([
+                    r'\begin{resultbox}',
+                    cell,
+                    r'\end{resultbox}',
+                    r''
+                ])
+            else:
+                # Text output - use outputbox for longer text, or just add to paragraph for short text
+                if len(cell) > 50:  # Longer output gets a box
+                    # Flush any pending paragraph
+                    if current_paragraph:
+                        latex_output.append(r'\paragraph{}')
+                        latex_output.append(' '.join(current_paragraph))
+                        latex_output.append(r'')
+                        current_paragraph = []
+                    
+                    latex_output.extend([
+                        r'\begin{outputbox}',
+                        cell,
+                        r'\end{outputbox}',
+                        r''
+                    ])
+                else:
+                    # Short text can be part of paragraph
+                    current_paragraph.append(cell)
+                    
+                    # Break paragraphs that get too long
+                    if len(current_paragraph) > 5:
+                        latex_output.append(r'\paragraph{}')
+                        latex_output.append(' '.join(current_paragraph))
+                        latex_output.append(r'')
+                        current_paragraph = []
     
     # Flush final paragraph
     if current_paragraph:
