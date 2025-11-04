@@ -139,25 +139,28 @@ Do[Export["figure_" <> ToString[i] <> ".png", graphics[[i]], ImageResolution -> 
 
 ## Document Structure
 
-The generated LaTeX includes:
+The generated LaTeX follows a professional academic paper style:
 
-- Professional document class with 11pt font and 1-inch margins
-- Proper spacing with `parskip` and `titlesec` packages
-- Code listings with syntax highlighting
-- Subsections for major parts
-- Tables with borders
-- Figure placeholders with frames
+- **Document class**: `letterpaper, 12pt` for standard US letter format
+- **Packages**: `tabularx`, `amsmath`, `graphicx`, `cite`, `hyperref`, `bm`, `float`
+- **Hyperlinks**: Colored links (blue for internal/citations, magenta for files)
+- **Title**: Bold formatting with italic author attribution
+- **Structure**: Uses `\section{}` and `\paragraph{}` for organization
+- **Tables**: Bordered tables with proper alignment
+- **Figures**: With captions and labels
+- **Code listings**: Syntax-highlighted Mathematica code blocks
 
 ## Improvements Over Basic Conversion
 
 This converter addresses common issues with raw Mathematica-to-LaTeX conversion:
 
 1. **No More "Super Linear" Output**: Content is organized into proper sections and paragraphs, not just one long linear sequence
-2. **Better Spacing**: Uses `\medskip` and `\bigskip` for visual separation
-3. **Proper Document Structure**: Sections, subsections, and proper LaTeX environments
+2. **Professional Academic Style**: Uses standard 12pt letterpaper format with proper sectioning
+3. **Proper Document Structure**: `\section{}` and `\paragraph{}` for clear hierarchy
 4. **Symbol Translation**: Greek letters and mathematical operators are correctly converted
-5. **Readable Tables**: Tables have borders and proper alignment
+5. **Readable Tables**: Tables with borders and proper alignment
 6. **Visible Figure Placeholders**: Graphics locations are clearly marked with frames
+7. **Hyperlinked PDF**: Internal links, citations, and URLs are properly hyperlinked
 
 ## Limitations
 

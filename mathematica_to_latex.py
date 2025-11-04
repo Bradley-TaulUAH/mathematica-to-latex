@@ -473,20 +473,28 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
     
     latex_output = []
     
-    # Document preamble with better formatting
+    # Document preamble matching user's style
     latex_output.extend([
-        r'\documentclass[11pt]{article}',
-        r'\usepackage[margin=1in]{geometry}',
-        r'\usepackage{amsmath}',
-        r'\usepackage{amssymb}',
-        r'\usepackage{graphicx}',
-        r'\usepackage{array}',
-        r'\usepackage{booktabs}',
+        r'\documentclass[letterpaper,12pt]{article}',
+        r'\usepackage{tabularx} % extra features for tabular environment',
+        r'\usepackage{amsmath}  % improve math presentation',
+        r'\usepackage{graphicx} % takes care of graphic including machinery',
+        r'\usepackage[margin=1in,letterpaper]{geometry} % decreases margins',
+        r'\usepackage{cite} % takes care of citations',
+        r'\usepackage[final]{hyperref} % adds hyper links inside the generated pdf file',
+        r'\hypersetup{',
+        r'	colorlinks=true,       % false: boxed links; true: colored links',
+        r'	linkcolor=blue,        % color of internal links',
+        r'	citecolor=blue,        % color of links to bibliography',
+        r'	filecolor=magenta,     % color of file links',
+        r'	urlcolor=blue',
+        r'}',
+        r'\usepackage{bm}',
         r'\usepackage{float}',
         r'\usepackage{listings}',
         r'\usepackage{xcolor}',
-        r'\usepackage{parskip}',  # Better paragraph spacing
-        r'\usepackage{titlesec}',  # Better section formatting
+        r'',
+        r'%++++++++++++++++++++++++++++++++++++++++',
         r'',
         r'% Configure listings for Mathematica code',
         r'\lstset{',
@@ -504,21 +512,17 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
         r'  belowskip=10pt',
         r'}',
         r'',
-        r'% Adjust section spacing',
-        r'\titlespacing*{\section}{0pt}{12pt plus 4pt minus 2pt}{6pt plus 2pt minus 2pt}',
-        r'\titlespacing*{\subsection}{0pt}{10pt plus 3pt minus 2pt}{4pt plus 2pt minus 2pt}',
-        r'',
         r'\begin{document}',
         r''
     ])
     
     filename = Path(input_file).stem
     latex_output.extend([
-        r'\title{' + filename.replace('_', r'\_') + '}',
-        r'\date{\today}',
-        r'\maketitle',
+        r'\title{\textbf{' + filename.replace('_', r'\_') + '}}',
+        r'\author{\textit{Generated from Mathematica Notebook}}',
+        r'\date{}',
         r'',
-        r'\bigskip',
+        r'\maketitle',
         r''
     ])
     
@@ -667,16 +671,14 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
             section_counter += 1
             if len(cell) < 40:
                 latex_output.extend([
-                    r'',
-                    r'\subsection*{' + cell + '}',
-                    r''
+                    r'\section{' + cell + '}',
+                    r'\paragraph{}'
                 ])
             else:
                 latex_output.extend([
                     r'',
-                    r'\noindent\textbf{' + cell + '}',
-                    r'',
-                    r'\medskip',
+                    r'\paragraph{}',
+                    r'\textbf{' + cell + '}',
                     r''
                 ])
         else:
@@ -689,14 +691,14 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
             
             # Break paragraphs that get too long
             if len(current_paragraph) > 5:
+                latex_output.append(r'\paragraph{}')
                 latex_output.append(' '.join(current_paragraph))
-                latex_output.append(r'')
-                latex_output.append(r'\medskip')
                 latex_output.append(r'')
                 current_paragraph = []
     
     # Flush final paragraph
     if current_paragraph:
+        latex_output.append(r'\paragraph{}')
         latex_output.append(' '.join(current_paragraph))
         latex_output.append(r'')
     

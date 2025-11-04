@@ -31,3 +31,6 @@ check_pb4.*
 # Graphics extraction test files
 test_no_extract.*
 test_with_extract.*
+
+# Style test files
+test_new_style.*
