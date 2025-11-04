@@ -86,22 +86,168 @@ There are two ways to do this:
 6. Right-click the ZIP file and choose "Extract All..." (Windows) or just double-click it (Mac)
 7. Remember where you extracted it! You'll need to find this folder in the next step.
 
-#### Option B: Use Git Command (If You Know How to Use Terminal/Command Prompt)
-1. Open Terminal (Mac/Linux) or Command Prompt (Windows)
-2. Navigate to where you want to download the tool. For example:
+#### Option B: Clone the Repository Using Git (More Advanced, But Useful to Learn!)
+
+**What does "clone a repository" mean?**
+- **Repository** (or "repo") = A folder containing all the code for this project
+- **Clone** = Make a complete copy of that folder on your computer
+- When you clone, you get all the files, not just a snapshot
+
+**Why clone instead of downloading ZIP?**
+- ✅ You can easily get updates if we improve the tool (just type `git pull`)
+- ✅ You can track changes over time
+- ✅ Useful skill if you want to contribute or work with code in the future
+
+**Do you have Git installed?**
+
+First, let's check if you already have Git:
+
+**On Windows:**
+1. Press Windows key and type `cmd`, press Enter
+2. Type `git --version` and press Enter
+3. If you see something like "git version 2.x.x", you have Git! Skip to "Cloning the Repository" below.
+4. If you see "command not found" or an error, continue to "Installing Git" below.
+
+**On Mac:**
+1. Press Cmd+Space, type `terminal`, press Enter
+2. Type `git --version` and press Enter
+3. If you see a version number, you have Git! Skip to "Cloning the Repository" below.
+4. If Mac asks you to install developer tools, click "Install" and wait.
+
+**On Linux:**
+1. Open Terminal (Ctrl+Alt+T)
+2. Type `git --version` and press Enter
+3. You probably have Git already!
+
+**Installing Git (If You Don't Have It):**
+
+**Windows:**
+1. Go to [git-scm.com/downloads](https://git-scm.com/downloads)
+2. Click "Download for Windows"
+3. Run the downloaded .exe file
+4. Click "Next" through all the options (the defaults are fine)
+5. Click "Install" and wait
+6. Click "Finish"
+7. **Important:** Close and reopen Command Prompt before continuing
+
+**Mac:**
+1. Git usually installs automatically when you check for the first time
+2. If not, go to [git-scm.com/downloads](https://git-scm.com/downloads) and download the Mac version
+3. Open the downloaded .dmg file and follow instructions
+
+**Linux:**
+```bash
+# Ubuntu/Debian
+sudo apt-get install git
+
+# Fedora
+sudo dnf install git
+
+# Arch
+sudo pacman -S git
+```
+
+**Cloning the Repository (Step-by-Step):**
+
+**On Windows:**
+1. Open Command Prompt (press Windows key, type `cmd`, press Enter)
+2. Decide where you want to put the tool. Your Desktop is usually a good choice.
+3. Navigate to that location by typing:
    ```bash
    cd Desktop
    ```
-   (This goes to your Desktop folder)
-3. Type this command and press Enter:
+   Press Enter. (If you want a different location, replace `Desktop` with that folder name)
+4. Now clone the repository by typing this exact command:
    ```bash
    git clone https://github.com/Bradley-TaulUAH/mathematica-to-latex.git
    ```
-4. Wait for it to download
-5. Go into the folder:
+   Press Enter.
+5. You'll see text appearing as it downloads. Lines like "Receiving objects" and "Resolving deltas" are normal!
+6. When it's done (you'll see the command prompt again), you now have a folder called `mathematica-to-latex` on your Desktop!
+7. Go into that folder by typing:
    ```bash
    cd mathematica-to-latex
    ```
+   Press Enter.
+8. You're now inside the tool's folder! Continue to Step 4 below.
+
+**On Mac:**
+1. Open Terminal (press Cmd+Space, type `terminal`, press Enter)
+2. Decide where you want to put the tool. Your Desktop is usually a good choice.
+3. Navigate to that location by typing:
+   ```bash
+   cd ~/Desktop
+   ```
+   Press Enter. (The `~` means "my home folder")
+4. Now clone the repository by typing this exact command:
+   ```bash
+   git clone https://github.com/Bradley-TaulUAH/mathematica-to-latex.git
+   ```
+   Press Enter.
+5. You'll see text appearing as it downloads. This is normal!
+6. When it's done (you'll see the command prompt again), you now have a folder called `mathematica-to-latex` on your Desktop!
+7. Go into that folder by typing:
+   ```bash
+   cd mathematica-to-latex
+   ```
+   Press Enter.
+8. You're now inside the tool's folder! Continue to Step 4 below.
+
+**On Linux:**
+1. Open Terminal (Ctrl+Alt+T)
+2. Navigate to where you want the tool:
+   ```bash
+   cd ~/Desktop
+   ```
+   Press Enter.
+3. Clone the repository:
+   ```bash
+   git clone https://github.com/Bradley-TaulUAH/mathematica-to-latex.git
+   ```
+   Press Enter.
+4. Go into the folder:
+   ```bash
+   cd mathematica-to-latex
+   ```
+   Press Enter.
+
+**What just happened?**
+- Git downloaded all the files from GitHub to your computer
+- You now have a folder called `mathematica-to-latex` with all the tool's files inside
+- This folder is connected to GitHub, so you can get updates later by typing `git pull`
+
+**Troubleshooting:**
+
+❌ **"Permission denied" error?**
+- Make sure you're not trying to clone into a protected folder like C:\Program Files
+- Try cloning to your Desktop or Documents folder instead
+
+❌ **"Repository not found" or "Access denied"?**
+- Check that you typed the URL exactly: `https://github.com/Bradley-TaulUAH/mathematica-to-latex.git`
+- Make sure you have internet connection
+
+❌ **"Failed to connect" or timeout?**
+- Check your internet connection
+- If you're behind a corporate firewall, you might need to ask your IT department
+- Try Option A (Download ZIP) instead
+
+**Getting Updates in the Future:**
+
+One big advantage of cloning is you can easily get updates!
+
+1. Open Terminal/Command Prompt
+2. Navigate to the tool's folder:
+   ```bash
+   cd Desktop/mathematica-to-latex
+   ```
+3. Type:
+   ```bash
+   git pull
+   ```
+   Press Enter.
+4. Git will download any new changes we've made since you first cloned!
+
+**Still confused?** That's okay! Just use Option A (Download ZIP) instead. It works just as well!
 
 ### Step 4: Verify Everything Works (Optional but Recommended)
 
