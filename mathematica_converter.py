@@ -18,7 +18,7 @@ class MathematicaConverter:
     def read_notebook(self, filepath: str) -> bool:
         """Read a Mathematica notebook file"""
         try:
-            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(filepath, 'r', encoding='utf-8', errors='replace') as f:
                 self.content = f.read()
             return True
         except Exception as e:

@@ -485,7 +485,7 @@
         }
 
         function downloadFile(type, filename) {
-            window.location.href = `/download/${type}/${filename}`;
+            window.location.href = `/download/${encodeURIComponent(type)}/${encodeURIComponent(filename)}`;
         }
 
         function showAlert(message, type) {

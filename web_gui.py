@@ -60,7 +60,7 @@ def convert():
         
         # Perform conversion
         converter = MathematicaConverter()
-        success, message = converter.convert_file(input_path, output_format, output_dir)
+        success, _ = converter.convert_file(input_path, output_format, output_dir)
         
         if success:
             # Get base filename without extension
@@ -86,35 +86,52 @@ def convert():
                             'content': f.read()
                         }
             
+            # Don't expose internal file paths to users
             return jsonify({
                 'success': True,
-                'message': message,
+                'message': 'Conversion successful!',
                 'files': files
             })
         else:
-            return jsonify({'success': False, 'error': message})
+            # Don't expose internal error details to users
+            return jsonify({'success': False, 'error': 'Conversion failed. Please check your file format and try again.'})
             
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+    except Exception:
+        # Don't expose stack trace details to users
+        return jsonify({'success': False, 'error': 'An error occurred during conversion. Please check your file and try again.'})
 
 
 @app.route('/download/<format_type>/<filename>')
 def download(format_type, filename):
     """Download converted file"""
     try:
+        # Sanitize filename to prevent path traversal
+        safe_filename = secure_filename(filename)
+        if not safe_filename or safe_filename != filename:
+            return "Invalid filename", 400
+        
+        # Only allow specific format types
+        if format_type not in ['latex', 'markdown']:
+            return "Invalid format type", 400
+        
         output_dir = os.path.join(app.config['UPLOAD_FOLDER'], 'output')
-        file_path = os.path.join(output_dir, filename)
+        file_path = os.path.join(output_dir, safe_filename)
+        
+        # Verify the path is within the output directory (prevent directory traversal)
+        if not os.path.abspath(file_path).startswith(os.path.abspath(output_dir)):
+            return "Invalid file path", 400
         
         if os.path.exists(file_path):
-            return send_file(file_path, as_attachment=True, download_name=filename)
+            return send_file(file_path, as_attachment=True, download_name=safe_filename)
         else:
             return "File not found", 404
             
-    except Exception as e:
-        return str(e), 500
+    except Exception:
+        # Don't expose stack trace to users
+        return "An error occurred during download", 500
 
 
 if __name__ == '__main__':
     print("Starting Mathematica to LaTeX/Markdown Converter Web GUI...")
     print("Open your browser and navigate to: http://localhost:5000")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=False, host='127.0.0.1', port=5000)
