@@ -1,14 +1,26 @@
-# Mathematica to LaTeX/Markdown Converter
+# Mathematica to LaTeX Converter
 
-A user-friendly GUI application for converting Mathematica notebook files (.nb) to LaTeX and Markdown formats.
+A comprehensive tool for converting Mathematica notebook files (.nb) to professional LaTeX documents, featuring both a desktop GUI and advanced command-line interface.
 
 ## Features
 
-- **Easy-to-use GUI**: Simple and intuitive graphical interface
-- **Multiple output formats**: Convert to LaTeX, Markdown, or both simultaneously
-- **Batch processing**: Process multiple files easily
-- **Real-time feedback**: See conversion progress and results immediately
-- **No external dependencies**: Uses only Python standard library
+### Advanced Conversion Engine (Integrated from PR #3 & #4)
+- **Professional LaTeX output**: Proper document structure with sections, paragraphs, tables, and figures
+- **Display modes**: Choose "input-only" (code), "output-only" (results), or "both" (code + results)
+- **Symbol translation**: 50+ Mathematica symbols automatically converted (Greek letters, operators, special characters)
+- **Automatic graphics extraction**: Extract graphics using Wolfram Engine (when available)
+- **Table formatting**: GridBox tables → LaTeX tabular environments
+- **Code listings**: Syntax-highlighted Mathematica code blocks
+- **Math mode handling**: Automatic detection and proper LaTeX math wrapping
+- **Multi-notebook support**: Combine multiple notebooks into single document
+
+### User-Friendly GUI
+- **Desktop popup interface**: Native GUI with tkinter (no web browser needed)
+- **File browser dialogs**: Easy file and directory selection
+- **Display mode selector**: Radio buttons for input-only/output-only/both
+- **Graphics toggle**: Enable/disable automatic graphics extraction
+- **Real-time status**: Live progress updates in scrolling text area
+- **Progress indicator**: Visual progress bar during conversion
 
 ## Requirements
 
@@ -81,34 +93,39 @@ python web_gui.py
 
 3. Open your browser to `http://localhost:5000`
 
-### Command-Line Mode
+### Command-Line Mode (Advanced Features)
 
-For scripting or automation, you can use the command-line interface:
+For scripting, automation, or advanced features:
 
 ```bash
-python mathematica_converter.py <input.nb> [output_format] [output_dir]
+python mathematica_to_latex.py <input.nb> [options]
 ```
 
-**Arguments:**
-- `input.nb`: Path to the Mathematica notebook file (required)
-- `output_format`: `latex`, `markdown`, or `both` (default: `both`)
-- `output_dir`: Output directory (default: same as input file)
+**Options:**
+- `-o, --output <file>`: Output LaTeX file (default: derived from input)
+- `--mode <mode>`: Display mode - `input-only`, `output-only`, or `both` (default: `both`)
+- `--auto-extract-graphics`: Automatically extract graphics using Wolfram Engine
 
 **Examples:**
 
-Convert to both formats in the same directory:
+Basic conversion:
 ```bash
-python mathematica_converter.py "HW 8-1 pb 4.nb"
+python mathematica_to_latex.py "HW 8-1 pb 4.nb"
 ```
 
-Convert to LaTeX only:
+Show only results (no code):
 ```bash
-python mathematica_converter.py "HW 8-1 pb 4.nb" latex
+python mathematica_to_latex.py "HW 8-1 pb 4.nb" --mode output-only -o results.tex
 ```
 
-Convert to Markdown in a specific directory:
+Convert with automatic graphics extraction:
 ```bash
-python mathematica_converter.py "HW 8-1 pb 4.nb" markdown ./output
+python mathematica_to_latex.py "HW 8-1 pb 5-all.nb" --auto-extract-graphics
+```
+
+Combine multiple notebooks:
+```bash
+python mathematica_to_latex.py "HW 8-1 pb 4.nb" "HW 8-1 pb 5-all.nb" "HW 8-1 pb 8.nb" -o combined.tex
 ```
 
 ## How It Works
