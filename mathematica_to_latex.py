@@ -779,11 +779,33 @@ def convert_notebook_to_latex(input_file, display_mode='both', auto_extract_grap
                 current_paragraph = []
             
             section_counter += 1
-            if len(cell) < 40:
-                latex_output.extend([
-                    r'\section{' + cell + '}',
-                    r''
-                ])
+            # Determine section level based on content and position
+            cell_lower = cell.lower()
+            
+            # Check if it's a major section (contains "problem", "part", etc.)
+            is_major_section = any(keyword in cell_lower for keyword in ['problem', 'statement', 'lowest', 'comparison', 'analysis'])
+            
+            # Check if it's a subsection (contains (a), (b), (c), or part indicators)
+            is_subsection = any(pattern in cell for pattern in ['(a)', '(b)', '(c)', '(d)', '(e)', '(i)', '(ii)', '(iii)']) or \
+                           any(keyword in cell_lower for keyword in ['case', 'step', 'trial function', 'normalization', 'kinetic energy'])
+            
+            if len(cell) < 60:
+                if is_subsection:
+                    latex_output.extend([
+                        r'\subsection{' + cell + '}',
+                        r''
+                    ])
+                elif is_major_section and section_counter == 1:
+                    # First major heading - make it unnumbered
+                    latex_output.extend([
+                        r'\section*{' + cell + '}',
+                        r''
+                    ])
+                else:
+                    latex_output.extend([
+                        r'\section{' + cell + '}',
+                        r''
+                    ])
             else:
                 latex_output.extend([
                     r'',
