@@ -150,20 +150,45 @@ def extract_graphics_with_wolfram(notebook_path, output_dir):
     # This avoids extracting intermediate graphics primitives
     wolfram_script = f'''
     nb = Import["{notebook_path}", "NB"];
-    (* Extract only Output cells containing Graphics *)
+    
+    (* Method 1: Extract Output cells containing Graphics or GraphicsBox *)
     outputCells = Cases[nb, 
-        Cell[BoxData[g:(_GraphicsBox | _Graphics3DBox | _Graphics | _Graphics3D)], "Output", ___] :> g, 
+        Cell[BoxData[g_], "Output", ___] :> g, 
         Infinity
     ];
-    (* Also check for Graphics in other output formats *)
-    graphics = Select[outputCells, Head[#] === Graphics || Head[#] === Graphics3D &];
-    (* If no Graphics found in outputs, try BoxData conversion *)
-    If[Length[graphics] == 0,
-        graphics = Cases[outputCells, _GraphicsBox | _Graphics3DBox, 1];
-        graphics = ToExpression /@ graphics;
+    
+    (* Convert GraphicsBox to Graphics if needed *)
+    graphics = {{}}; 
+    Do[
+        Which[
+            MatchQ[cell, _Graphics | _Graphics3D],
+                AppendTo[graphics, cell],
+            MatchQ[cell, _GraphicsBox | _Graphics3DBox],
+                Module[{{g = Quiet[ToExpression[cell]]}},
+                    If[MatchQ[g, _Graphics | _Graphics3D], AppendTo[graphics, g]]
+                ],
+            True,
+                (* Check if nested inside RowBox or other box structures *)
+                Module[{{nested = Cases[cell, _Graphics | _Graphics3D, {{1, 2}}]}},
+                    If[Length[nested] > 0, AppendTo[graphics, nested[[1]]]]
+                ]
+        ],
+        {{cell, outputCells}}
     ];
-    (* Filter to ensure we have valid Graphics objects *)
-    graphics = Select[graphics, MatchQ[#, _Graphics | _Graphics3D] &];
+    
+    (* Filter to ensure we have valid, complete Graphics objects *)
+    graphics = Select[graphics, 
+        MatchQ[#, _Graphics | _Graphics3D] && 
+        Length[#] > 1 &&  (* Ensure it's not just an empty Graphics object *)
+        !FreeQ[#, _GraphicsComplex | _Line | _Point | _Polygon | _Circle] &  (* Has actual content *)
+    ];
+    
+    (* Remove duplicates based on visual similarity (same dimensions/structure) *)
+    graphics = DeleteDuplicatesBy[graphics, 
+        Dimensions[#] &
+    ];
+    
+    (* Export each graphic *)
     extracted = Table[
         Export[
             "{output_dir}/figure_" <> ToString[i] <> ".png",
@@ -172,6 +197,7 @@ def extract_graphics_with_wolfram(notebook_path, output_dir):
         ],
         {{i, Length[graphics]}}
     ];
+    
     Print["EXTRACTED:" <> ToString[Length[graphics]]];
     '''
     
@@ -363,7 +389,7 @@ def clean_formbox_expressions(text):
 
 
 def extract_input_code(cell_text):
-    """Extract code from an Input cell."""
+    """Extract code from an Input cell and escape for LaTeX listings."""
     code_parts = []
     matches = re.findall(r'"([^"\\]*(?:\\.[^"\\]*)*)"', cell_text)
     for match in matches:
@@ -377,6 +403,13 @@ def extract_input_code(cell_text):
         cleaned = cleaned.replace('\\[', '[').replace('\\]', ']')
         cleaned = cleaned.replace('\\(', '(').replace('\\)', ')')
         
+        # Remove Mathematica string delimiters like \< and \>
+        cleaned = re.sub(r'\\<', '', cleaned)
+        cleaned = re.sub(r'\\>', '', cleaned)
+        
+        # Clean up other Mathematica-specific escape sequences
+        cleaned = cleaned.replace('\\`', '`')
+        
         if cleaned.strip():
             code_parts.append(cleaned)
     
@@ -384,6 +417,11 @@ def extract_input_code(cell_text):
         result = ' '.join(code_parts)
         result = re.sub(r' +', ' ', result)
         result = re.sub(r' *\n *', '\n', result)
+        
+        # Final cleanup for listings environment
+        # listings package handles most special chars, but we need to clean up the string markers
+        result = re.sub(r'"\s*\+\s*"', '', result)  # Remove string concatenation markers
+        
         return result
     return ''
 
