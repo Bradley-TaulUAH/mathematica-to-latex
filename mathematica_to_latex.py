@@ -121,19 +121,24 @@ SYMBOL_MAP = {
     r'\[VeryThinSpace]': r'\!',
 }
 
+# Regex patterns for subscript conversion
+# These handle various levels of escaping that can appear in Mathematica notebook files
+SUBSCRIPT_DOUBLE_BACKSLASH = r'\\\\?\[Subscript\s+([^\]]+)\]'  # Matches \\[Subscript x] or \[Subscript x]
+SUBSCRIPT_WITH_BASE = r'(\w+)\\\\\\\\?\[Subscript\s+([^\]]+)\]'  # Matches var\\[Subscript x] or var\\\\[Subscript x]
+SUBSCRIPT_FUNCTION = r'Subscript\[([^,]+),\s*([^\]]+)\]'  # Matches Subscript[base, sub]
+
 
 def convert_subscripts(text):
-    """Convert Mathematica subscript notation to LaTeX subscripts."""
-    # Pattern for \\[Subscript x] - note the double backslash
-    # This can appear as literal text in the output
-    text = re.sub(r'\\\\?\[Subscript\s+([^\]]+)\]', r'_{\1}', text)
+    r"""Convert Mathematica subscript notation to LaTeX subscripts.
     
-    # Pattern for escaped backslashes followed by [Subscript ...]
-    # Example: r\\\\[Subscript 1] -> r_1
-    text = re.sub(r'(\w+)\\\\\\\\?\[Subscript\s+([^\]]+)\]', r'\1_{\2}', text)
-    
-    # Pattern for Subscript[base, sub]
-    text = re.sub(r'Subscript\[([^,]+),\s*([^\]]+)\]', r'\1_{\2}', text)
+    Handles multiple escaping levels that appear in .nb files:
+    - \\[Subscript x] or \[Subscript x] -> _{x}
+    - var\\\\[Subscript x] -> var_{x}
+    - Subscript[base, sub] -> base_{sub}
+    """
+    text = re.sub(SUBSCRIPT_DOUBLE_BACKSLASH, r'_{\1}', text)
+    text = re.sub(SUBSCRIPT_WITH_BASE, r'\1_{\2}', text)
+    text = re.sub(SUBSCRIPT_FUNCTION, r'\1_{\2}', text)
     
     return text
 

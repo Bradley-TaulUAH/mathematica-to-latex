@@ -1,6 +1,6 @@
 # Mathematica to LaTeX Converter
 
-[![Python Version](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/downloads/)
+[![Python Version](https://img.shields.io/badge/python-3.7%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub issues](https://img.shields.io/github/issues/Bradley-TaulUAH/mathematica-to-latex)](https://github.com/Bradley-TaulUAH/mathematica-to-latex/issues)
 [![GitHub stars](https://img.shields.io/github/stars/Bradley-TaulUAH/mathematica-to-latex)](https://github.com/Bradley-TaulUAH/mathematica-to-latex/stargazers)
@@ -9,16 +9,16 @@ A powerful Python tool that converts Wolfram Mathematica notebook files (`.nb`) 
 
 ## 📑 Table of Contents
 
-- [Features](#-features)
-- [Quick Start](#-quick-start)
-- [Symbol Conversions](#-symbol-conversions)
-- [Limitations](#️-limitations--known-issues)
-- [Compiling the Output](#-compiling-the-output)
-- [Working with Graphics](#️-working-with-graphics)
-- [Examples](#-examples)
-- [Contributing](#-contributing)
-- [License](#-license)
-- [Support](#-support)
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Symbol Conversions](#symbol-conversions)
+- [Limitations](#limitations--known-issues)
+- [Compiling the Output](#compiling-the-output)
+- [Working with Graphics](#working-with-graphics)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
+- [Support](#support)
 
 ## ✨ Features
 
@@ -36,7 +36,7 @@ A powerful Python tool that converts Wolfram Mathematica notebook files (`.nb`) 
 
 ### Prerequisites
 
-- Python 3.6 or higher (no additional packages required)
+- Python 3.7 or higher (no additional packages required)
 
 ### Installation
 

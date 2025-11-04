@@ -99,7 +99,7 @@ Currently manual testing with example notebooks. Future improvements could inclu
 
 ## Dependencies
 
-**Runtime**: None (Python 3.6+ standard library only)
+**Runtime**: None (Python 3.7+ standard library only)
 - `re` - Regular expressions
 - `argparse` - Command-line argument parsing
 - `sys`, `os`, `pathlib` - File system operations
